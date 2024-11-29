@@ -1,1 +1,39 @@
-spring.application.name=dealership
+spring:
+  application:
+    name: dealership
+  profiles:
+    active: test
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+#  mail:
+#    host: ${MAIL_HOST}
+#    port: ${MAIL_PORT}
+#    username: ${MAIL_USERNAME}
+#    password: ${MAIL_PASSWORD}
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+  servlet:
+    context-path: /api
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+file:
+  upload-dir: ${UPLOAD_DIR}
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET}
