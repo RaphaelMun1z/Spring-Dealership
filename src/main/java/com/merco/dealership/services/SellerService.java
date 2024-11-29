@@ -1,5 +1,6 @@
 package com.merco.dealership.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,9 +42,10 @@ public class SellerService {
 	public Seller create(Seller obj) {
 		try {
 			String encryptedPassword = new BCryptPasswordEncoder().encode(obj.getPassword());
-			Seller Seller = new Seller(null, "Vendedor", "(13) 91111-1111", "vendedor@loja.com", encryptedPassword);
-			repository.save(Seller);
-			return Seller;
+			Seller seller = new Seller(null, "CHARLIE WILLIAMS", "(51) 98765-4321", "charlie.williams@example.com",
+					encryptedPassword, LocalDate.of(2019, 2, 17), 4800.0, 0.08, "Active");
+			repository.save(seller);
+			return seller;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

@@ -10,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -23,12 +25,18 @@ public class Sale implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
+	@OneToOne
+	@JoinColumn(name = "vehicle_id")
 	private Vehicle vehicle;
 
 	@NotNull(message = "Required field")
+	@OneToOne
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
 	@NotNull(message = "Required field")
+	@OneToOne
+	@JoinColumn(name = "seller_id")
 	private Seller seller;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

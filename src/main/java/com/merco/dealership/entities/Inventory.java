@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -21,6 +23,8 @@ public class Inventory implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
+	@OneToOne
+	@JoinColumn(name = "vehicle_id")
 	private Vehicle vehicle;
 
 	private LocalDate stockEntryDate;

@@ -21,8 +21,6 @@ public class SecurityConfigurations {
 	@Autowired
 	SecurityFilter securityFilter;
 
-	private static final String[] EXCLUDED_PATTERNS = { "/h2-console/**" };
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(csrf -> csrf.disable())

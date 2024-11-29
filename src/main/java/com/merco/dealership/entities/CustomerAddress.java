@@ -1,17 +1,24 @@
 package com.merco.dealership.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "tb_customers_address")
+@Table(name = "tb_customers_address", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "street", "number", "district", "city", "state", "postalCode", "country" }) })
 public class CustomerAddress implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -28,7 +35,7 @@ public class CustomerAddress implements Serializable {
 	private String complement;
 
 	@NotNull(message = "Required field")
-	private String neighborhood;
+	private String district;
 
 	@NotNull(message = "Required field")
 	private String city;
@@ -42,13 +49,17 @@ public class CustomerAddress implements Serializable {
 	@NotNull(message = "Required field")
 	private String country;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "address")
+	private Set<Customer> customers = new HashSet<>();
+
 	public CustomerAddress() {
 
 	}
 
 	public CustomerAddress(String id, @NotNull(message = "Required field") String street,
 			@NotNull(message = "Required field") int number, String complement,
-			@NotNull(message = "Required field") String neighborhood, @NotNull(message = "Required field") String city,
+			@NotNull(message = "Required field") String district, @NotNull(message = "Required field") String city,
 			@NotNull(message = "Required field") String state, @NotNull(message = "Required field") String postalCode,
 			@NotNull(message = "Required field") String country) {
 		super();
@@ -56,7 +67,7 @@ public class CustomerAddress implements Serializable {
 		this.street = street;
 		this.number = number;
 		this.complement = complement;
-		this.neighborhood = neighborhood;
+		this.district = district;
 		this.city = city;
 		this.state = state;
 		this.postalCode = postalCode;
@@ -95,12 +106,12 @@ public class CustomerAddress implements Serializable {
 		this.complement = complement;
 	}
 
-	public String getNeighborhood() {
-		return neighborhood;
+	public String getDistrict() {
+		return district;
 	}
 
-	public void setNeighborhood(String neighborhood) {
-		this.neighborhood = neighborhood;
+	public void setDistrict(String district) {
+		this.district = district;
 	}
 
 	public String getCity() {
@@ -133,6 +144,10 @@ public class CustomerAddress implements Serializable {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public Set<Customer> getCustomers() {
+		return customers;
 	}
 
 	@Override
