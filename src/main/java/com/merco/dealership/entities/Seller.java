@@ -3,19 +3,33 @@ package com.merco.dealership.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "tb_sellers")
 public class Seller extends User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@NotNull(message = "Required field")
 	private Date hireDate;
+
+	@NotNull(message = "Required field")
 	private Double salary;
+
+	@NotNull(message = "Required field")
 	private Double commissionRate;
+
 	private String status;
 
 	public Seller() {
 
 	}
 
-	public Seller(Date hireDate, Double salary, Double commissionRate, String status) {
+	public Seller(@NotNull(message = "Required field") Date hireDate,
+			@NotNull(message = "Required field") Double salary,
+			@NotNull(message = "Required field") Double commissionRate, String status) {
 		super();
 		this.hireDate = hireDate;
 		this.salary = salary;
