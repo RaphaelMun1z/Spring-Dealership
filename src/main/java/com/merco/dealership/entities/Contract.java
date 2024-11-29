@@ -24,13 +24,13 @@ public class Contract implements Serializable {
 	private String contractNumber;
 
 	@NotNull(message = "Required field")
-	private String vehicleId;
+	private Vehicle vehicle;
 
 	@NotNull(message = "Required field")
-	private String sellerId;
+	private Seller seller;
 
 	@NotNull(message = "Required field")
-	private String customerId;
+	private Customer customer;
 
 	@NotNull(message = "Required field")
 	private String contractType;
@@ -58,8 +58,8 @@ public class Contract implements Serializable {
 	}
 
 	public Contract(String id, @NotNull(message = "Required field") String contractNumber,
-			@NotNull(message = "Required field") String vehicleId, @NotNull(message = "Required field") String sellerId,
-			@NotNull(message = "Required field") String customerId,
+			@NotNull(message = "Required field") Vehicle vehicle, @NotNull(message = "Required field") Seller seller,
+			@NotNull(message = "Required field") Customer customer,
 			@NotNull(message = "Required field") String contractType,
 			@NotNull(message = "Required field") LocalDate contractDate,
 			@NotNull(message = "Required field") LocalDate deliveryDate,
@@ -69,9 +69,9 @@ public class Contract implements Serializable {
 		super();
 		this.id = id;
 		this.contractNumber = contractNumber;
-		this.vehicleId = vehicleId;
-		this.sellerId = sellerId;
-		this.customerId = customerId;
+		this.vehicle = vehicle;
+		this.seller = seller;
+		this.customer = customer;
 		this.contractType = contractType;
 		this.contractDate = contractDate;
 		this.deliveryDate = deliveryDate;
@@ -98,28 +98,28 @@ public class Contract implements Serializable {
 		this.contractNumber = contractNumber;
 	}
 
-	public String getVehicleId() {
-		return vehicleId;
+	public Vehicle getVehicle() {
+		return vehicle;
 	}
 
-	public void setVehicleId(String vehicleId) {
-		this.vehicleId = vehicleId;
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
 	}
 
-	public String getSellerId() {
-		return sellerId;
+	public Seller getSeller() {
+		return seller;
 	}
 
-	public void setSellerId(String sellerId) {
-		this.sellerId = sellerId;
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 
-	public String getCustomerId() {
-		return customerId;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	public String getContractType() {

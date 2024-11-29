@@ -33,7 +33,7 @@ public class Customer implements Serializable {
 	private String phone;
 
 	@NotNull(message = "Required field")
-	private String address;
+	private CustomerAddress address;
 
 	@NotNull(message = "Required field")
 	private LocalDate birthDate;
@@ -52,7 +52,8 @@ public class Customer implements Serializable {
 
 	public Customer(String id, @NotNull(message = "Required field") String name,
 			@NotNull(message = "Required field") String cpf, @NotNull(message = "Required field") String email,
-			@NotNull(message = "Required field") String phone, @NotNull(message = "Required field") String address,
+			@NotNull(message = "Required field") String phone,
+			@NotNull(message = "Required field") CustomerAddress address,
 			@NotNull(message = "Required field") LocalDate birthDate, LocalDate registrationDate,
 			@NotNull(message = "Required field") String clientType,
 			@NotNull(message = "Required field") Boolean validCnh) {
@@ -109,11 +110,11 @@ public class Customer implements Serializable {
 		this.phone = phone;
 	}
 
-	public String getAddress() {
+	public CustomerAddress getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(CustomerAddress address) {
 		this.address = address;
 	}
 

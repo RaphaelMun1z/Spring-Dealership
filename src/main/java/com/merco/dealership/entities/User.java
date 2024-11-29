@@ -121,14 +121,11 @@ public class User implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		if (role == UserRole.ADM) {
-			return List.of(new SimpleGrantedAuthority("ROLE_ADM"), new SimpleGrantedAuthority("ROLE_STAFF"));
-		} else if (role == UserRole.STAFF) {
-			return List.of(new SimpleGrantedAuthority("ROLE_STAFF"), new SimpleGrantedAuthority("ROLE_OWNER"),
-					new SimpleGrantedAuthority("ROLE_TENANT"));
-		} else if (role == UserRole.OWNER) {
-			return List.of(new SimpleGrantedAuthority("ROLE_OWNER"));
-		} else if (role == UserRole.TENANT) {
-			return List.of(new SimpleGrantedAuthority("ROLE_TENANT"));
+			return List.of(new SimpleGrantedAuthority("ROLE_ADM"), new SimpleGrantedAuthority("ROLE_SELLER"));
+		} else if (role == UserRole.SELLER) {
+			return List.of(new SimpleGrantedAuthority("ROLE_SELLER"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+		} else if (role == UserRole.CUSTOMER) {
+			return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
 		} else {
 			throw new IllegalArgumentException("Unexpected value: " + this.role);
 		}

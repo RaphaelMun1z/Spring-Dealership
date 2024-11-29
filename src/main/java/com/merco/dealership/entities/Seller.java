@@ -3,9 +3,13 @@ package com.merco.dealership.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.merco.dealership.entities.enums.UserRole;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "tb_sellers")
@@ -27,14 +31,10 @@ public class Seller extends User implements Serializable {
 
 	}
 
-	public Seller(@NotNull(message = "Required field") Date hireDate,
-			@NotNull(message = "Required field") Double salary,
-			@NotNull(message = "Required field") Double commissionRate, String status) {
-		super();
-		this.hireDate = hireDate;
-		this.salary = salary;
-		this.commissionRate = commissionRate;
-		this.status = status;
+	public Seller(String id, @NotNull(message = "Required field") @Pattern(regexp = "^[A-Z]+(.)*") String name,
+			String phone, @NotNull(message = "Required field") @Email(message = "Invalid field value") String email,
+			@NotNull(message = "Required field") String password) {
+		super(id, name, phone, email, password, UserRole.SELLER);
 	}
 
 	public Date getHireDate() {

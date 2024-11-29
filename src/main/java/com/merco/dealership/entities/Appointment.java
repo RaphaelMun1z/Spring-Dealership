@@ -21,16 +21,16 @@ public class Appointment implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
-	private String clientID;
+	private Customer customer;
 
 	@NotNull(message = "Required field")
-	private String vehicleID;
+	private Vehicle vehicle;
 
 	@NotNull(message = "Required field")
 	private LocalDate date;
 
 	@NotNull(message = "Required field")
-	private String responsibleSellerID;
+	private Seller responsibleSeller;
 
 	@NotNull(message = "Required field")
 	private String appointmentType;
@@ -40,16 +40,16 @@ public class Appointment implements Serializable {
 	public Appointment() {
 	}
 
-	public Appointment(String id, @NotNull(message = "Required field") String clientID,
-			@NotNull(message = "Required field") String vehicleID, @NotNull(message = "Required field") LocalDate date,
-			@NotNull(message = "Required field") String responsibleSellerID,
+	public Appointment(String id, @NotNull(message = "Required field") Customer customer,
+			@NotNull(message = "Required field") Vehicle vehicle, @NotNull(message = "Required field") LocalDate date,
+			@NotNull(message = "Required field") Seller responsibleSeller,
 			@NotNull(message = "Required field") String appointmentType, String appointmentStatus) {
 		super();
 		this.id = id;
-		this.clientID = clientID;
-		this.vehicleID = vehicleID;
+		this.customer = customer;
+		this.vehicle = vehicle;
 		this.date = date;
-		this.responsibleSellerID = responsibleSellerID;
+		this.responsibleSeller = responsibleSeller;
 		this.appointmentType = appointmentType;
 		this.appointmentStatus = appointmentStatus;
 	}
@@ -62,20 +62,20 @@ public class Appointment implements Serializable {
 		this.id = id;
 	}
 
-	public String getClientID() {
-		return clientID;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setClientID(String clientID) {
-		this.clientID = clientID;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
-	public String getVehicleID() {
-		return vehicleID;
+	public Vehicle getVehicle() {
+		return vehicle;
 	}
 
-	public void setVehicleID(String vehicleID) {
-		this.vehicleID = vehicleID;
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
 	}
 
 	public LocalDate getDate() {
@@ -86,12 +86,12 @@ public class Appointment implements Serializable {
 		this.date = date;
 	}
 
-	public String getResponsibleSellerID() {
-		return responsibleSellerID;
+	public Seller getResponsibleSeller() {
+		return responsibleSeller;
 	}
 
-	public void setResponsibleSellerID(String responsibleSellerID) {
-		this.responsibleSellerID = responsibleSellerID;
+	public void setResponsibleSeller(Seller responsibleSeller) {
+		this.responsibleSeller = responsibleSeller;
 	}
 
 	public String getAppointmentType() {

@@ -1,7 +1,7 @@
 package com.merco.dealership.entities.enums;
 
 public enum UserRole {
-	TENANT("tenant"), OWNER("owner"), STAFF("staff"), ADM("adm");
+	CUSTOMER("customer"), SELLER("seller"), ADM("adm");
 
 	private String role;
 

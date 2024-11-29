@@ -23,13 +23,13 @@ public class Sale implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
-	private String vehicleID;
+	private Vehicle vehicle;
 
 	@NotNull(message = "Required field")
-	private String clientID;
+	private Customer customer;
 
 	@NotNull(message = "Required field")
-	private String sellerID;
+	private Seller seller;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@NotNull(message = "Required field")
@@ -53,17 +53,17 @@ public class Sale implements Serializable {
 	public Sale() {
 	}
 
-	public Sale(String id, @NotNull(message = "Required field") String vehicleID,
-			@NotNull(message = "Required field") String clientID, @NotNull(message = "Required field") String sellerID,
+	public Sale(String id, @NotNull(message = "Required field") Vehicle vehicle,
+			@NotNull(message = "Required field") Customer customer, @NotNull(message = "Required field") Seller seller,
 			@NotNull(message = "Required field") LocalDate saleDate,
 			@NotNull(message = "Required field") Double grossAmount, Double netAmount, Double appliedDiscount,
 			@NotNull(message = "Required field") String paymentMethod, int installmentsNumber,
 			@NotNull(message = "Required field") String receipt) {
 		super();
 		this.id = id;
-		this.vehicleID = vehicleID;
-		this.clientID = clientID;
-		this.sellerID = sellerID;
+		this.vehicle = vehicle;
+		this.customer = customer;
+		this.seller = seller;
 		this.saleDate = saleDate;
 		this.grossAmount = grossAmount;
 		this.netAmount = netAmount;
@@ -81,28 +81,28 @@ public class Sale implements Serializable {
 		this.id = id;
 	}
 
-	public String getVehicleID() {
-		return vehicleID;
+	public Vehicle getVehicle() {
+		return vehicle;
 	}
 
-	public void setVehicleID(String vehicleID) {
-		this.vehicleID = vehicleID;
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
 	}
 
-	public String getClientID() {
-		return clientID;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setClientID(String clientID) {
-		this.clientID = clientID;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
-	public String getSellerID() {
-		return sellerID;
+	public Seller getSeller() {
+		return seller;
 	}
 
-	public void setSellerID(String sellerID) {
-		this.sellerID = sellerID;
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 
 	public LocalDate getSaleDate() {

@@ -21,7 +21,7 @@ public class Inventory implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
-	private String vehicleID;
+	private Vehicle vehicle;
 
 	private LocalDate stockEntryDate;
 	private LocalDate stockExitDate;
@@ -34,12 +34,12 @@ public class Inventory implements Serializable {
 	public Inventory() {
 	}
 
-	public Inventory(String id, @NotNull(message = "Required field") String vehicleID, LocalDate stockEntryDate,
+	public Inventory(String id, @NotNull(message = "Required field") Vehicle vehicle, LocalDate stockEntryDate,
 			LocalDate stockExitDate, Double acquisitionPrice, Double profitMargin, String supplier, String licensePlate,
 			String chassis) {
 		super();
 		this.id = id;
-		this.vehicleID = vehicleID;
+		this.vehicle = vehicle;
 		this.stockEntryDate = stockEntryDate;
 		this.stockExitDate = stockExitDate;
 		this.acquisitionPrice = acquisitionPrice;
@@ -57,12 +57,12 @@ public class Inventory implements Serializable {
 		this.id = id;
 	}
 
-	public String getVehicleID() {
-		return vehicleID;
+	public Vehicle getVehicle() {
+		return vehicle;
 	}
 
-	public void setVehicleID(String vehicleID) {
-		this.vehicleID = vehicleID;
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
 	}
 
 	public LocalDate getStockEntryDate() {
