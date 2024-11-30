@@ -13,7 +13,7 @@ import com.merco.dealership.entities.Appointment;
 import com.merco.dealership.entities.Contract;
 import com.merco.dealership.entities.Customer;
 import com.merco.dealership.entities.CustomerAddress;
-import com.merco.dealership.entities.Inventory;
+import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.entities.Sale;
 import com.merco.dealership.entities.Seller;
 import com.merco.dealership.entities.Vehicle;
@@ -82,9 +82,9 @@ public class TestConfig implements CommandLineRunner {
 				"(11) 98765-4321", customerAddress1, LocalDate.of(1985, 3, 25), LocalDate.of(2023, 11, 29), "Regular",
 				true);
 
-		Vehicle vehicle1 = new Vehicle(null, "Toyota", "Corolla", "CAR", "SEDAN", LocalDate.of(2021, 5, 20), "White",
-				15000.0, "Gasoline", "Automatic", "Leather seats, Sunroof", 95000.0, "Available", "In Stock",
-				"Reliable car in excellent condition", LocalDate.now(), "São Paulo, Brazil", "toyota_corolla.jpg");
+		Vehicle vehicle1 = new Vehicle(null, "Toyota", "Corolla", "Sedan", "Economy", LocalDate.of(2020, 5, 15),
+				"Black", 35000.0, "Petrol", "Automatic", 80000.0, "Available", "In stock", "A well-maintained sedan",
+				LocalDate.of(2023, 11, 29), "Santos, SP");
 
 		VehicleSpecificDetail vehicleSpecificDetail1 = new VehicleSpecificDetail(null, "Sunroof with panoramic view");
 		VehicleSpecificDetail vehicleSpecificDetail2 = new VehicleSpecificDetail(null, "Leather seats");
@@ -92,13 +92,13 @@ public class TestConfig implements CommandLineRunner {
 		VehicleSpecificDetail vehicleSpecificDetail4 = new VehicleSpecificDetail(null, "Adaptive cruise control");
 		VehicleSpecificDetail vehicleSpecificDetail5 = new VehicleSpecificDetail(null, "Automatic parking assistance");
 
-		Inventory inventory1 = new Inventory(null, vehicle1, LocalDate.of(2024, 11, 20), null, 80000.0, 0.15,
-				"Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456");
+		InventoryItem inventoryItem1 = new InventoryItem(null, vehicle1, LocalDate.of(2024, 11, 20), null, 80000.0,
+				0.15, "Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456");
 
 		Sale sale1 = new Sale(null, vehicle1, customer1, seller1, LocalDate.now(), 120.000, 105.000, 15.000, "PIX", 1,
 				"a");
 
-		Contract contract1 = new Contract(null, "CN12345", vehicle1, seller1, customer1, "Sale",
+		Contract contract1 = new Contract(null, "CN12345", inventoryItem1, seller1, customer1, "Sale",
 				LocalDate.of(2024, 11, 29), LocalDate.of(2024, 12, 15), 95000.0, "Paid in full", "Active", "None",
 				"contract_attachment.pdf");
 
@@ -112,7 +112,7 @@ public class TestConfig implements CommandLineRunner {
 		vehicleRepository.save(vehicle1);
 		vehicleSpecificDetailRepository.saveAll(Arrays.asList(vehicleSpecificDetail1, vehicleSpecificDetail2,
 				vehicleSpecificDetail3, vehicleSpecificDetail4, vehicleSpecificDetail5));
-		inventoryRepository.save(inventory1);
+		inventoryRepository.save(inventoryItem1);
 		saleRepository.save(sale1);
 		contractRepository.save(contract1);
 		appointmentRepository.save(appointment1);

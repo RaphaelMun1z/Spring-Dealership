@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "tb_inventory")
-public class Inventory implements Serializable {
+public class InventoryItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -35,10 +35,10 @@ public class Inventory implements Serializable {
 	private String licensePlate;
 	private String chassis;
 
-	public Inventory() {
+	public InventoryItem() {
 	}
 
-	public Inventory(String id, @NotNull(message = "Required field") Vehicle vehicle, LocalDate stockEntryDate,
+	public InventoryItem(String id, @NotNull(message = "Required field") Vehicle vehicle, LocalDate stockEntryDate,
 			LocalDate stockExitDate, Double acquisitionPrice, Double profitMargin, String supplier, String licensePlate,
 			String chassis) {
 		super();
@@ -138,7 +138,7 @@ public class Inventory implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Inventory other = (Inventory) obj;
+		InventoryItem other = (InventoryItem) obj;
 		return Objects.equals(id, other.id);
 	}
 

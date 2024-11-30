@@ -2,12 +2,16 @@ package com.merco.dealership.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -47,8 +51,6 @@ public class Vehicle implements Serializable {
 	@NotNull(message = "Required field")
 	private String transmissionType;
 
-	private String specificDetails;
-
 	@NotNull(message = "Required field")
 	private Double salePrice;
 
@@ -64,7 +66,11 @@ public class Vehicle implements Serializable {
 	@NotNull(message = "Required field")
 	private String location;
 
-	private String images;
+	@OneToMany(mappedBy = "id.vehicle", cascade = CascadeType.ALL)
+	private Set<VehicleConfiguration> specificDetails = new HashSet<>();
+
+	@OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+	private Set<VehicleImageFile> images = new HashSet<>();
 
 	public Vehicle() {
 
@@ -75,10 +81,10 @@ public class Vehicle implements Serializable {
 			@NotNull(message = "Required field") String category, LocalDate manufactureYear,
 			@NotNull(message = "Required field") String color, @NotNull(message = "Required field") Double mileage,
 			@NotNull(message = "Required field") String fuelType,
-			@NotNull(message = "Required field") String transmissionType, String specificDetails,
+			@NotNull(message = "Required field") String transmissionType,
 			@NotNull(message = "Required field") Double salePrice, String status, String availability,
 			@NotNull(message = "Required field") String description, LocalDate lastUpdate,
-			@NotNull(message = "Required field") String location, String images) {
+			@NotNull(message = "Required field") String location) {
 		super();
 		this.id = id;
 		this.brand = brand;
@@ -90,14 +96,12 @@ public class Vehicle implements Serializable {
 		this.mileage = mileage;
 		this.fuelType = fuelType;
 		this.transmissionType = transmissionType;
-		this.specificDetails = specificDetails;
 		this.salePrice = salePrice;
 		this.status = status;
 		this.availability = availability;
 		this.description = description;
 		this.lastUpdate = lastUpdate;
 		this.location = location;
-		this.images = images;
 	}
 
 	public String getId() {
@@ -180,12 +184,8 @@ public class Vehicle implements Serializable {
 		this.transmissionType = transmissionType;
 	}
 
-	public String getSpecificDetails() {
+	public Set<VehicleConfiguration> getSpecificDetails() {
 		return specificDetails;
-	}
-
-	public void setSpecificDetails(String specificDetails) {
-		this.specificDetails = specificDetails;
 	}
 
 	public Double getSalePrice() {
@@ -236,12 +236,8 @@ public class Vehicle implements Serializable {
 		this.location = location;
 	}
 
-	public String getImages() {
+	public Set<VehicleImageFile> getImages() {
 		return images;
-	}
-
-	public void setImages(String images) {
-		this.images = images;
 	}
 
 	@Override

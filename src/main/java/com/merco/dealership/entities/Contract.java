@@ -28,8 +28,8 @@ public class Contract implements Serializable {
 
 	@NotNull(message = "Required field")
 	@OneToOne
-	@JoinColumn(name = "vehicle_id")
-	private Vehicle vehicle;
+	@JoinColumn(name = "inventory_item_id")
+	private InventoryItem inventoryItem;
 
 	@NotNull(message = "Required field")
 	@ManyToOne
@@ -67,8 +67,8 @@ public class Contract implements Serializable {
 	}
 
 	public Contract(String id, @NotNull(message = "Required field") String contractNumber,
-			@NotNull(message = "Required field") Vehicle vehicle, @NotNull(message = "Required field") Seller seller,
-			@NotNull(message = "Required field") Customer customer,
+			@NotNull(message = "Required field") InventoryItem inventoryItem,
+			@NotNull(message = "Required field") Seller seller, @NotNull(message = "Required field") Customer customer,
 			@NotNull(message = "Required field") String contractType,
 			@NotNull(message = "Required field") LocalDate contractDate,
 			@NotNull(message = "Required field") LocalDate deliveryDate,
@@ -78,7 +78,7 @@ public class Contract implements Serializable {
 		super();
 		this.id = id;
 		this.contractNumber = contractNumber;
-		this.vehicle = vehicle;
+		this.inventoryItem = inventoryItem;
 		this.seller = seller;
 		this.customer = customer;
 		this.contractType = contractType;
@@ -107,12 +107,12 @@ public class Contract implements Serializable {
 		this.contractNumber = contractNumber;
 	}
 
-	public Vehicle getVehicle() {
-		return vehicle;
+	public InventoryItem getInventoryItem() {
+		return inventoryItem;
 	}
 
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
+	public void setVehicle(InventoryItem inventoryItem) {
+		this.inventoryItem = inventoryItem;
 	}
 
 	public Seller getSeller() {
