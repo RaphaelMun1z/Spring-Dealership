@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -17,9 +15,8 @@ import jakarta.persistence.UniqueConstraint;
 public class CustomerAddress extends Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "address")
-	private Set<Customer> customers = new HashSet<>();
+	@OneToMany(mappedBy = "id.customerAddress", orphanRemoval = true)
+	private Set<CustomerAddressMapping> customerAddressesMapping = new HashSet<>();
 
 	public CustomerAddress() {
 
@@ -30,8 +27,8 @@ public class CustomerAddress extends Address implements Serializable {
 		super(id, street, number, district, city, state, country, cep, complement);
 	}
 
-	public Set<Customer> getCustomers() {
-		return customers;
+	public Set<CustomerAddressMapping> getCustomerAddressesMapping() {
+		return customerAddressesMapping;
 	}
 
 }

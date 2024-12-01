@@ -9,8 +9,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.merco.dealership.entities.Appointment;
-import com.merco.dealership.repositories.AppointmentRepository;
+import com.merco.dealership.entities.Branch;
+import com.merco.dealership.repositories.BranchRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;
@@ -19,28 +19,28 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 
 @Service
-public class AppointmentService {
+public class BranchService {
 	@Autowired
-	private AppointmentRepository repository;
+	private BranchRepository repository;
 
-	public List<Appointment> findAllCached() {
+	public List<Branch> findAllCached() {
 		return findAll();
 	}
 
-	public List<Appointment> findAll() {
+	public List<Branch> findAll() {
 		return repository.findAll();
 	}
 
-	public Appointment findById(String id) {
-		Optional<Appointment> obj = repository.findById(id);
+	public Branch findById(String id) {
+		Optional<Branch> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	@Transactional
-	public Appointment create(Appointment obj) {
+	public Branch create(Branch obj) {
 		try {
-			Appointment Appointment = repository.save(obj);
-			return Appointment;
+			Branch Branch = repository.save(obj);
+			return Branch;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}
@@ -62,12 +62,12 @@ public class AppointmentService {
 	}
 
 	@Transactional
-	public Appointment patch(String id, Appointment obj) {
+	public Branch patch(String id, Branch obj) {
 		try {
-			Appointment entity = repository.getReferenceById(id);
+			Branch entity = repository.getReferenceById(id);
 			updateData(entity, obj);
-			Appointment Appointment = repository.save(entity);
-			return Appointment;
+			Branch Branch = repository.save(entity);
+			return Branch;
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -77,7 +77,7 @@ public class AppointmentService {
 		}
 	}
 
-	private void updateData(Appointment entity, Appointment obj) {
+	private void updateData(Branch entity, Branch obj) {
 //		if (obj.getName() != null)
 //			entity.setName(obj.getName());
 //		if (obj.getEmail() != null)

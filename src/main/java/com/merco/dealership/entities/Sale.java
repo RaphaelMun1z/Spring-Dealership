@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -25,19 +26,23 @@ public class Sale implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
-	@OneToOne
-	@JoinColumn(name = "vehicle_id")
-	private Vehicle vehicle;
+	@ManyToOne
+	@JoinColumn(name = "seller_id")
+	private Seller seller;
 
 	@NotNull(message = "Required field")
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	@NotNull(message = "Required field")
 	@OneToOne
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
+	@JoinColumn(name = "contract_id")
+	private Contract contract;
+
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "vehicle_id")
+	private Vehicle vehicle;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@NotNull(message = "Required field")
@@ -61,17 +66,18 @@ public class Sale implements Serializable {
 	public Sale() {
 	}
 
-	public Sale(String id, @NotNull(message = "Required field") Vehicle vehicle,
-			@NotNull(message = "Required field") Customer customer, @NotNull(message = "Required field") Seller seller,
+	public Sale(String id, @NotNull(message = "Required field") Seller seller,
+			@NotNull(message = "Required field") Customer customer,
+			@NotNull(message = "Required field") Vehicle vehicle,
 			@NotNull(message = "Required field") LocalDate saleDate,
 			@NotNull(message = "Required field") Double grossAmount, Double netAmount, Double appliedDiscount,
 			@NotNull(message = "Required field") String paymentMethod, int installmentsNumber,
 			@NotNull(message = "Required field") String receipt) {
 		super();
 		this.id = id;
-		this.vehicle = vehicle;
-		this.customer = customer;
 		this.seller = seller;
+		this.customer = customer;
+		this.vehicle = vehicle;
 		this.saleDate = saleDate;
 		this.grossAmount = grossAmount;
 		this.netAmount = netAmount;
@@ -167,6 +173,22 @@ public class Sale implements Serializable {
 
 	public void setInvoice(String invoice) {
 		this.receipt = invoice;
+	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+
+	public String getReceipt() {
+		return receipt;
+	}
+
+	public void setReceipt(String receipt) {
+		this.receipt = receipt;
 	}
 
 	@Override

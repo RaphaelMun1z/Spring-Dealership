@@ -12,8 +12,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -50,10 +48,8 @@ public class Customer implements Serializable {
 	@NotNull(message = "Required field")
 	private Boolean validCnh;
 
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "customer_address_id")
-	private CustomerAddress address;
+	@OneToMany(mappedBy = "id.customer", orphanRemoval = true)
+	private Set<CustomerAddressMapping> customerAddressesMapping = new HashSet<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "customer")
@@ -61,7 +57,7 @@ public class Customer implements Serializable {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "customer")
-	private Set<Contract> contracts = new HashSet<>();
+	private Set<Sale> sales = new HashSet<>();
 
 	public Customer() {
 		super();
@@ -69,10 +65,8 @@ public class Customer implements Serializable {
 
 	public Customer(String id, @NotNull(message = "Required field") String name,
 			@NotNull(message = "Required field") String cpf, @NotNull(message = "Required field") String email,
-			@NotNull(message = "Required field") String phone,
-			@NotNull(message = "Required field") CustomerAddress address,
-			@NotNull(message = "Required field") LocalDate birthDate, LocalDate registrationDate,
-			@NotNull(message = "Required field") String clientType,
+			@NotNull(message = "Required field") String phone, @NotNull(message = "Required field") LocalDate birthDate,
+			LocalDate registrationDate, @NotNull(message = "Required field") String clientType,
 			@NotNull(message = "Required field") Boolean validCnh) {
 		super();
 		this.id = id;
@@ -80,7 +74,6 @@ public class Customer implements Serializable {
 		this.cpf = cpf;
 		this.email = email;
 		this.phone = phone;
-		this.address = address;
 		this.birthDate = birthDate;
 		this.registrationDate = registrationDate;
 		this.clientType = clientType;
@@ -127,14 +120,6 @@ public class Customer implements Serializable {
 		this.phone = phone;
 	}
 
-	public CustomerAddress getAddress() {
-		return address;
-	}
-
-	public void setAddress(CustomerAddress address) {
-		this.address = address;
-	}
-
 	public LocalDate getBirthDate() {
 		return birthDate;
 	}
@@ -167,8 +152,16 @@ public class Customer implements Serializable {
 		this.validCnh = validCnh;
 	}
 
-	public Set<Contract> getContracts() {
-		return contracts;
+	public Set<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public Set<Sale> getSales() {
+		return sales;
+	}
+
+	public Set<CustomerAddressMapping> getCustomerAddressesMapping() {
+		return customerAddressesMapping;
 	}
 
 	@Override

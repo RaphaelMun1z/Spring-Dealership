@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -66,10 +65,13 @@ public class Vehicle implements Serializable {
 	@NotNull(message = "Required field")
 	private String location;
 
-	@OneToMany(mappedBy = "id.vehicle", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "vehicle")
+	private Set<InventoryItem> inventoryItems = new HashSet<>();
+
+	@OneToMany(mappedBy = "id.vehicle", orphanRemoval = true)
 	private Set<VehicleConfiguration> specificDetails = new HashSet<>();
 
-	@OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "vehicle")
 	private Set<VehicleImageFile> images = new HashSet<>();
 
 	public Vehicle() {
@@ -238,6 +240,10 @@ public class Vehicle implements Serializable {
 
 	public Set<VehicleImageFile> getImages() {
 		return images;
+	}
+
+	public Set<InventoryItem> getInventoryItems() {
+		return inventoryItems;
 	}
 
 	@Override

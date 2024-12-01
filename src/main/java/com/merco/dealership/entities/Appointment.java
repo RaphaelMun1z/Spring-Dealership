@@ -2,7 +2,9 @@ package com.merco.dealership.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -23,21 +26,6 @@ public class Appointment implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "customer_id")
-	private Customer customer;
-
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "vehicle_id")
-	private Vehicle vehicle;
-
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
-
-	@NotNull(message = "Required field")
 	private LocalDate date;
 
 	@NotNull(message = "Required field")
@@ -45,21 +33,33 @@ public class Appointment implements Serializable {
 
 	private String appointmentStatus;
 
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
+
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "seller_id")
+	private Seller seller;
+
+	@OneToMany(mappedBy = "id.appointment", orphanRemoval = true)
+	private Set<InventoryItemCommitment> InventoryItemCommitments = new HashSet<>();
+
 	public Appointment() {
 	}
 
-	public Appointment(String id, @NotNull(message = "Required field") Customer customer,
-			@NotNull(message = "Required field") Vehicle vehicle, @NotNull(message = "Required field") LocalDate date,
-			@NotNull(message = "Required field") Seller seller,
-			@NotNull(message = "Required field") String appointmentType, String appointmentStatus) {
+	public Appointment(String id, @NotNull(message = "Required field") LocalDate date,
+			@NotNull(message = "Required field") String appointmentType, String appointmentStatus,
+			@NotNull(message = "Required field") Customer customer,
+			@NotNull(message = "Required field") Seller seller) {
 		super();
 		this.id = id;
-		this.customer = customer;
-		this.vehicle = vehicle;
 		this.date = date;
-		this.seller = seller;
 		this.appointmentType = appointmentType;
 		this.appointmentStatus = appointmentStatus;
+		this.customer = customer;
+		this.seller = seller;
 	}
 
 	public String getId() {
@@ -76,14 +76,6 @@ public class Appointment implements Serializable {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-
-	public Vehicle getVehicle() {
-		return vehicle;
-	}
-
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
 	}
 
 	public LocalDate getDate() {
@@ -116,6 +108,10 @@ public class Appointment implements Serializable {
 
 	public void setAppointmentStatus(String appointmentStatus) {
 		this.appointmentStatus = appointmentStatus;
+	}
+
+	public Set<InventoryItemCommitment> getInventoryItemCommitments() {
+		return InventoryItemCommitments;
 	}
 
 	@Override

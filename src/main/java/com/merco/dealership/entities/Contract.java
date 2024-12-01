@@ -28,16 +28,6 @@ public class Contract implements Serializable {
 
 	@NotNull(message = "Required field")
 	@OneToOne
-	@JoinColumn(name = "inventory_item_id")
-	private InventoryItem inventoryItem;
-
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
-
-	@NotNull(message = "Required field")
-	@OneToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
@@ -61,6 +51,16 @@ public class Contract implements Serializable {
 
 	@NotNull(message = "Required field")
 	private String attachments;
+	
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "inventory_item_id")
+	private InventoryItem inventoryItem;
+
+	@NotNull(message = "Required field")
+	@OneToOne
+	@JoinColumn(name = "sale_id")
+	private Sale sale;
 
 	public Contract() {
 
@@ -68,7 +68,7 @@ public class Contract implements Serializable {
 
 	public Contract(String id, @NotNull(message = "Required field") String contractNumber,
 			@NotNull(message = "Required field") InventoryItem inventoryItem,
-			@NotNull(message = "Required field") Seller seller, @NotNull(message = "Required field") Customer customer,
+			@NotNull(message = "Required field") Sale sale, @NotNull(message = "Required field") Customer customer,
 			@NotNull(message = "Required field") String contractType,
 			@NotNull(message = "Required field") LocalDate contractDate,
 			@NotNull(message = "Required field") LocalDate deliveryDate,
@@ -79,7 +79,7 @@ public class Contract implements Serializable {
 		this.id = id;
 		this.contractNumber = contractNumber;
 		this.inventoryItem = inventoryItem;
-		this.seller = seller;
+		this.sale = sale;
 		this.customer = customer;
 		this.contractType = contractType;
 		this.contractDate = contractDate;
@@ -113,14 +113,6 @@ public class Contract implements Serializable {
 
 	public void setVehicle(InventoryItem inventoryItem) {
 		this.inventoryItem = inventoryItem;
-	}
-
-	public Seller getSeller() {
-		return seller;
-	}
-
-	public void setSeller(Seller seller) {
-		this.seller = seller;
 	}
 
 	public Customer getCustomer() {
@@ -193,6 +185,18 @@ public class Contract implements Serializable {
 
 	public void setAttachments(String attachments) {
 		this.attachments = attachments;
+	}
+
+	public Sale getSale() {
+		return sale;
+	}
+
+	public void setSale(Sale sale) {
+		this.sale = sale;
+	}
+
+	public void setInventoryItem(InventoryItem inventoryItem) {
+		this.inventoryItem = inventoryItem;
 	}
 
 	@Override

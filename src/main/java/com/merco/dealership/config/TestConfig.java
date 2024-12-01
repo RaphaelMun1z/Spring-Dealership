@@ -78,9 +78,8 @@ public class TestConfig implements CommandLineRunner {
 		CustomerAddress customerAddress1 = new CustomerAddress(null, "Main Street", 123, "Apt 4B", "Downtown",
 				"São Paulo", "SP", "01000-000", "Brazil");
 
-		Customer customer1 = new Customer(null, "Carlos Silva", "123.456.789-00", "carlos.silva@example.com",
-				"(11) 98765-4321", customerAddress1, LocalDate.of(1985, 3, 25), LocalDate.of(2023, 11, 29), "Regular",
-				true);
+		Customer customer1 = new Customer(null, "John Doe", "(12) 93456-7890", "johndoe@example.com", "1234567890",
+				LocalDate.of(1990, 1, 1), LocalDate.now(), "Regular", true);
 
 		Vehicle vehicle1 = new Vehicle(null, "Toyota", "Corolla", "Sedan", "Economy", LocalDate.of(2020, 5, 15),
 				"Black", 35000.0, "Petrol", "Automatic", 80000.0, "Available", "In stock", "A well-maintained sedan",
@@ -95,15 +94,15 @@ public class TestConfig implements CommandLineRunner {
 		InventoryItem inventoryItem1 = new InventoryItem(null, vehicle1, LocalDate.of(2024, 11, 20), null, 80000.0,
 				0.15, "Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456");
 
-		Sale sale1 = new Sale(null, vehicle1, customer1, seller1, LocalDate.now(), 120.000, 105.000, 15.000, "PIX", 1,
-				"a");
+		Sale sale1 = new Sale(null, seller1, customer1, vehicle1, LocalDate.of(1990, 1, 1), 25000.0, 24000.0, 1000.0,
+				"Credit Card", 12, "RC123456");
 
-		Contract contract1 = new Contract(null, "CN12345", inventoryItem1, seller1, customer1, "Sale",
+		Contract contract1 = new Contract(null, "CN12345", inventoryItem1, sale1, customer1, "Sale",
 				LocalDate.of(2024, 11, 29), LocalDate.of(2024, 12, 15), 95000.0, "Paid in full", "Active", "None",
 				"contract_attachment.pdf");
 
-		Appointment appointment1 = new Appointment(null, customer1, vehicle1, LocalDate.of(2024, 12, 1), seller1,
-				"Test Drive", "Scheduled");
+		Appointment appointment1 = new Appointment(null, LocalDate.of(2024, 12, 1), "Test Drive", "Scheduled",
+				customer1, seller1);
 
 		admRepository.save(adm);
 		sellerRepository.saveAll(Arrays.asList(seller1, seller2, seller3, seller4));

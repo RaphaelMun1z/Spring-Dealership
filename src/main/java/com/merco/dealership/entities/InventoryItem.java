@@ -2,14 +2,19 @@ package com.merco.dealership.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -23,9 +28,16 @@ public class InventoryItem implements Serializable {
 	private String id;
 
 	@NotNull(message = "Required field")
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "vehicle_id")
 	private Vehicle vehicle;
+
+	@OneToMany(mappedBy = "id.inventoryItem", orphanRemoval = true)
+	private Set<InventoryItemCommitment> InventoryItemCommitments = new HashSet<>();
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "inventoryItem")
+	private Set<Contract> contracts = new HashSet<>();
 
 	private LocalDate stockEntryDate;
 	private LocalDate stockExitDate;
@@ -121,8 +133,16 @@ public class InventoryItem implements Serializable {
 		return chassis;
 	}
 
+	public Set<Contract> getContracts() {
+		return contracts;
+	}
+
 	public void setChassis(String chassis) {
 		this.chassis = chassis;
+	}
+
+	public Set<InventoryItemCommitment> getInventoryItemCommitments() {
+		return InventoryItemCommitments;
 	}
 
 	@Override

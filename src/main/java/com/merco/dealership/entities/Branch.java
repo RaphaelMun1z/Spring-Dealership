@@ -25,11 +25,6 @@ public class Branch {
 	@NotNull(message = "Required field")
 	private String name;
 
-	@NotNull(message = "Required field")
-	@OneToOne
-	@JoinColumn(name = "branch_address_id")
-	private BranchAddress address;
-
 	@PhoneNumber(message = "Invalid field value")
 	private String phoneNumber;
 
@@ -51,6 +46,11 @@ public class Branch {
 	private LocalDate createdAt;
 
 	private LocalDate updatedAt;
+
+	@NotNull(message = "Required field")
+	@OneToOne
+	@JoinColumn(name = "branch_address_id")
+	private BranchAddress address;
 
 	public Branch() {
 

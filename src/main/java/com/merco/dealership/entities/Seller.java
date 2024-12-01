@@ -34,14 +34,10 @@ public class Seller extends User implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy = "seller")
 	private Set<Sale> sales = new HashSet<>();
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "seller")
-	private Set<Appointment> appointments = new HashSet<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "seller")
-	private Set<Contract> contracts = new HashSet<>();
+	private Set<Appointment> appointments = new HashSet<>();
 
 	public Seller() {
 
@@ -92,6 +88,10 @@ public class Seller extends User implements Serializable {
 
 	public Set<Sale> getSales() {
 		return sales;
+	}
+
+	public Set<Appointment> getAppointments() {
+		return appointments;
 	}
 
 }
