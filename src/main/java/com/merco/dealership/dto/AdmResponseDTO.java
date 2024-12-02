@@ -12,7 +12,6 @@ public class AdmResponseDTO {
 	}
 
 	public AdmResponseDTO(Adm adm) {
-		super();
 		this.id = adm.getId();
 		this.name = adm.getName();
 		this.phone = adm.getPhone();

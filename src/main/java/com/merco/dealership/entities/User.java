@@ -123,9 +123,7 @@ public class User implements UserDetails {
 		if (role == UserRole.ADM) {
 			return List.of(new SimpleGrantedAuthority("ROLE_ADM"), new SimpleGrantedAuthority("ROLE_SELLER"));
 		} else if (role == UserRole.SELLER) {
-			return List.of(new SimpleGrantedAuthority("ROLE_SELLER"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-		} else if (role == UserRole.CUSTOMER) {
-			return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+			return List.of(new SimpleGrantedAuthority("ROLE_SELLER"));
 		} else {
 			throw new IllegalArgumentException("Unexpected value: " + this.role);
 		}

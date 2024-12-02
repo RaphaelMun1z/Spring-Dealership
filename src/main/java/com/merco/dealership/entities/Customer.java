@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.merco.dealership.entities.enums.ClientType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,7 +44,7 @@ public class Customer implements Serializable {
 	private LocalDate registrationDate;
 
 	@NotNull(message = "Required field")
-	private String clientType;
+	private Integer clientType;
 
 	@NotNull(message = "Required field")
 	private Boolean validCnh;
@@ -66,7 +67,7 @@ public class Customer implements Serializable {
 	public Customer(String id, @NotNull(message = "Required field") String name,
 			@NotNull(message = "Required field") String cpf, @NotNull(message = "Required field") String email,
 			@NotNull(message = "Required field") String phone, @NotNull(message = "Required field") LocalDate birthDate,
-			LocalDate registrationDate, @NotNull(message = "Required field") String clientType,
+			LocalDate registrationDate, @NotNull(message = "Required field") ClientType clientType,
 			@NotNull(message = "Required field") Boolean validCnh) {
 		super();
 		this.id = id;
@@ -76,7 +77,7 @@ public class Customer implements Serializable {
 		this.phone = phone;
 		this.birthDate = birthDate;
 		this.registrationDate = registrationDate;
-		this.clientType = clientType;
+		setClientType(clientType);
 		this.validCnh = validCnh;
 	}
 
@@ -136,12 +137,14 @@ public class Customer implements Serializable {
 		this.registrationDate = registrationDate;
 	}
 
-	public String getClientType() {
-		return clientType;
+	public ClientType getClientType() {
+		return ClientType.valueOf(clientType);
 	}
 
-	public void setClientType(String clientType) {
-		this.clientType = clientType;
+	public void setClientType(ClientType clientType) {
+		if (clientType != null) {
+			this.clientType = clientType.getCode();
+		}
 	}
 
 	public Boolean getValidCnh() {

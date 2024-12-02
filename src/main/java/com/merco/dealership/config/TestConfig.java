@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Profile;
 
 import com.merco.dealership.entities.Adm;
 import com.merco.dealership.entities.Appointment;
+import com.merco.dealership.entities.Branch;
+import com.merco.dealership.entities.BranchAddress;
 import com.merco.dealership.entities.Contract;
 import com.merco.dealership.entities.Customer;
 import com.merco.dealership.entities.CustomerAddress;
@@ -18,8 +20,21 @@ import com.merco.dealership.entities.Sale;
 import com.merco.dealership.entities.Seller;
 import com.merco.dealership.entities.Vehicle;
 import com.merco.dealership.entities.VehicleSpecificDetail;
+import com.merco.dealership.entities.enums.AppointmentStatus;
+import com.merco.dealership.entities.enums.AppointmentType;
+import com.merco.dealership.entities.enums.ClientType;
+import com.merco.dealership.entities.enums.ContractStatus;
+import com.merco.dealership.entities.enums.FuelType;
+import com.merco.dealership.entities.enums.PaymentTerms;
+import com.merco.dealership.entities.enums.TransmissionType;
+import com.merco.dealership.entities.enums.VehicleAvailability;
+import com.merco.dealership.entities.enums.VehicleCategory;
+import com.merco.dealership.entities.enums.VehicleStatus;
+import com.merco.dealership.entities.enums.VehicleType;
 import com.merco.dealership.repositories.AdmRepository;
 import com.merco.dealership.repositories.AppointmentRepository;
+import com.merco.dealership.repositories.BranchAddressRepository;
+import com.merco.dealership.repositories.BranchRepository;
 import com.merco.dealership.repositories.ContractRepository;
 import com.merco.dealership.repositories.CustomerAddressRepository;
 import com.merco.dealership.repositories.CustomerRepository;
@@ -62,6 +77,12 @@ public class TestConfig implements CommandLineRunner {
 	@Autowired
 	private VehicleRepository vehicleRepository;
 
+	@Autowired
+	private BranchRepository branchRepository;
+
+	@Autowired
+	private BranchAddressRepository branchAddressRepository;
+
 	@Override
 	public void run(String... args) throws Exception {
 		Adm adm = new Adm(null, "Irineu", "(11) 91234-5678", "irineu@gmail.com",
@@ -79,10 +100,11 @@ public class TestConfig implements CommandLineRunner {
 				"São Paulo", "SP", "01000-000", "Brazil");
 
 		Customer customer1 = new Customer(null, "John Doe", "(12) 93456-7890", "johndoe@example.com", "1234567890",
-				LocalDate.of(1990, 1, 1), LocalDate.now(), "Regular", true);
+				LocalDate.of(1990, 1, 1), LocalDate.now(), ClientType.INDIVIDUAL, true);
 
-		Vehicle vehicle1 = new Vehicle(null, "Toyota", "Corolla", "Sedan", "Economy", LocalDate.of(2020, 5, 15),
-				"Black", 35000.0, "Petrol", "Automatic", 80000.0, "Available", "In stock", "A well-maintained sedan",
+		Vehicle vehicle1 = new Vehicle(null, "Toyota", "Corolla", VehicleType.CAR, VehicleCategory.SEDAN,
+				LocalDate.of(2020, 5, 15), "Black", 35000.0, FuelType.GASOLINE, TransmissionType.AUTOMATIC, 80000.0,
+				VehicleStatus.SEMINOVO, VehicleAvailability.AVAILABLE, "A well-maintained sedan",
 				LocalDate.of(2023, 11, 29), "Santos, SP");
 
 		VehicleSpecificDetail vehicleSpecificDetail1 = new VehicleSpecificDetail(null, "Sunroof with panoramic view");
@@ -98,11 +120,18 @@ public class TestConfig implements CommandLineRunner {
 				"Credit Card", 12, "RC123456");
 
 		Contract contract1 = new Contract(null, "CN12345", inventoryItem1, sale1, customer1, "Sale",
-				LocalDate.of(2024, 11, 29), LocalDate.of(2024, 12, 15), 95000.0, "Paid in full", "Active", "None",
-				"contract_attachment.pdf");
+				LocalDate.of(2024, 11, 29), LocalDate.of(2024, 12, 15), 95000.0, PaymentTerms.PIX,
+				ContractStatus.SIGNED, "None", "contract_attachment.pdf");
 
-		Appointment appointment1 = new Appointment(null, LocalDate.of(2024, 12, 1), "Test Drive", "Scheduled",
-				customer1, seller1);
+		Appointment appointment1 = new Appointment(null, LocalDate.of(2024, 12, 1), AppointmentType.TEST_DRIVE,
+				AppointmentStatus.PENDING, customer1, seller1);
+
+		BranchAddress branchAddress1 = new BranchAddress(null, "Other Street", 456, "Apt 1A", "Downtown", "Paraná",
+				"PR", "12345-678", "Brazil");
+
+		Branch branch1 = new Branch(null, "Main Branch", branchAddress1, "(11) 91212-1212", "mainbranch@example.com",
+				"John Doe", "8:00 AM - 6:00 PM", "Dealership", "Active", LocalDate.of(2023, 1, 1),
+				LocalDate.of(2023, 11, 30));
 
 		admRepository.save(adm);
 		sellerRepository.saveAll(Arrays.asList(seller1, seller2, seller3, seller4));
@@ -115,6 +144,8 @@ public class TestConfig implements CommandLineRunner {
 		saleRepository.save(sale1);
 		contractRepository.save(contract1);
 		appointmentRepository.save(appointment1);
+		branchAddressRepository.save(branchAddress1);
+		branchRepository.save(branch1);
 	}
 
 }

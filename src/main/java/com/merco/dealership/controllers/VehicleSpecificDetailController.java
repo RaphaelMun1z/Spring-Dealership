@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,52 +23,42 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.AdmResponseDTO;
-import com.merco.dealership.dto.AdmRegisterRequestDTO;
-import com.merco.dealership.entities.Adm;
-import com.merco.dealership.repositories.AdmRepository;
-import com.merco.dealership.services.AdmService;
+import com.merco.dealership.dto.VehicleSpecificDetailResponseDTO;
+import com.merco.dealership.entities.VehicleSpecificDetail;
+import com.merco.dealership.services.VehicleSpecificDetailService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/adm")
-public class AdmController {
+@RequestMapping(value = "/vehicle-specific-details")
+public class VehicleSpecificDetailController {
 	@Autowired
-	private AdmService service;
-
-	@Autowired
-	private AdmRepository repository;
+	private VehicleSpecificDetailService service;
 
 	@GetMapping
-	public ResponseEntity<List<AdmResponseDTO>> findAll() {
-		List<Adm> list = service.findAllCached();
-		List<AdmResponseDTO> adms = new ArrayList<>();
+	public ResponseEntity<List<VehicleSpecificDetailResponseDTO>> findAll() {
+		List<VehicleSpecificDetail> list = service.findAllCached();
+		List<VehicleSpecificDetailResponseDTO> VehicleSpecificDetails = new ArrayList<>();
 
-		for (Adm adm : list) {
-			adms.add(new AdmResponseDTO(adm));
+		for (VehicleSpecificDetail VehicleSpecificDetail : list) {
+			VehicleSpecificDetails.add(new VehicleSpecificDetailResponseDTO(VehicleSpecificDetail));
 		}
-		return ResponseEntity.ok().body(adms);
+		return ResponseEntity.ok().body(VehicleSpecificDetails);
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Adm> findById(@PathVariable String id) {
-		Adm obj = service.findById(id);
+	public ResponseEntity<VehicleSpecificDetail> findById(@PathVariable String id) {
+		VehicleSpecificDetail obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 
 	@PostMapping
-	public ResponseEntity<Adm> insert(@RequestBody @Valid AdmRegisterRequestDTO obj) {
-		if (repository.findByEmail(obj.getEmail()) != null)
-			return ResponseEntity.badRequest().build();
-
-		String encryptedPassword = new BCryptPasswordEncoder().encode(obj.getPassword());
-		Adm user = new Adm(null, obj.getName(), obj.getPhone(), obj.getEmail(), encryptedPassword);
-
-		Adm adm = service.create(user);
-
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(adm.getId()).toUri();
-		return ResponseEntity.created(uri).body(adm);
+	public ResponseEntity<VehicleSpecificDetailResponseDTO> insert(@RequestBody @Valid VehicleSpecificDetail obj) {
+		obj = service.create(obj);
+		VehicleSpecificDetailResponseDTO VehicleSpecificDetail = new VehicleSpecificDetailResponseDTO(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(VehicleSpecificDetail.getId()).toUri();
+		return ResponseEntity.created(uri).body(VehicleSpecificDetail);
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -79,7 +68,8 @@ public class AdmController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Adm> patch(@PathVariable String id, @RequestBody Adm obj) {
+	public ResponseEntity<VehicleSpecificDetail> patch(@PathVariable String id,
+			@RequestBody VehicleSpecificDetail obj) {
 		obj = service.patch(id, obj);
 		return ResponseEntity.ok().body(obj);
 	}

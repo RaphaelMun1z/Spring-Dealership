@@ -3,7 +3,6 @@ package com.merco.dealership.entities;
 import java.io.Serializable;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -14,8 +13,7 @@ import jakarta.persistence.UniqueConstraint;
 public class BranchAddress extends Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne
-	@JoinColumn(name = "branch_id")
+	@OneToOne(mappedBy = "address")
 	private Branch branch;
 
 	public BranchAddress() {

@@ -30,7 +30,7 @@ import com.merco.dealership.services.SellerService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/Sellers")
+@RequestMapping(value = "/sellers")
 public class SellerController {
 	@Autowired
 	private SellerService service;
@@ -46,18 +46,18 @@ public class SellerController {
 		return ResponseEntity.ok().body(Sellers);
 	}
 
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<Seller> findById(@PathVariable String id) {
+		Seller obj = service.findById(id);
+		return ResponseEntity.ok().body(obj);
+	}
+
 	@PostMapping
 	public ResponseEntity<SellerResponseDTO> insert(@RequestBody @Valid Seller obj) {
 		obj = service.create(obj);
 		SellerResponseDTO Seller = new SellerResponseDTO(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Seller.getId()).toUri();
 		return ResponseEntity.created(uri).body(Seller);
-	}
-
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<Seller> findById(@PathVariable String id) {
-		Seller obj = service.findById(id);
-		return ResponseEntity.ok().body(obj);
 	}
 
 	@DeleteMapping(value = "/{id}")

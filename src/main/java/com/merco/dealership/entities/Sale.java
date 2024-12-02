@@ -25,25 +25,6 @@ public class Sale implements Serializable {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
-
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "customer_id")
-	private Customer customer;
-
-	@OneToOne
-	@JoinColumn(name = "contract_id")
-	private Contract contract;
-
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "vehicle_id")
-	private Vehicle vehicle;
-
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@NotNull(message = "Required field")
 	private LocalDate saleDate;
@@ -62,6 +43,25 @@ public class Sale implements Serializable {
 
 	@NotNull(message = "Required field")
 	private String receipt;
+
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "seller_id")
+	private Seller seller;
+
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
+
+	@OneToOne
+	@JoinColumn(name = "contract_id")
+	private Contract contract;
+
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "vehicle_id")
+	private Vehicle vehicle;
 
 	public Sale() {
 	}

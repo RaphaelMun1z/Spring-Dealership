@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,52 +23,43 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.AdmResponseDTO;
-import com.merco.dealership.dto.AdmRegisterRequestDTO;
-import com.merco.dealership.entities.Adm;
-import com.merco.dealership.repositories.AdmRepository;
-import com.merco.dealership.services.AdmService;
+import com.merco.dealership.dto.ContractResponseDTO;
+import com.merco.dealership.entities.Contract;
+import com.merco.dealership.services.ContractService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/adm")
-public class AdmController {
+@RequestMapping(value = "/contracts")
+public class ContractController {
 	@Autowired
-	private AdmService service;
-
-	@Autowired
-	private AdmRepository repository;
+	private ContractService service;
 
 	@GetMapping
-	public ResponseEntity<List<AdmResponseDTO>> findAll() {
-		List<Adm> list = service.findAllCached();
-		List<AdmResponseDTO> adms = new ArrayList<>();
+	public ResponseEntity<List<ContractResponseDTO>> findAll() {
+		System.out.println("Teste\n");
+		List<Contract> list = service.findAllCached();
+		List<ContractResponseDTO> contracts = new ArrayList<>();
 
-		for (Adm adm : list) {
-			adms.add(new AdmResponseDTO(adm));
+		for (Contract contract : list) {
+			contracts.add(new ContractResponseDTO(contract));
 		}
-		return ResponseEntity.ok().body(adms);
+		return ResponseEntity.ok().body(contracts);
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Adm> findById(@PathVariable String id) {
-		Adm obj = service.findById(id);
+	public ResponseEntity<Contract> findById(@PathVariable String id) {
+		Contract obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 
 	@PostMapping
-	public ResponseEntity<Adm> insert(@RequestBody @Valid AdmRegisterRequestDTO obj) {
-		if (repository.findByEmail(obj.getEmail()) != null)
-			return ResponseEntity.badRequest().build();
-
-		String encryptedPassword = new BCryptPasswordEncoder().encode(obj.getPassword());
-		Adm user = new Adm(null, obj.getName(), obj.getPhone(), obj.getEmail(), encryptedPassword);
-
-		Adm adm = service.create(user);
-
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(adm.getId()).toUri();
-		return ResponseEntity.created(uri).body(adm);
+	public ResponseEntity<ContractResponseDTO> insert(@RequestBody @Valid Contract obj) {
+		obj = service.create(obj);
+		ContractResponseDTO Contract = new ContractResponseDTO(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Contract.getId())
+				.toUri();
+		return ResponseEntity.created(uri).body(Contract);
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -79,7 +69,7 @@ public class AdmController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Adm> patch(@PathVariable String id, @RequestBody Adm obj) {
+	public ResponseEntity<Contract> patch(@PathVariable String id, @RequestBody Contract obj) {
 		obj = service.patch(id, obj);
 		return ResponseEntity.ok().body(obj);
 	}

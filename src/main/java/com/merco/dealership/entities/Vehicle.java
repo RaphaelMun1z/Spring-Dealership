@@ -6,6 +6,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.merco.dealership.entities.enums.FuelType;
+import com.merco.dealership.entities.enums.TransmissionType;
+import com.merco.dealership.entities.enums.VehicleAvailability;
+import com.merco.dealership.entities.enums.VehicleCategory;
+import com.merco.dealership.entities.enums.VehicleStatus;
+import com.merco.dealership.entities.enums.VehicleType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,10 +37,10 @@ public class Vehicle implements Serializable {
 	private String model;
 
 	@NotNull(message = "Required field")
-	private String type;
+	private Integer type;
 
 	@NotNull(message = "Required field")
-	private String category;
+	private Integer category;
 
 	@NotNull(message = "Required field")
 	private LocalDate manufactureYear;
@@ -45,17 +52,17 @@ public class Vehicle implements Serializable {
 	private Double mileage;
 
 	@NotNull(message = "Required field")
-	private String fuelType;
+	private Integer fuelType;
 
 	@NotNull(message = "Required field")
-	private String transmissionType;
+	private Integer transmissionType;
 
 	@NotNull(message = "Required field")
 	private Double salePrice;
 
-	private String status;
+	private Integer status;
 
-	private String availability;
+	private Integer availability;
 
 	@NotNull(message = "Required field")
 	private String description;
@@ -79,28 +86,28 @@ public class Vehicle implements Serializable {
 	}
 
 	public Vehicle(String id, @NotNull(message = "Required field") String brand,
-			@NotNull(message = "Required field") String model, @NotNull(message = "Required field") String type,
-			@NotNull(message = "Required field") String category, LocalDate manufactureYear,
+			@NotNull(message = "Required field") String model, @NotNull(message = "Required field") VehicleType type,
+			@NotNull(message = "Required field") VehicleCategory category, LocalDate manufactureYear,
 			@NotNull(message = "Required field") String color, @NotNull(message = "Required field") Double mileage,
-			@NotNull(message = "Required field") String fuelType,
-			@NotNull(message = "Required field") String transmissionType,
-			@NotNull(message = "Required field") Double salePrice, String status, String availability,
-			@NotNull(message = "Required field") String description, LocalDate lastUpdate,
-			@NotNull(message = "Required field") String location) {
+			@NotNull(message = "Required field") FuelType fuelType,
+			@NotNull(message = "Required field") TransmissionType transmissionType,
+			@NotNull(message = "Required field") Double salePrice, VehicleStatus status,
+			VehicleAvailability availability, @NotNull(message = "Required field") String description,
+			LocalDate lastUpdate, @NotNull(message = "Required field") String location) {
 		super();
 		this.id = id;
 		this.brand = brand;
 		this.model = model;
-		this.type = type;
-		this.category = category;
+		setType(type);
+		setCategory(category);
 		this.manufactureYear = manufactureYear;
 		this.color = color;
 		this.mileage = mileage;
-		this.fuelType = fuelType;
-		this.transmissionType = transmissionType;
+		setFuelType(fuelType);
+		setTransmissionType(transmissionType);
 		this.salePrice = salePrice;
-		this.status = status;
-		this.availability = availability;
+		setStatus(status);
+		setAvailability(availability);
 		this.description = description;
 		this.lastUpdate = lastUpdate;
 		this.location = location;
@@ -130,20 +137,24 @@ public class Vehicle implements Serializable {
 		this.model = model;
 	}
 
-	public String getType() {
-		return type;
+	public VehicleType getType() {
+		return VehicleType.valueOf(type);
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setType(VehicleType vehicleType) {
+		if (vehicleType != null) {
+			this.type = vehicleType.getCode();
+		}
 	}
 
-	public String getCategory() {
-		return category;
+	public VehicleCategory getCategory() {
+		return VehicleCategory.valueOf(category);
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setCategory(VehicleCategory vehicleCategory) {
+		if (vehicleCategory != null) {
+			this.category = vehicleCategory.getCode();
+		}
 	}
 
 	public LocalDate getManufactureYear() {
@@ -170,20 +181,24 @@ public class Vehicle implements Serializable {
 		this.mileage = mileage;
 	}
 
-	public String getFuelType() {
-		return fuelType;
+	public FuelType getFuelType() {
+		return FuelType.valueOf(fuelType);
 	}
 
-	public void setFuelType(String fuelType) {
-		this.fuelType = fuelType;
+	public void setFuelType(FuelType fuelType) {
+		if (fuelType != null) {
+			this.fuelType = fuelType.getCode();
+		}
 	}
 
-	public String getTransmissionType() {
-		return transmissionType;
+	public TransmissionType getTransmissionType() {
+		return TransmissionType.valueOf(transmissionType);
 	}
 
-	public void setTransmissionType(String transmissionType) {
-		this.transmissionType = transmissionType;
+	public void setTransmissionType(TransmissionType transmissionType) {
+		if (transmissionType != null) {
+			this.transmissionType = transmissionType.getCode();
+		}
 	}
 
 	public Set<VehicleConfiguration> getSpecificDetails() {
@@ -198,20 +213,24 @@ public class Vehicle implements Serializable {
 		this.salePrice = salePrice;
 	}
 
-	public String getStatus() {
-		return status;
+	public VehicleStatus getStatus() {
+		return VehicleStatus.valueOf(status);
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatus(VehicleStatus status) {
+		if (status != null) {
+			this.status = status.getCode();
+		}
 	}
 
-	public String getAvailability() {
-		return availability;
+	public VehicleAvailability getAvailability() {
+		return VehicleAvailability.valueOf(availability);
 	}
 
-	public void setAvailability(String availability) {
-		this.availability = availability;
+	public void setAvailability(VehicleAvailability availability) {
+		if (availability != null) {
+			this.availability = availability.getCode();
+		}
 	}
 
 	public String getDescription() {

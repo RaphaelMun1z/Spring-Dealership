@@ -26,19 +26,6 @@ public class InventoryItem implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
-
-	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "vehicle_id")
-	private Vehicle vehicle;
-
-	@OneToMany(mappedBy = "id.inventoryItem", orphanRemoval = true)
-	private Set<InventoryItemCommitment> InventoryItemCommitments = new HashSet<>();
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "inventoryItem")
-	private Set<Contract> contracts = new HashSet<>();
-
 	private LocalDate stockEntryDate;
 	private LocalDate stockExitDate;
 	private Double acquisitionPrice;
@@ -46,6 +33,18 @@ public class InventoryItem implements Serializable {
 	private String supplier;
 	private String licensePlate;
 	private String chassis;
+
+	@NotNull(message = "Required field")
+	@ManyToOne
+	@JoinColumn(name = "vehicle_id")
+	private Vehicle vehicle;
+
+	@OneToMany(mappedBy = "id.inventoryItem", orphanRemoval = true)
+	private Set<InventoryItemCommitment> inventoryItemCommitments = new HashSet<>();
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "inventoryItem")
+	private Set<Contract> contracts = new HashSet<>();
 
 	public InventoryItem() {
 	}
@@ -142,7 +141,7 @@ public class InventoryItem implements Serializable {
 	}
 
 	public Set<InventoryItemCommitment> getInventoryItemCommitments() {
-		return InventoryItemCommitments;
+		return inventoryItemCommitments;
 	}
 
 	@Override

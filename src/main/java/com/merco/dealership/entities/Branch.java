@@ -16,7 +16,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "tb_branchs")
+@Table(name = "tb_branches")
 public class Branch {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

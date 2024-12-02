@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,52 +23,42 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.AdmResponseDTO;
-import com.merco.dealership.dto.AdmRegisterRequestDTO;
-import com.merco.dealership.entities.Adm;
-import com.merco.dealership.repositories.AdmRepository;
-import com.merco.dealership.services.AdmService;
+import com.merco.dealership.dto.InventoryItemResponseDTO;
+import com.merco.dealership.entities.InventoryItem;
+import com.merco.dealership.services.InventoryItemService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/adm")
-public class AdmController {
+@RequestMapping(value = "/inventory-items")
+public class InventoryItemController {
 	@Autowired
-	private AdmService service;
-
-	@Autowired
-	private AdmRepository repository;
+	private InventoryItemService service;
 
 	@GetMapping
-	public ResponseEntity<List<AdmResponseDTO>> findAll() {
-		List<Adm> list = service.findAllCached();
-		List<AdmResponseDTO> adms = new ArrayList<>();
+	public ResponseEntity<List<InventoryItemResponseDTO>> findAll() {
+		List<InventoryItem> list = service.findAllCached();
+		List<InventoryItemResponseDTO> InventoryItems = new ArrayList<>();
 
-		for (Adm adm : list) {
-			adms.add(new AdmResponseDTO(adm));
+		for (InventoryItem InventoryItem : list) {
+			InventoryItems.add(new InventoryItemResponseDTO(InventoryItem));
 		}
-		return ResponseEntity.ok().body(adms);
+		return ResponseEntity.ok().body(InventoryItems);
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Adm> findById(@PathVariable String id) {
-		Adm obj = service.findById(id);
+	public ResponseEntity<InventoryItem> findById(@PathVariable String id) {
+		InventoryItem obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 
 	@PostMapping
-	public ResponseEntity<Adm> insert(@RequestBody @Valid AdmRegisterRequestDTO obj) {
-		if (repository.findByEmail(obj.getEmail()) != null)
-			return ResponseEntity.badRequest().build();
-
-		String encryptedPassword = new BCryptPasswordEncoder().encode(obj.getPassword());
-		Adm user = new Adm(null, obj.getName(), obj.getPhone(), obj.getEmail(), encryptedPassword);
-
-		Adm adm = service.create(user);
-
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(adm.getId()).toUri();
-		return ResponseEntity.created(uri).body(adm);
+	public ResponseEntity<InventoryItemResponseDTO> insert(@RequestBody @Valid InventoryItem obj) {
+		obj = service.create(obj);
+		InventoryItemResponseDTO InventoryItem = new InventoryItemResponseDTO(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(InventoryItem.getId())
+				.toUri();
+		return ResponseEntity.created(uri).body(InventoryItem);
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -79,7 +68,7 @@ public class AdmController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Adm> patch(@PathVariable String id, @RequestBody Adm obj) {
+	public ResponseEntity<InventoryItem> patch(@PathVariable String id, @RequestBody InventoryItem obj) {
 		obj = service.patch(id, obj);
 		return ResponseEntity.ok().body(obj);
 	}

@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import com.merco.dealership.entities.enums.ContractStatus;
+import com.merco.dealership.entities.enums.PaymentTerms;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -44,14 +47,14 @@ public class Contract implements Serializable {
 	private Double totalAmount;
 
 	@NotNull(message = "Required field")
-	private String paymentTerms;
+	private Integer paymentTerms;
 
-	private String contractStatus;
+	private Integer contractStatus;
 	private String notes;
 
 	@NotNull(message = "Required field")
 	private String attachments;
-	
+
 	@NotNull(message = "Required field")
 	@ManyToOne
 	@JoinColumn(name = "inventory_item_id")
@@ -73,7 +76,7 @@ public class Contract implements Serializable {
 			@NotNull(message = "Required field") LocalDate contractDate,
 			@NotNull(message = "Required field") LocalDate deliveryDate,
 			@NotNull(message = "Required field") Double totalAmount,
-			@NotNull(message = "Required field") String paymentTerms, String contractStatus, String notes,
+			@NotNull(message = "Required field") PaymentTerms paymentTerms, ContractStatus contractStatus, String notes,
 			@NotNull(message = "Required field") String attachments) {
 		super();
 		this.id = id;
@@ -85,8 +88,8 @@ public class Contract implements Serializable {
 		this.contractDate = contractDate;
 		this.deliveryDate = deliveryDate;
 		this.totalAmount = totalAmount;
-		this.paymentTerms = paymentTerms;
-		this.contractStatus = contractStatus;
+		setPaymentTerms(paymentTerms);
+		setContractStatus(contractStatus);
 		this.notes = notes;
 		this.attachments = attachments;
 	}
@@ -155,20 +158,24 @@ public class Contract implements Serializable {
 		this.totalAmount = totalAmount;
 	}
 
-	public String getPaymentTerms() {
-		return paymentTerms;
+	public PaymentTerms getPaymentTerms() {
+		return PaymentTerms.valueOf(paymentTerms);
 	}
 
-	public void setPaymentTerms(String paymentTerms) {
-		this.paymentTerms = paymentTerms;
+	public void setPaymentTerms(PaymentTerms paymentTerms) {
+		if (paymentTerms != null) {
+			this.paymentTerms = paymentTerms.getCode();
+		}
 	}
 
-	public String getContractStatus() {
-		return contractStatus;
+	public ContractStatus getContractStatus() {
+		return ContractStatus.valueOf(contractStatus);
 	}
 
-	public void setContractStatus(String contractStatus) {
-		this.contractStatus = contractStatus;
+	public void setContractStatus(ContractStatus contractStatus) {
+		if (contractStatus != null) {
+			this.contractStatus = contractStatus.getCode();
+		}
 	}
 
 	public String getNotes() {

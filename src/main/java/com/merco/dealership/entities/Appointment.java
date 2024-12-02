@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.merco.dealership.entities.enums.AppointmentStatus;
+import com.merco.dealership.entities.enums.AppointmentType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,9 +32,9 @@ public class Appointment implements Serializable {
 	private LocalDate date;
 
 	@NotNull(message = "Required field")
-	private String appointmentType;
+	private Integer appointmentType;
 
-	private String appointmentStatus;
+	private Integer appointmentStatus;
 
 	@NotNull(message = "Required field")
 	@ManyToOne
@@ -44,20 +47,20 @@ public class Appointment implements Serializable {
 	private Seller seller;
 
 	@OneToMany(mappedBy = "id.appointment", orphanRemoval = true)
-	private Set<InventoryItemCommitment> InventoryItemCommitments = new HashSet<>();
+	private Set<InventoryItemCommitment> inventoryItemCommitments = new HashSet<>();
 
 	public Appointment() {
 	}
 
 	public Appointment(String id, @NotNull(message = "Required field") LocalDate date,
-			@NotNull(message = "Required field") String appointmentType, String appointmentStatus,
+			@NotNull(message = "Required field") AppointmentType appointmentType, AppointmentStatus appointmentStatus,
 			@NotNull(message = "Required field") Customer customer,
 			@NotNull(message = "Required field") Seller seller) {
 		super();
 		this.id = id;
 		this.date = date;
-		this.appointmentType = appointmentType;
-		this.appointmentStatus = appointmentStatus;
+		setAppointmentType(appointmentType);
+		setAppointmentStatus(appointmentStatus);
 		this.customer = customer;
 		this.seller = seller;
 	}
@@ -94,24 +97,28 @@ public class Appointment implements Serializable {
 		this.seller = seller;
 	}
 
-	public String getAppointmentType() {
-		return appointmentType;
+	public AppointmentType getAppointmentType() {
+		return AppointmentType.valueOf(appointmentType);
 	}
 
-	public void setAppointmentType(String appointmentType) {
-		this.appointmentType = appointmentType;
+	public void setAppointmentType(AppointmentType appointmentType) {
+		if (appointmentType != null) {
+			this.appointmentType = appointmentType.getCode();
+		}
 	}
 
-	public String getAppointmentStatus() {
-		return appointmentStatus;
+	public AppointmentStatus getAppointmentStatus() {
+		return AppointmentStatus.valueOf(appointmentStatus);
 	}
 
-	public void setAppointmentStatus(String appointmentStatus) {
-		this.appointmentStatus = appointmentStatus;
+	public void setAppointmentStatus(AppointmentStatus appointmentStatus) {
+		if (appointmentStatus != null) {
+			this.appointmentStatus = appointmentStatus.getCode();
+		}
 	}
 
 	public Set<InventoryItemCommitment> getInventoryItemCommitments() {
-		return InventoryItemCommitments;
+		return inventoryItemCommitments;
 	}
 
 	@Override
