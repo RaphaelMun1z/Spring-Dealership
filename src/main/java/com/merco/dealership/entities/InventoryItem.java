@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -34,17 +35,18 @@ public class InventoryItem implements Serializable {
 	private String licensePlate;
 	private String chassis;
 
+	@JsonIgnore
+	@OneToOne(mappedBy = "inventoryItem")
+	private Sale sale;
+
 	@NotNull(message = "Required field")
 	@ManyToOne
 	@JoinColumn(name = "vehicle_id")
 	private Vehicle vehicle;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "id.inventoryItem", orphanRemoval = true)
 	private Set<InventoryItemCommitment> inventoryItemCommitments = new HashSet<>();
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "inventoryItem")
-	private Set<Contract> contracts = new HashSet<>();
 
 	public InventoryItem() {
 	}
@@ -130,10 +132,6 @@ public class InventoryItem implements Serializable {
 
 	public String getChassis() {
 		return chassis;
-	}
-
-	public Set<Contract> getContracts() {
-		return contracts;
 	}
 
 	public void setChassis(String chassis) {

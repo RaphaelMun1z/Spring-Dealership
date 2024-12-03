@@ -1,7 +1,6 @@
 package com.merco.dealership.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,7 +8,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.dto.BranchAddressResponseDTO;
 import com.merco.dealership.entities.BranchAddress;
+import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.BranchAddressRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
@@ -23,17 +24,13 @@ public class BranchAddressService {
 	@Autowired
 	private BranchAddressRepository repository;
 
-	public List<BranchAddress> findAllCached() {
-		return findAll();
+	public List<BranchAddressResponseDTO> findAll() {
+		return Mapper.modelMapperList(repository.findAll(), BranchAddressResponseDTO.class);
 	}
 
-	public List<BranchAddress> findAll() {
-		return repository.findAll();
-	}
-
-	public BranchAddress findById(String id) {
-		Optional<BranchAddress> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+	public BranchAddressResponseDTO findById(String id) {
+		BranchAddress branchAddress = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return Mapper.modelMapper(branchAddress, BranchAddressResponseDTO.class);
 	}
 
 	@Transactional

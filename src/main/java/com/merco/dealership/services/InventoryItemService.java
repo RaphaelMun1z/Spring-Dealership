@@ -1,7 +1,6 @@
 package com.merco.dealership.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,7 +8,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.dto.InventoryItemResponseDTO;
 import com.merco.dealership.entities.InventoryItem;
+import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.InventoryItemRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
@@ -23,17 +24,13 @@ public class InventoryItemService {
 	@Autowired
 	private InventoryItemRepository repository;
 
-	public List<InventoryItem> findAllCached() {
-		return findAll();
+	public List<InventoryItemResponseDTO> findAll() {
+		return Mapper.modelMapperList(repository.findAll(), InventoryItemResponseDTO.class);
 	}
 
-	public List<InventoryItem> findAll() {
-		return repository.findAll();
-	}
-
-	public InventoryItem findById(String id) {
-		Optional<InventoryItem> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+	public InventoryItemResponseDTO findById(String id) {
+		InventoryItem inventoryItem = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return Mapper.modelMapper(inventoryItem, InventoryItemResponseDTO.class);
 	}
 
 	@Transactional

@@ -1,7 +1,6 @@
 package com.merco.dealership.controllers;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +23,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.AdmResponseDTO;
 import com.merco.dealership.dto.AdmRegisterRequestDTO;
+import com.merco.dealership.dto.AdmResponseDTO;
 import com.merco.dealership.entities.Adm;
 import com.merco.dealership.repositories.AdmRepository;
 import com.merco.dealership.services.AdmService;
@@ -43,19 +42,12 @@ public class AdmController {
 
 	@GetMapping
 	public ResponseEntity<List<AdmResponseDTO>> findAll() {
-		List<Adm> list = service.findAllCached();
-		List<AdmResponseDTO> adms = new ArrayList<>();
-
-		for (Adm adm : list) {
-			adms.add(new AdmResponseDTO(adm));
-		}
-		return ResponseEntity.ok().body(adms);
+		return ResponseEntity.ok().body(service.findAll());
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Adm> findById(@PathVariable String id) {
-		Adm obj = service.findById(id);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<AdmResponseDTO> findById(@PathVariable String id) {
+		return ResponseEntity.ok().body(service.findById(id));
 	}
 
 	@PostMapping

@@ -3,7 +3,7 @@ package com.merco.dealership.dto;
 import java.time.LocalDate;
 
 import com.merco.dealership.entities.Branch;
-import com.merco.dealership.entities.BranchAddress;
+import com.merco.dealership.mapper.Mapper;
 
 public class BranchResponseDTO {
 	private String id;
@@ -16,67 +16,111 @@ public class BranchResponseDTO {
 	private String status;
 	private LocalDate createdAt;
 	private LocalDate updatedAt;
-	private BranchAddress address;
+	private BranchAddressResponseDTO address;
 
 	public BranchResponseDTO() {
 	}
 
-	public BranchResponseDTO(Branch Branch) {
-		this.id = Branch.getId();
-		this.name = Branch.getName();
-		this.phoneNumber = Branch.getPhoneNumber();
-		this.email = Branch.getEmail();
-		this.managerName = Branch.getManagerName();
-		this.openingHours = Branch.getOpeningHours();
-		this.branchType = Branch.getBranchType();
-		this.status = Branch.getStatus();
-		this.createdAt = Branch.getCreatedAt();
-		this.updatedAt = Branch.getUpdatedAt();
-		this.address = Branch.getAddress();
+	public BranchResponseDTO(Branch branch) {
+		this.id = branch.getId();
+		this.name = branch.getName();
+		this.phoneNumber = branch.getPhoneNumber();
+		this.email = branch.getEmail();
+		this.managerName = branch.getManagerName();
+		this.openingHours = branch.getOpeningHours();
+		this.branchType = branch.getBranchType();
+		this.status = branch.getStatus();
+		this.createdAt = branch.getCreatedAt();
+		this.updatedAt = branch.getUpdatedAt();
+		this.address = Mapper.modelMapper(branch.getAddress(), BranchAddressResponseDTO.class);
 	}
 
 	public String getId() {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public String getEmail() {
 		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getManagerName() {
 		return managerName;
 	}
 
+	public void setManagerName(String managerName) {
+		this.managerName = managerName;
+	}
+
 	public String getOpeningHours() {
 		return openingHours;
+	}
+
+	public void setOpeningHours(String openingHours) {
+		this.openingHours = openingHours;
 	}
 
 	public String getBranchType() {
 		return branchType;
 	}
 
+	public void setBranchType(String branchType) {
+		this.branchType = branchType;
+	}
+
 	public String getStatus() {
 		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public LocalDate getCreatedAt() {
 		return createdAt;
 	}
 
+	public void setCreatedAt(LocalDate createdAt) {
+		this.createdAt = createdAt;
+	}
+
 	public LocalDate getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public BranchAddress getAddress() {
+	public void setUpdatedAt(LocalDate updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public BranchAddressResponseDTO getAddress() {
 		return address;
+	}
+
+	public void setAddress(BranchAddressResponseDTO address) {
+		this.address = address;
 	}
 
 }

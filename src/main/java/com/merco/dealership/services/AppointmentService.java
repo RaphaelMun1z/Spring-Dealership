@@ -1,7 +1,6 @@
 package com.merco.dealership.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,7 +8,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.dto.AppointmentResponseDTO;
 import com.merco.dealership.entities.Appointment;
+import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.AppointmentRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
@@ -23,17 +24,13 @@ public class AppointmentService {
 	@Autowired
 	private AppointmentRepository repository;
 
-	public List<Appointment> findAllCached() {
-		return findAll();
+	public List<AppointmentResponseDTO> findAll() {
+		return Mapper.modelMapperList(repository.findAll(), AppointmentResponseDTO.class);
 	}
 
-	public List<Appointment> findAll() {
-		return repository.findAll();
-	}
-
-	public Appointment findById(String id) {
-		Optional<Appointment> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+	public AppointmentResponseDTO findById(String id) {
+		Appointment appointment = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return Mapper.modelMapper(appointment, AppointmentResponseDTO.class);
 	}
 
 	@Transactional

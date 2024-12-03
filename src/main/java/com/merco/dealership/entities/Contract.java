@@ -12,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -28,11 +27,6 @@ public class Contract implements Serializable {
 
 	@NotNull(message = "Required field")
 	private String contractNumber;
-
-	@NotNull(message = "Required field")
-	@OneToOne
-	@JoinColumn(name = "customer_id")
-	private Customer customer;
 
 	@NotNull(message = "Required field")
 	private String contractType;
@@ -56,11 +50,6 @@ public class Contract implements Serializable {
 	private String attachments;
 
 	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "inventory_item_id")
-	private InventoryItem inventoryItem;
-
-	@NotNull(message = "Required field")
 	@OneToOne
 	@JoinColumn(name = "sale_id")
 	private Sale sale;
@@ -70,9 +59,7 @@ public class Contract implements Serializable {
 	}
 
 	public Contract(String id, @NotNull(message = "Required field") String contractNumber,
-			@NotNull(message = "Required field") InventoryItem inventoryItem,
-			@NotNull(message = "Required field") Sale sale, @NotNull(message = "Required field") Customer customer,
-			@NotNull(message = "Required field") String contractType,
+			@NotNull(message = "Required field") Sale sale, @NotNull(message = "Required field") String contractType,
 			@NotNull(message = "Required field") LocalDate contractDate,
 			@NotNull(message = "Required field") LocalDate deliveryDate,
 			@NotNull(message = "Required field") Double totalAmount,
@@ -81,9 +68,7 @@ public class Contract implements Serializable {
 		super();
 		this.id = id;
 		this.contractNumber = contractNumber;
-		this.inventoryItem = inventoryItem;
 		this.sale = sale;
-		this.customer = customer;
 		this.contractType = contractType;
 		this.contractDate = contractDate;
 		this.deliveryDate = deliveryDate;
@@ -108,22 +93,6 @@ public class Contract implements Serializable {
 
 	public void setContractNumber(String contractNumber) {
 		this.contractNumber = contractNumber;
-	}
-
-	public InventoryItem getInventoryItem() {
-		return inventoryItem;
-	}
-
-	public void setVehicle(InventoryItem inventoryItem) {
-		this.inventoryItem = inventoryItem;
-	}
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
 	}
 
 	public String getContractType() {
@@ -200,10 +169,6 @@ public class Contract implements Serializable {
 
 	public void setSale(Sale sale) {
 		this.sale = sale;
-	}
-
-	public void setInventoryItem(InventoryItem inventoryItem) {
-		this.inventoryItem = inventoryItem;
 	}
 
 	@Override

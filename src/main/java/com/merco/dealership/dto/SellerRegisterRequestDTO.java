@@ -6,7 +6,6 @@ public class SellerRegisterRequestDTO {
 	private String name;
 	private String phone;
 	private String email;
-	private String password;
 
 	public SellerRegisterRequestDTO() {
 	}
@@ -15,23 +14,30 @@ public class SellerRegisterRequestDTO {
 		this.name = seller.getName();
 		this.phone = seller.getPhone();
 		this.email = seller.getEmail();
-		this.password = seller.getPassword();
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getPhone() {
 		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public String getPassword() {
-		return password;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

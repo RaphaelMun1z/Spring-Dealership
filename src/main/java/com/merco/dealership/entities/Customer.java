@@ -49,6 +49,7 @@ public class Customer implements Serializable {
 	@NotNull(message = "Required field")
 	private Boolean validCnh;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "id.customer", orphanRemoval = true)
 	private Set<CustomerAddressMapping> customerAddressesMapping = new HashSet<>();
 

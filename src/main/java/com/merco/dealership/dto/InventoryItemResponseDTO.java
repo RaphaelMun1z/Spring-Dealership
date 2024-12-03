@@ -1,13 +1,9 @@
 package com.merco.dealership.dto;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.merco.dealership.entities.Contract;
 import com.merco.dealership.entities.InventoryItem;
-import com.merco.dealership.entities.InventoryItemCommitment;
-import com.merco.dealership.entities.Vehicle;
+import com.merco.dealership.mapper.Mapper;
 
 public class InventoryItemResponseDTO {
 	private String id;
@@ -18,9 +14,7 @@ public class InventoryItemResponseDTO {
 	private String supplier;
 	private String licensePlate;
 	private String chassis;
-	private Vehicle vehicle;
-	private Set<InventoryItemCommitment> inventoryItemCommitments = new HashSet<>();
-	private Set<Contract> contracts = new HashSet<>();
+	private VehicleResponseDTO vehicle;
 
 	public InventoryItemResponseDTO() {
 	}
@@ -34,53 +28,79 @@ public class InventoryItemResponseDTO {
 		this.supplier = inventoryItem.getSupplier();
 		this.licensePlate = inventoryItem.getLicensePlate();
 		this.chassis = inventoryItem.getChassis();
-		this.vehicle = inventoryItem.getVehicle();
-		this.inventoryItemCommitments = inventoryItem.getInventoryItemCommitments();
-		this.contracts = inventoryItem.getContracts();
+		this.vehicle = Mapper.modelMapper(inventoryItem.getVehicle(), VehicleResponseDTO.class);
 	}
 
 	public String getId() {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public LocalDate getStockEntryDate() {
 		return stockEntryDate;
+	}
+
+	public void setStockEntryDate(LocalDate stockEntryDate) {
+		this.stockEntryDate = stockEntryDate;
 	}
 
 	public LocalDate getStockExitDate() {
 		return stockExitDate;
 	}
 
+	public void setStockExitDate(LocalDate stockExitDate) {
+		this.stockExitDate = stockExitDate;
+	}
+
 	public Double getAcquisitionPrice() {
 		return acquisitionPrice;
+	}
+
+	public void setAcquisitionPrice(Double acquisitionPrice) {
+		this.acquisitionPrice = acquisitionPrice;
 	}
 
 	public Double getProfitMargin() {
 		return profitMargin;
 	}
 
+	public void setProfitMargin(Double profitMargin) {
+		this.profitMargin = profitMargin;
+	}
+
 	public String getSupplier() {
 		return supplier;
+	}
+
+	public void setSupplier(String supplier) {
+		this.supplier = supplier;
 	}
 
 	public String getLicensePlate() {
 		return licensePlate;
 	}
 
+	public void setLicensePlate(String licensePlate) {
+		this.licensePlate = licensePlate;
+	}
+
 	public String getChassis() {
 		return chassis;
 	}
 
-	public Vehicle getVehicle() {
+	public void setChassis(String chassis) {
+		this.chassis = chassis;
+	}
+
+	public VehicleResponseDTO getVehicle() {
 		return vehicle;
 	}
 
-	public Set<InventoryItemCommitment> getInventoryItemCommitments() {
-		return inventoryItemCommitments;
-	}
-
-	public Set<Contract> getContracts() {
-		return contracts;
+	public void setVehicle(VehicleResponseDTO vehicle) {
+		this.vehicle = vehicle;
 	}
 
 }

@@ -14,7 +14,9 @@ spring:
   profiles:
     active: test
   jpa:
-    open-in-view: false
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
     show-sql: false
   datasource:
     username: ${DB_USERNAME}

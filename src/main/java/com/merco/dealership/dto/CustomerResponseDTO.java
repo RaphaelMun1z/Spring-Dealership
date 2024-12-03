@@ -1,13 +1,8 @@
 package com.merco.dealership.dto;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.merco.dealership.entities.Appointment;
 import com.merco.dealership.entities.Customer;
-import com.merco.dealership.entities.CustomerAddressMapping;
-import com.merco.dealership.entities.Sale;
 import com.merco.dealership.entities.enums.ClientType;
 
 public class CustomerResponseDTO {
@@ -20,9 +15,6 @@ public class CustomerResponseDTO {
 	private LocalDate registrationDate;
 	private ClientType clientType;
 	private Boolean validCnh;
-	private Set<CustomerAddressMapping> customerAddressesMapping = new HashSet<>();
-	private Set<Appointment> appointments = new HashSet<>();
-	private Set<Sale> sales = new HashSet<>();
 
 	public CustomerResponseDTO() {
 	}
@@ -37,57 +29,78 @@ public class CustomerResponseDTO {
 		this.registrationDate = customer.getRegistrationDate();
 		this.clientType = customer.getClientType();
 		this.validCnh = customer.getValidCnh();
-		this.customerAddressesMapping = customer.getCustomerAddressesMapping();
-		this.appointments = customer.getAppointments();
-		this.sales = customer.getSales();
 	}
 
 	public String getId() {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getCpf() {
 		return cpf;
 	}
 
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
 	public String getEmail() {
 		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPhone() {
 		return phone;
 	}
 
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	public LocalDate getBirthDate() {
 		return birthDate;
+	}
+
+	public void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
 	}
 
 	public LocalDate getRegistrationDate() {
 		return registrationDate;
 	}
 
+	public void setRegistrationDate(LocalDate registrationDate) {
+		this.registrationDate = registrationDate;
+	}
+
 	public ClientType getClientType() {
 		return clientType;
+	}
+
+	public void setClientType(ClientType clientType) {
+		this.clientType = clientType;
 	}
 
 	public Boolean getValidCnh() {
 		return validCnh;
 	}
 
-	public Set<CustomerAddressMapping> getCustomerAddressesMapping() {
-		return customerAddressesMapping;
-	}
-
-	public Set<Appointment> getAppointments() {
-		return appointments;
-	}
-
-	public Set<Sale> getSales() {
-		return sales;
+	public void setValidCnh(Boolean validCnh) {
+		this.validCnh = validCnh;
 	}
 
 }

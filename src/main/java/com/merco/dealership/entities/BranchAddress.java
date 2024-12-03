@@ -2,6 +2,8 @@ package com.merco.dealership.entities;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -13,6 +15,7 @@ import jakarta.persistence.UniqueConstraint;
 public class BranchAddress extends Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnore
 	@OneToOne(mappedBy = "address")
 	private Branch branch;
 

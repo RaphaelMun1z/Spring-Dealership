@@ -2,11 +2,8 @@ package com.merco.dealership.dto;
 
 import java.time.LocalDate;
 
-import com.merco.dealership.entities.Contract;
-import com.merco.dealership.entities.Customer;
 import com.merco.dealership.entities.Sale;
-import com.merco.dealership.entities.Seller;
-import com.merco.dealership.entities.Vehicle;
+import com.merco.dealership.mapper.Mapper;
 
 public class SaleResponseDTO {
 	private String id;
@@ -17,10 +14,9 @@ public class SaleResponseDTO {
 	private String paymentMethod;
 	private int installmentsNumber;
 	private String receipt;
-	private Seller seller;
-	private Customer customer;
-	private Contract contract;
-	private Vehicle vehicle;
+	private SellerResponseDTO seller;
+	private CustomerResponseDTO customer;
+	private InventoryItemResponseDTO inventoryItem;
 
 	public SaleResponseDTO() {
 	}
@@ -34,58 +30,97 @@ public class SaleResponseDTO {
 		this.paymentMethod = sale.getPaymentMethod();
 		this.installmentsNumber = sale.getInstallmentsNumber();
 		this.receipt = sale.getReceipt();
-		this.seller = sale.getSeller();
-		this.customer = sale.getCustomer();
-		this.contract = sale.getContract();
-		this.vehicle = sale.getVehicle();
+		this.seller = Mapper.modelMapper(sale.getSeller(), SellerResponseDTO.class);
+		this.customer = Mapper.modelMapper(sale.getCustomer(), CustomerResponseDTO.class);
+		this.inventoryItem = Mapper.modelMapper(sale.getInventoryItem(), InventoryItemResponseDTO.class);
 	}
 
 	public String getId() {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public LocalDate getSaleDate() {
 		return saleDate;
+	}
+
+	public void setSaleDate(LocalDate saleDate) {
+		this.saleDate = saleDate;
 	}
 
 	public Double getGrossAmount() {
 		return grossAmount;
 	}
 
+	public void setGrossAmount(Double grossAmount) {
+		this.grossAmount = grossAmount;
+	}
+
 	public Double getNetAmount() {
 		return netAmount;
+	}
+
+	public void setNetAmount(Double netAmount) {
+		this.netAmount = netAmount;
 	}
 
 	public Double getAppliedDiscount() {
 		return appliedDiscount;
 	}
 
+	public void setAppliedDiscount(Double appliedDiscount) {
+		this.appliedDiscount = appliedDiscount;
+	}
+
 	public String getPaymentMethod() {
 		return paymentMethod;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 
 	public int getInstallmentsNumber() {
 		return installmentsNumber;
 	}
 
+	public void setInstallmentsNumber(int installmentsNumber) {
+		this.installmentsNumber = installmentsNumber;
+	}
+
 	public String getReceipt() {
 		return receipt;
 	}
 
-	public Seller getSeller() {
+	public void setReceipt(String receipt) {
+		this.receipt = receipt;
+	}
+
+	public SellerResponseDTO getSeller() {
 		return seller;
 	}
 
-	public Customer getCustomer() {
+	public void setSeller(SellerResponseDTO seller) {
+		this.seller = seller;
+	}
+
+	public CustomerResponseDTO getCustomer() {
 		return customer;
 	}
 
-	public Contract getContract() {
-		return contract;
+	public void setCustomer(CustomerResponseDTO customer) {
+		this.customer = customer;
 	}
 
-	public Vehicle getVehicle() {
-		return vehicle;
+	public InventoryItemResponseDTO getInventoryItem() {
+		return inventoryItem;
+	}
+
+	public void setInventoryItem(InventoryItemResponseDTO inventoryItem) {
+		this.inventoryItem = inventoryItem;
 	}
 
 }

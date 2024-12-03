@@ -116,12 +116,12 @@ public class TestConfig implements CommandLineRunner {
 		InventoryItem inventoryItem1 = new InventoryItem(null, vehicle1, LocalDate.of(2024, 11, 20), null, 80000.0,
 				0.15, "Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456");
 
-		Sale sale1 = new Sale(null, seller1, customer1, vehicle1, LocalDate.of(1990, 1, 1), 25000.0, 24000.0, 1000.0,
-				"Credit Card", 12, "RC123456");
+		Sale sale1 = new Sale(null, seller1, customer1, inventoryItem1, LocalDate.of(1990, 1, 1), 25000.0, 24000.0,
+				1000.0, "Credit Card", 12, "RC123456");
 
-		Contract contract1 = new Contract(null, "CN12345", inventoryItem1, sale1, customer1, "Sale",
-				LocalDate.of(2024, 11, 29), LocalDate.of(2024, 12, 15), 95000.0, PaymentTerms.PIX,
-				ContractStatus.SIGNED, "None", "contract_attachment.pdf");
+		Contract contract1 = new Contract(null, "CN12345", sale1, "Sale", LocalDate.of(2024, 11, 29),
+				LocalDate.of(2024, 12, 15), 95000.0, PaymentTerms.PIX, ContractStatus.SIGNED, "None",
+				"contract_attachment.pdf");
 
 		Appointment appointment1 = new Appointment(null, LocalDate.of(2024, 12, 1), AppointmentType.TEST_DRIVE,
 				AppointmentStatus.PENDING, customer1, seller1);
@@ -143,6 +143,8 @@ public class TestConfig implements CommandLineRunner {
 		inventoryRepository.save(inventoryItem1);
 		saleRepository.save(sale1);
 		contractRepository.save(contract1);
+		sale1.setContract(contract1);
+		saleRepository.save(sale1);
 		appointmentRepository.save(appointment1);
 		branchAddressRepository.save(branchAddress1);
 		branchRepository.save(branch1);

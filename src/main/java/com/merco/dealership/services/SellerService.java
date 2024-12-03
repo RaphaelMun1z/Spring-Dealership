@@ -2,7 +2,6 @@ package com.merco.dealership.services;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,7 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.dto.SellerResponseDTO;
 import com.merco.dealership.entities.Seller;
+import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.SellerRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
@@ -25,17 +26,13 @@ public class SellerService {
 	@Autowired
 	private SellerRepository repository;
 
-	public List<Seller> findAllCached() {
-		return findAll();
+	public List<SellerResponseDTO> findAll() {
+		return Mapper.modelMapperList(repository.findAll(), SellerResponseDTO.class);
 	}
 
-	public List<Seller> findAll() {
-		return repository.findAll();
-	}
-
-	public Seller findById(String id) {
-		Optional<Seller> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException("Seller", id));
+	public SellerResponseDTO findById(String id) {
+		Seller seller = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return Mapper.modelMapper(seller, SellerResponseDTO.class);
 	}
 
 	@Transactional

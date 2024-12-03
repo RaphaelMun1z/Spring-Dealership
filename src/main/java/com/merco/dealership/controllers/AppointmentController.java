@@ -1,7 +1,6 @@
 package com.merco.dealership.controllers;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,19 +36,12 @@ public class AppointmentController {
 
 	@GetMapping
 	public ResponseEntity<List<AppointmentResponseDTO>> findAll() {
-		List<Appointment> list = service.findAllCached();
-		List<AppointmentResponseDTO> Appointments = new ArrayList<>();
-
-		for (Appointment Appointment : list) {
-			Appointments.add(new AppointmentResponseDTO(Appointment));
-		}
-		return ResponseEntity.ok().body(Appointments);
+		return ResponseEntity.ok().body(service.findAll());
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Appointment> findById(@PathVariable String id) {
-		Appointment obj = service.findById(id);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<AppointmentResponseDTO> findById(@PathVariable String id) {
+		return ResponseEntity.ok().body(service.findById(id));
 	}
 
 	@PostMapping

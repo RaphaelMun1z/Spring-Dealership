@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -54,21 +55,22 @@ public class Sale implements Serializable {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
+	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
 	@NotNull(message = "Required field")
-	@ManyToOne
-	@JoinColumn(name = "vehicle_id")
-	private Vehicle vehicle;
+	@OneToOne
+	@JoinColumn(name = "inventory_item_id")
+	private InventoryItem inventoryItem;
 
 	public Sale() {
 	}
 
 	public Sale(String id, @NotNull(message = "Required field") Seller seller,
 			@NotNull(message = "Required field") Customer customer,
-			@NotNull(message = "Required field") Vehicle vehicle,
+			@NotNull(message = "Required field") InventoryItem inventoryItem,
 			@NotNull(message = "Required field") LocalDate saleDate,
 			@NotNull(message = "Required field") Double grossAmount, Double netAmount, Double appliedDiscount,
 			@NotNull(message = "Required field") String paymentMethod, int installmentsNumber,
@@ -77,7 +79,7 @@ public class Sale implements Serializable {
 		this.id = id;
 		this.seller = seller;
 		this.customer = customer;
-		this.vehicle = vehicle;
+		this.inventoryItem = inventoryItem;
 		this.saleDate = saleDate;
 		this.grossAmount = grossAmount;
 		this.netAmount = netAmount;
@@ -95,12 +97,12 @@ public class Sale implements Serializable {
 		this.id = id;
 	}
 
-	public Vehicle getVehicle() {
-		return vehicle;
+	public InventoryItem getInventoryItem() {
+		return inventoryItem;
 	}
 
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
+	public void setInventoryItem(InventoryItem inventoryItem) {
+		this.inventoryItem = inventoryItem;
 	}
 
 	public Customer getCustomer() {

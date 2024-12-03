@@ -1,7 +1,6 @@
 package com.merco.dealership.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,7 +8,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.dto.CustomerAddressResponseDTO;
 import com.merco.dealership.entities.CustomerAddress;
+import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.CustomerAddressRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
@@ -23,17 +24,13 @@ public class CustomerAddressService {
 	@Autowired
 	private CustomerAddressRepository repository;
 
-	public List<CustomerAddress> findAllCached() {
-		return findAll();
+	public List<CustomerAddressResponseDTO> findAll() {
+		return Mapper.modelMapperList(repository.findAll(), CustomerAddressResponseDTO.class);
 	}
 
-	public List<CustomerAddress> findAll() {
-		return repository.findAll();
-	}
-
-	public CustomerAddress findById(String id) {
-		Optional<CustomerAddress> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+	public CustomerAddressResponseDTO findById(String id) {
+		CustomerAddress customer = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return Mapper.modelMapper(customer, CustomerAddressResponseDTO.class);
 	}
 
 	@Transactional

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.merco.dealership.entities.enums.FuelType;
 import com.merco.dealership.entities.enums.TransmissionType;
 import com.merco.dealership.entities.enums.VehicleAvailability;
@@ -72,6 +73,7 @@ public class Vehicle implements Serializable {
 	@NotNull(message = "Required field")
 	private String location;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "vehicle")
 	private Set<InventoryItem> inventoryItems = new HashSet<>();
 

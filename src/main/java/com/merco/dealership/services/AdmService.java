@@ -1,7 +1,6 @@
 package com.merco.dealership.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,7 +8,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.dto.AdmResponseDTO;
 import com.merco.dealership.entities.Adm;
+import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.AdmRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
@@ -23,17 +24,13 @@ public class AdmService {
 	@Autowired
 	private AdmRepository repository;
 
-	public List<Adm> findAllCached() {
-		return findAll();
+	public List<AdmResponseDTO> findAll() {
+		return Mapper.modelMapperList(repository.findAll(), AdmResponseDTO.class);
 	}
 
-	public List<Adm> findAll() {
-		return repository.findAll();
-	}
-
-	public Adm findById(String id) {
-		Optional<Adm> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+	public AdmResponseDTO findById(String id) {
+		Adm adm = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		return Mapper.modelMapper(adm, AdmResponseDTO.class);
 	}
 
 	@Transactional

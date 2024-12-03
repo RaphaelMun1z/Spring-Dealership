@@ -1,7 +1,6 @@
 package com.merco.dealership.controllers;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,19 +36,12 @@ public class BranchController {
 
 	@GetMapping
 	public ResponseEntity<List<BranchResponseDTO>> findAll() {
-		List<Branch> list = service.findAllCached();
-		List<BranchResponseDTO> Branchs = new ArrayList<>();
-
-		for (Branch Branch : list) {
-			Branchs.add(new BranchResponseDTO(Branch));
-		}
-		return ResponseEntity.ok().body(Branchs);
+		return ResponseEntity.ok().body(service.findAll());
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Branch> findById(@PathVariable String id) {
-		Branch obj = service.findById(id);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<BranchResponseDTO> findById(@PathVariable String id) {
+		return ResponseEntity.ok().body(service.findById(id));
 	}
 
 	@PostMapping

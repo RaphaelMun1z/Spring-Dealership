@@ -1,24 +1,22 @@
 package com.merco.dealership.dto;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.merco.dealership.entities.Appointment;
-import com.merco.dealership.entities.Customer;
-import com.merco.dealership.entities.InventoryItemCommitment;
-import com.merco.dealership.entities.Seller;
 import com.merco.dealership.entities.enums.AppointmentStatus;
 import com.merco.dealership.entities.enums.AppointmentType;
+import com.merco.dealership.mapper.Mapper;
 
 public class AppointmentResponseDTO {
 	private String id;
 	private LocalDate date;
 	private AppointmentType appointmentType;
 	private AppointmentStatus appointmentStatus;
-	private Customer customer;
-	private Seller seller;
-	private Set<InventoryItemCommitment> inventoryItemCommitments = new HashSet<>();
+	private CustomerResponseDTO customer;
+	private SellerResponseDTO seller;
+	private List<InventoryItemResponseDTO> inventoryItemCommitments = new ArrayList<>();
 
 	public AppointmentResponseDTO() {
 	}
@@ -28,37 +26,66 @@ public class AppointmentResponseDTO {
 		this.date = appointment.getDate();
 		this.appointmentType = appointment.getAppointmentType();
 		this.appointmentStatus = appointment.getAppointmentStatus();
-		this.customer = appointment.getCustomer();
-		this.seller = appointment.getSeller();
-		this.inventoryItemCommitments = appointment.getInventoryItemCommitments();
+		this.customer = Mapper.modelMapper(appointment.getCustomer(), CustomerResponseDTO.class);
+		this.seller = Mapper.modelMapper(appointment.getSeller(), SellerResponseDTO.class);
+		this.inventoryItemCommitments = Mapper.modelMapperList(appointment.getInventoryItemCommitments(),
+				InventoryItemResponseDTO.class);
 	}
 
 	public String getId() {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public LocalDate getDate() {
 		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 
 	public AppointmentType getAppointmentType() {
 		return appointmentType;
 	}
 
+	public void setAppointmentType(AppointmentType appointmentType) {
+		this.appointmentType = appointmentType;
+	}
+
 	public AppointmentStatus getAppointmentStatus() {
 		return appointmentStatus;
 	}
 
-	public Customer getCustomer() {
+	public void setAppointmentStatus(AppointmentStatus appointmentStatus) {
+		this.appointmentStatus = appointmentStatus;
+	}
+
+	public CustomerResponseDTO getCustomer() {
 		return customer;
 	}
 
-	public Seller getSeller() {
+	public void setCustomer(CustomerResponseDTO customer) {
+		this.customer = customer;
+	}
+
+	public SellerResponseDTO getSeller() {
 		return seller;
 	}
 
-	public Set<InventoryItemCommitment> getInventoryItemCommitments() {
+	public void setSeller(SellerResponseDTO seller) {
+		this.seller = seller;
+	}
+
+	public List<InventoryItemResponseDTO> getInventoryItemCommitments() {
 		return inventoryItemCommitments;
+	}
+
+	public void setInventoryItemCommitments(List<InventoryItemResponseDTO> inventoryItemCommitments) {
+		this.inventoryItemCommitments = inventoryItemCommitments;
 	}
 
 }
