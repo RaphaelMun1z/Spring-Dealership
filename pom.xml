@@ -88,8 +88,21 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+			 <scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.flywaydb</groupId>
+		    <artifactId>flyway-core</artifactId>
+		</dependency>
+				
+		<dependency>
+		    <groupId>org.flywaydb</groupId>
+		    <artifactId>flyway-database-postgresql</artifactId>
+		    <scope>runtime</scope>
 		</dependency>
 
+		
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>java-dotenv</artifactId>
@@ -101,6 +114,8 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		
+		
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+  profile: dev
+  hikari:
+    minimum-idle: 5
+    maximum-pool-size: 10
+    idle-timeout: 30000
+    connection-timeout: 30000
+  jpa:
+    open-in-view: true
+    show-sql: false
+    database-platform:
+      org:
+        hibernate:
+          dialect: PostgreSQLDialect
+    properties:
+      hibernate:
+        jdbc:
+          lob: 
+            non_contextual_creation: true
+        ddl-auto: none
+        format_sql: true
+  flyway:
+    baseline-on-migrate: true
