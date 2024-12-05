@@ -48,7 +48,7 @@ public class InventoryItemController {
 	public ResponseEntity<InventoryItemResponseDTO> insert(@RequestBody @Valid InventoryItem obj) {
 		obj = service.create(obj);
 		InventoryItemResponseDTO InventoryItem = new InventoryItemResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(InventoryItem.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(InventoryItem.getResourceId())
 				.toUri();
 		return ResponseEntity.created(uri).body(InventoryItem);
 	}

@@ -1,8 +1,10 @@
 package com.merco.dealership.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Seller;
 
-public class SellerRegisterRequestDTO {
+public class SellerRegisterRequestDTO  extends RepresentationModel<SellerResponseDTO> {
 	private String name;
 	private String phone;
 	private String email;

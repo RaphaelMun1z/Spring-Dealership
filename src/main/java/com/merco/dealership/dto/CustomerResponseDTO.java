@@ -2,10 +2,12 @@ package com.merco.dealership.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Customer;
 import com.merco.dealership.entities.enums.ClientType;
 
-public class CustomerResponseDTO {
+public class CustomerResponseDTO  extends RepresentationModel<CustomerResponseDTO> {
 	private String id;
 	private String name;
 	private String cpf;
@@ -31,7 +33,7 @@ public class CustomerResponseDTO {
 		this.validCnh = customer.getValidCnh();
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

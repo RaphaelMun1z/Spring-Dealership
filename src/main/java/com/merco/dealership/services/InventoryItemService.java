@@ -1,5 +1,8 @@
 package com.merco.dealership.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.controllers.InventoryItemController;
 import com.merco.dealership.dto.InventoryItemResponseDTO;
 import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.mapper.Mapper;
@@ -25,12 +29,18 @@ public class InventoryItemService {
 	private InventoryItemRepository repository;
 
 	public List<InventoryItemResponseDTO> findAll() {
-		return Mapper.modelMapperList(repository.findAll(), InventoryItemResponseDTO.class);
+		List<InventoryItemResponseDTO> inventoryItemsDTO = Mapper.modelMapperList(repository.findAll(),
+				InventoryItemResponseDTO.class);
+		inventoryItemsDTO.stream()
+				.forEach(i -> i.add(linkTo(methodOn(InventoryItemController.class).findById(i.getResourceId())).withSelfRel()));
+		return inventoryItemsDTO;
 	}
 
 	public InventoryItemResponseDTO findById(String id) {
 		InventoryItem inventoryItem = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		return Mapper.modelMapper(inventoryItem, InventoryItemResponseDTO.class);
+		InventoryItemResponseDTO inventoryItemDTO = Mapper.modelMapper(inventoryItem, InventoryItemResponseDTO.class);
+		inventoryItemDTO.add(linkTo(methodOn(InventoryItemController.class).findById(id)).withSelfRel());
+		return inventoryItemDTO;
 	}
 
 	@Transactional

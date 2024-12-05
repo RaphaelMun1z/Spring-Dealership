@@ -1,5 +1,8 @@
 package com.merco.dealership.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.controllers.SaleController;
 import com.merco.dealership.dto.SaleResponseDTO;
 import com.merco.dealership.entities.Sale;
 import com.merco.dealership.mapper.Mapper;
@@ -25,12 +29,16 @@ public class SaleService {
 	private SaleRepository repository;
 
 	public List<SaleResponseDTO> findAll() {
-		return Mapper.modelMapperList(repository.findAll(), SaleResponseDTO.class);
+		List<SaleResponseDTO> salesDTO = Mapper.modelMapperList(repository.findAll(), SaleResponseDTO.class);
+		salesDTO.stream().forEach(i -> i.add(linkTo(methodOn(SaleController.class).findById(i.getResourceId())).withSelfRel()));
+		return salesDTO;
 	}
 
 	public SaleResponseDTO findById(String id) {
 		Sale sale = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		return Mapper.modelMapper(sale, SaleResponseDTO.class);
+		SaleResponseDTO saleDTO = Mapper.modelMapper(sale, SaleResponseDTO.class);
+		saleDTO.add(linkTo(methodOn(SaleController.class).findById(id)).withSelfRel());
+		return saleDTO;
 	}
 
 	@Transactional

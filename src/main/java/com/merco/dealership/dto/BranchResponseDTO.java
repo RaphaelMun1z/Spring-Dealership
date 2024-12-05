@@ -2,10 +2,12 @@ package com.merco.dealership.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Branch;
 import com.merco.dealership.mapper.Mapper;
 
-public class BranchResponseDTO {
+public class BranchResponseDTO extends RepresentationModel<BranchResponseDTO> {
 	private String id;
 	private String name;
 	private String phoneNumber;
@@ -35,7 +37,7 @@ public class BranchResponseDTO {
 		this.address = Mapper.modelMapper(branch.getAddress(), BranchAddressResponseDTO.class);
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

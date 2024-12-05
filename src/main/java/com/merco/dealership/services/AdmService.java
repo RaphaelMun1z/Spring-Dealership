@@ -1,5 +1,8 @@
 package com.merco.dealership.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.controllers.AdmController;
 import com.merco.dealership.dto.AdmResponseDTO;
 import com.merco.dealership.entities.Adm;
 import com.merco.dealership.mapper.Mapper;
@@ -25,12 +29,16 @@ public class AdmService {
 	private AdmRepository repository;
 
 	public List<AdmResponseDTO> findAll() {
-		return Mapper.modelMapperList(repository.findAll(), AdmResponseDTO.class);
+		List<AdmResponseDTO> admsDTO = Mapper.modelMapperList(repository.findAll(), AdmResponseDTO.class);
+		admsDTO.stream().forEach(i -> i.add(linkTo(methodOn(AdmController.class).findById(i.getResourceId())).withSelfRel()));
+		return admsDTO;
 	}
 
 	public AdmResponseDTO findById(String id) {
 		Adm adm = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		return Mapper.modelMapper(adm, AdmResponseDTO.class);
+		AdmResponseDTO admResponse = Mapper.modelMapper(adm, AdmResponseDTO.class);
+		admResponse.add(linkTo(methodOn(AdmController.class).findById(id)).withSelfRel());
+		return admResponse;
 	}
 
 	@Transactional

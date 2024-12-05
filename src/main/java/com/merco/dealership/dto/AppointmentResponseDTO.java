@@ -4,12 +4,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Appointment;
 import com.merco.dealership.entities.enums.AppointmentStatus;
 import com.merco.dealership.entities.enums.AppointmentType;
 import com.merco.dealership.mapper.Mapper;
 
-public class AppointmentResponseDTO {
+public class AppointmentResponseDTO extends RepresentationModel<AppointmentResponseDTO> {
 	private String id;
 	private LocalDate date;
 	private AppointmentType appointmentType;
@@ -32,7 +34,7 @@ public class AppointmentResponseDTO {
 				InventoryItemResponseDTO.class);
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

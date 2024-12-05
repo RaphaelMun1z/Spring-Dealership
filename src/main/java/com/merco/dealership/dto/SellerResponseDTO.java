@@ -1,8 +1,10 @@
 package com.merco.dealership.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Seller;
 
-public class SellerResponseDTO {
+public class SellerResponseDTO  extends RepresentationModel<SellerResponseDTO> {
 	private String id;
 	private String name;
 	private String phone;
@@ -18,7 +20,7 @@ public class SellerResponseDTO {
 		this.email = seller.getEmail();
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

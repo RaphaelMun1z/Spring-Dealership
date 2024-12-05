@@ -49,7 +49,7 @@ public class VehicleSpecificDetailController {
 		obj = service.create(obj);
 		VehicleSpecificDetailResponseDTO VehicleSpecificDetail = new VehicleSpecificDetailResponseDTO(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(VehicleSpecificDetail.getId()).toUri();
+				.buildAndExpand(VehicleSpecificDetail.getResourceId()).toUri();
 		return ResponseEntity.created(uri).body(VehicleSpecificDetail);
 	}
 

@@ -1,8 +1,10 @@
 package com.merco.dealership.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.BranchAddress;
 
-public class BranchAddressResponseDTO {
+public class BranchAddressResponseDTO extends RepresentationModel<BranchAddressResponseDTO> {
 	private String id;
 	private String street;
 	private int number;
@@ -28,7 +30,7 @@ public class BranchAddressResponseDTO {
 		this.complement = branchAddress.getComplement();
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

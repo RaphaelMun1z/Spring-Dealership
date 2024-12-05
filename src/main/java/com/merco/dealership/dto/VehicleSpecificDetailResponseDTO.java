@@ -1,8 +1,10 @@
 package com.merco.dealership.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.VehicleSpecificDetail;
 
-public class VehicleSpecificDetailResponseDTO {
+public class VehicleSpecificDetailResponseDTO extends RepresentationModel<VehicleSpecificDetailResponseDTO> {
 	private String id;
 	private String detail;
 
@@ -14,7 +16,7 @@ public class VehicleSpecificDetailResponseDTO {
 		this.detail = vehicleSpecificDetail.getDetail();
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

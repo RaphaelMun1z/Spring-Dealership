@@ -48,7 +48,7 @@ public class BranchAddressController {
 	public ResponseEntity<BranchAddressResponseDTO> insert(@RequestBody @Valid BranchAddress obj) {
 		obj = service.create(obj);
 		BranchAddressResponseDTO BranchAddress = new BranchAddressResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(BranchAddress.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(BranchAddress.getResourceId())
 				.toUri();
 		return ResponseEntity.created(uri).body(BranchAddress);
 	}

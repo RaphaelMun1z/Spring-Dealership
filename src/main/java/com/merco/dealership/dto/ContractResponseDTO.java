@@ -2,12 +2,14 @@ package com.merco.dealership.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Contract;
 import com.merco.dealership.entities.enums.ContractStatus;
 import com.merco.dealership.entities.enums.PaymentTerms;
 import com.merco.dealership.mapper.Mapper;
 
-public class ContractResponseDTO {
+public class ContractResponseDTO  extends RepresentationModel<ContractResponseDTO> {
 	private String id;
 	private String contractNumber;
 	private String contractType;
@@ -37,7 +39,7 @@ public class ContractResponseDTO {
 		this.sale = Mapper.modelMapper(contract.getSale(), SaleResponseDTO.class);
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

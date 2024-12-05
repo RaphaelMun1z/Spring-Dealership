@@ -1,5 +1,8 @@
 package com.merco.dealership.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.controllers.CustomerController;
 import com.merco.dealership.dto.CustomerResponseDTO;
 import com.merco.dealership.entities.Customer;
 import com.merco.dealership.mapper.Mapper;
@@ -25,12 +29,18 @@ public class CustomerService {
 	private CustomerRepository repository;
 
 	public List<CustomerResponseDTO> findAll() {
-		return Mapper.modelMapperList(repository.findAll(), CustomerResponseDTO.class);
+		List<CustomerResponseDTO> customersDTO = Mapper.modelMapperList(repository.findAll(),
+				CustomerResponseDTO.class);
+		customersDTO.stream()
+				.forEach(i -> i.add(linkTo(methodOn(CustomerController.class).findById(i.getResourceId())).withSelfRel()));
+		return customersDTO;
 	}
 
 	public CustomerResponseDTO findById(String id) {
 		Customer customer = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		return Mapper.modelMapper(customer, CustomerResponseDTO.class);
+		CustomerResponseDTO customerDTO = Mapper.modelMapper(customer, CustomerResponseDTO.class);
+		customerDTO.add(linkTo(methodOn(CustomerController.class).findById(id)).withSelfRel());
+		return customerDTO;
 	}
 
 	@Transactional

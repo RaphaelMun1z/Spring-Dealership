@@ -2,10 +2,12 @@ package com.merco.dealership.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Sale;
 import com.merco.dealership.mapper.Mapper;
 
-public class SaleResponseDTO {
+public class SaleResponseDTO  extends RepresentationModel<SaleResponseDTO> {
 	private String id;
 	private LocalDate saleDate;
 	private Double grossAmount;
@@ -35,7 +37,7 @@ public class SaleResponseDTO {
 		this.inventoryItem = Mapper.modelMapper(sale.getInventoryItem(), InventoryItemResponseDTO.class);
 	}
 
-	public String getId() {
+	public String getResourceId() {
 		return id;
 	}
 

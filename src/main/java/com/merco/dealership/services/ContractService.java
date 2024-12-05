@@ -1,5 +1,8 @@
 package com.merco.dealership.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.controllers.ContractController;
 import com.merco.dealership.dto.ContractResponseDTO;
 import com.merco.dealership.entities.Contract;
 import com.merco.dealership.mapper.Mapper;
@@ -25,12 +29,18 @@ public class ContractService {
 	private ContractRepository repository;
 
 	public List<ContractResponseDTO> findAll() {
-		return Mapper.modelMapperList(repository.findAll(), ContractResponseDTO.class);
+		List<ContractResponseDTO> contractsDTO = Mapper.modelMapperList(repository.findAll(),
+				ContractResponseDTO.class);
+		contractsDTO.stream()
+				.forEach(i -> i.add(linkTo(methodOn(ContractController.class).findById(i.getResourceId())).withSelfRel()));
+		return contractsDTO;
 	}
 
 	public ContractResponseDTO findById(String id) {
 		Contract contract = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		return Mapper.modelMapper(contract, ContractResponseDTO.class);
+		ContractResponseDTO contractDTO = Mapper.modelMapper(contract, ContractResponseDTO.class);
+		contractDTO.add(linkTo(methodOn(ContractController.class).findById(id)).withSelfRel());
+		return contractDTO;
 	}
 
 	@Transactional

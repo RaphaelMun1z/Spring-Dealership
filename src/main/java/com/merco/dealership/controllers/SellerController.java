@@ -48,7 +48,7 @@ public class SellerController {
 	public ResponseEntity<SellerResponseDTO> insert(@RequestBody @Valid Seller obj) {
 		obj = service.create(obj);
 		SellerResponseDTO Seller = new SellerResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Seller.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Seller.getResourceId()).toUri();
 		return ResponseEntity.created(uri).body(Seller);
 	}
 

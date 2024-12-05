@@ -48,7 +48,7 @@ public class CustomerController {
 	public ResponseEntity<CustomerResponseDTO> insert(@RequestBody @Valid Customer obj) {
 		obj = service.create(obj);
 		CustomerResponseDTO Customer = new CustomerResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Customer.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Customer.getResourceId())
 				.toUri();
 		return ResponseEntity.created(uri).body(Customer);
 	}

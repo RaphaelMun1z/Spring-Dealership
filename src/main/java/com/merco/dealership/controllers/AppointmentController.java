@@ -48,7 +48,7 @@ public class AppointmentController {
 	public ResponseEntity<AppointmentResponseDTO> insert(@RequestBody @Valid Appointment obj) {
 		obj = service.create(obj);
 		AppointmentResponseDTO Appointment = new AppointmentResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Appointment.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Appointment.getResourceId())
 				.toUri();
 		return ResponseEntity.created(uri).body(Appointment);
 	}

@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.merco.dealership.entities.Vehicle;
 import com.merco.dealership.entities.VehicleImageFile;
 import com.merco.dealership.entities.enums.FuelType;
@@ -16,7 +18,7 @@ import com.merco.dealership.entities.enums.VehicleStatus;
 import com.merco.dealership.entities.enums.VehicleType;
 import com.merco.dealership.mapper.Mapper;
 
-public class VehicleResponseDTO {
+public class VehicleResponseDTO extends RepresentationModel<VehicleResponseDTO> {
 	private String id;
 	private String brand;
 	private String model;

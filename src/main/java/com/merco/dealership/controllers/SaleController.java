@@ -48,7 +48,7 @@ public class SaleController {
 	public ResponseEntity<SaleResponseDTO> insert(@RequestBody @Valid Sale obj) {
 		obj = service.create(obj);
 		SaleResponseDTO Sale = new SaleResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Sale.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Sale.getResourceId()).toUri();
 		return ResponseEntity.created(uri).body(Sale);
 	}
 

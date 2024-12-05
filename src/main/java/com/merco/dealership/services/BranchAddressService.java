@@ -1,5 +1,8 @@
 package com.merco.dealership.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.controllers.BranchAddressController;
 import com.merco.dealership.dto.BranchAddressResponseDTO;
 import com.merco.dealership.entities.BranchAddress;
 import com.merco.dealership.mapper.Mapper;
@@ -25,12 +29,18 @@ public class BranchAddressService {
 	private BranchAddressRepository repository;
 
 	public List<BranchAddressResponseDTO> findAll() {
-		return Mapper.modelMapperList(repository.findAll(), BranchAddressResponseDTO.class);
+		List<BranchAddressResponseDTO> branchesAdressDTO = Mapper.modelMapperList(repository.findAll(),
+				BranchAddressResponseDTO.class);
+		branchesAdressDTO.stream()
+				.forEach(i -> i.add(linkTo(methodOn(BranchAddressController.class).findById(i.getResourceId())).withSelfRel()));
+		return branchesAdressDTO;
 	}
 
 	public BranchAddressResponseDTO findById(String id) {
 		BranchAddress branchAddress = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		return Mapper.modelMapper(branchAddress, BranchAddressResponseDTO.class);
+		BranchAddressResponseDTO branchAddressDTO = Mapper.modelMapper(branchAddress, BranchAddressResponseDTO.class);
+		branchAddressDTO.add(linkTo(methodOn(BranchAddressController.class).findById(id)).withSelfRel());
+		return branchAddressDTO;
 	}
 
 	@Transactional

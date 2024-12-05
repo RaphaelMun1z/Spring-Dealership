@@ -48,7 +48,7 @@ public class ContractController {
 	public ResponseEntity<ContractResponseDTO> insert(@RequestBody @Valid Contract obj) {
 		obj = service.create(obj);
 		ContractResponseDTO Contract = new ContractResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Contract.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(Contract.getResourceId())
 				.toUri();
 		return ResponseEntity.created(uri).body(Contract);
 	}

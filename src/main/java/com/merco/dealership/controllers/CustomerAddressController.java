@@ -48,7 +48,7 @@ public class CustomerAddressController {
 	public ResponseEntity<CustomerAddressResponseDTO> insert(@RequestBody @Valid CustomerAddress obj) {
 		obj = service.create(obj);
 		CustomerAddressResponseDTO CustomerAddress = new CustomerAddressResponseDTO(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(CustomerAddress.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(CustomerAddress.getResourceId())
 				.toUri();
 		return ResponseEntity.created(uri).body(CustomerAddress);
 	}

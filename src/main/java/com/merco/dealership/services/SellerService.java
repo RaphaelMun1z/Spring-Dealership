@@ -1,5 +1,8 @@
 package com.merco.dealership.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merco.dealership.controllers.SellerController;
 import com.merco.dealership.dto.SellerResponseDTO;
 import com.merco.dealership.entities.Seller;
 import com.merco.dealership.mapper.Mapper;
@@ -27,12 +31,17 @@ public class SellerService {
 	private SellerRepository repository;
 
 	public List<SellerResponseDTO> findAll() {
-		return Mapper.modelMapperList(repository.findAll(), SellerResponseDTO.class);
+		List<SellerResponseDTO> sellersDTO = Mapper.modelMapperList(repository.findAll(), SellerResponseDTO.class);
+		sellersDTO.stream()
+				.forEach(i -> i.add(linkTo(methodOn(SellerController.class).findById(i.getResourceId())).withSelfRel()));
+		return sellersDTO;
 	}
 
 	public SellerResponseDTO findById(String id) {
 		Seller seller = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		return Mapper.modelMapper(seller, SellerResponseDTO.class);
+		SellerResponseDTO sellerDTO = Mapper.modelMapper(seller, SellerResponseDTO.class);
+		sellerDTO.add(linkTo(methodOn(SellerController.class).findById(id)).withSelfRel());
+		return sellerDTO;
 	}
 
 	@Transactional
