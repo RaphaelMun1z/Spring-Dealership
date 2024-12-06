@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.merco.dealership.entities.enums.FuelType;
-import com.merco.dealership.entities.enums.TransmissionType;
 import com.merco.dealership.entities.enums.VehicleAvailability;
 import com.merco.dealership.entities.enums.VehicleCategory;
 import com.merco.dealership.entities.enums.VehicleStatus;
@@ -18,13 +17,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "tb_vehicles")
-public class Vehicle implements Serializable {
+public abstract class Vehicle implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -38,10 +42,10 @@ public class Vehicle implements Serializable {
 	private String model;
 
 	@NotNull(message = "Required field")
-	private Integer type = 1;
+	private Integer type;
 
 	@NotNull(message = "Required field")
-	private Integer category = 1;
+	private Integer category;
 
 	@NotNull(message = "Required field")
 	private LocalDate manufactureYear;
@@ -53,25 +57,43 @@ public class Vehicle implements Serializable {
 	private Double mileage;
 
 	@NotNull(message = "Required field")
-	private Integer fuelType = 1;
+	private Double weight;
 
 	@NotNull(message = "Required field")
-	private Integer transmissionType = 1;
+	private Integer fuelType;
+
+	@NotNull(message = "Required field")
+	private Integer numberOfCylinders;
+
+	@NotNull(message = "Required field")
+	private String infotainmentSystem;
+
+	@NotNull(message = "Required field")
+	private Double fuelTankCapacity;
+
+	@NotNull(message = "Required field")
+	private Double enginePower;
+
+	@NotNull(message = "Required field")
+	private Integer passengerCapacity;
 
 	@NotNull(message = "Required field")
 	private Double salePrice;
 
-	private Integer status = 1;
+	private Integer status;
 
-	private Integer availability = 1;
+	private Integer availability;
 
 	@NotNull(message = "Required field")
 	private String description;
 
 	private LocalDate lastUpdate;
 
+	@JsonIgnore
 	@NotNull(message = "Required field")
-	private String location;
+	@ManyToOne
+	@JoinColumn(name = "branch_id")
+	private Branch branch;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "vehicle")
@@ -83,36 +105,49 @@ public class Vehicle implements Serializable {
 	@OneToMany(mappedBy = "vehicle")
 	private Set<VehicleImageFile> images = new HashSet<>();
 
-	public Vehicle() {
-
+	protected Vehicle() {
 	}
 
-	public Vehicle(String id, @NotNull(message = "Required field") String brand,
+	protected Vehicle(String id, @NotNull(message = "Required field") String brand,
 			@NotNull(message = "Required field") String model, @NotNull(message = "Required field") VehicleType type,
-			@NotNull(message = "Required field") VehicleCategory category, LocalDate manufactureYear,
+			@NotNull(message = "Required field") VehicleCategory category,
+			@NotNull(message = "Required field") LocalDate manufactureYear,
 			@NotNull(message = "Required field") String color, @NotNull(message = "Required field") Double mileage,
-			@NotNull(message = "Required field") FuelType fuelType,
-			@NotNull(message = "Required field") TransmissionType transmissionType,
+			@NotNull(message = "Required field") Double weight, @NotNull(message = "Required field") FuelType fuelType,
+			@NotNull(message = "Required field") Integer numberOfCylinders,
+			@NotNull(message = "Required field") String infotainmentSystem,
+			@NotNull(message = "Required field") Double fuelTankCapacity,
+			@NotNull(message = "Required field") Double enginePower,
+			@NotNull(message = "Required field") Integer passengerCapacity,
 			@NotNull(message = "Required field") Double salePrice, VehicleStatus status,
 			VehicleAvailability availability, @NotNull(message = "Required field") String description,
-			LocalDate lastUpdate, @NotNull(message = "Required field") String location) {
+			LocalDate lastUpdate, @NotNull(message = "Required field") Branch branch, Set<InventoryItem> inventoryItems,
+			Set<VehicleConfiguration> specificDetails, Set<VehicleImageFile> images) {
 		super();
 		this.id = id;
 		this.brand = brand;
 		this.model = model;
-		setType(type);
-		setCategory(category);
 		this.manufactureYear = manufactureYear;
 		this.color = color;
 		this.mileage = mileage;
-		setFuelType(fuelType);
-		setTransmissionType(transmissionType);
+		this.weight = weight;
+		this.numberOfCylinders = numberOfCylinders;
+		this.infotainmentSystem = infotainmentSystem;
+		this.fuelTankCapacity = fuelTankCapacity;
+		this.enginePower = enginePower;
+		this.passengerCapacity = passengerCapacity;
 		this.salePrice = salePrice;
-		setStatus(status);
-		setAvailability(availability);
 		this.description = description;
 		this.lastUpdate = lastUpdate;
-		this.location = location;
+		this.branch = branch;
+		this.inventoryItems = inventoryItems;
+		this.specificDetails = specificDetails;
+		this.images = images;
+		setType(type);
+		setCategory(category);
+		setFuelType(fuelType);
+		setStatus(status);
+		setAvailability(availability);
 	}
 
 	public String getId() {
@@ -193,16 +228,6 @@ public class Vehicle implements Serializable {
 		}
 	}
 
-	public TransmissionType getTransmissionType() {
-		return TransmissionType.valueOf(transmissionType);
-	}
-
-	public void setTransmissionType(TransmissionType transmissionType) {
-		if (transmissionType != null) {
-			this.transmissionType = transmissionType.getCode();
-		}
-	}
-
 	public Set<VehicleConfiguration> getSpecificDetails() {
 		return specificDetails;
 	}
@@ -251,12 +276,72 @@ public class Vehicle implements Serializable {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public String getLocation() {
-		return location;
+	public Double getWeight() {
+		return weight;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
+
+	public Integer getNumberOfCylinders() {
+		return numberOfCylinders;
+	}
+
+	public void setNumberOfCylinders(Integer numberOfCylinders) {
+		this.numberOfCylinders = numberOfCylinders;
+	}
+
+	public String getInfotainmentSystem() {
+		return infotainmentSystem;
+	}
+
+	public void setInfotainmentSystem(String infotainmentSystem) {
+		this.infotainmentSystem = infotainmentSystem;
+	}
+
+	public Double getFuelTankCapacity() {
+		return fuelTankCapacity;
+	}
+
+	public void setFuelTankCapacity(Double fuelTankCapacity) {
+		this.fuelTankCapacity = fuelTankCapacity;
+	}
+
+	public Double getEnginePower() {
+		return enginePower;
+	}
+
+	public void setEnginePower(Double enginePower) {
+		this.enginePower = enginePower;
+	}
+
+	public Integer getPassengerCapacity() {
+		return passengerCapacity;
+	}
+
+	public void setPassengerCapacity(Integer passengerCapacity) {
+		this.passengerCapacity = passengerCapacity;
+	}
+
+	public Branch getBranch() {
+		return branch;
+	}
+
+	public void setBranch(Branch branch) {
+		this.branch = branch;
+	}
+
+	public void setInventoryItems(Set<InventoryItem> inventoryItems) {
+		this.inventoryItems = inventoryItems;
+	}
+
+	public void setSpecificDetails(Set<VehicleConfiguration> specificDetails) {
+		this.specificDetails = specificDetails;
+	}
+
+	public void setImages(Set<VehicleImageFile> images) {
+		this.images = images;
 	}
 
 	public Set<VehicleImageFile> getImages() {

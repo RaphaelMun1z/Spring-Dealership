@@ -26,7 +26,7 @@ import jakarta.validation.ConstraintViolationException;
 @Service
 public class VehicleService {
 	@Autowired
-	private VehicleRepository repository;
+	private VehicleRepository<Vehicle> repository;
 
 	public List<VehicleResponseDTO> findAll() {
 		List<VehicleResponseDTO> vehiclesDTO = Mapper.modelMapperList(repository.findAll(), VehicleResponseDTO.class);

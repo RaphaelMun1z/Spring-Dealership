@@ -28,7 +28,7 @@ import jakarta.validation.constraints.Pattern;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "tb_users")
-public class User implements UserDetails {
+public abstract class User implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -58,7 +58,7 @@ public class User implements UserDetails {
 		super();
 	}
 
-	public User(String id, @NotNull(message = "Required field") @Pattern(regexp = "^[A-Z]+(.)*") String name,
+	protected User(String id, @NotNull(message = "Required field") @Pattern(regexp = "^[A-Z]+(.)*") String name,
 			String phone, @NotNull(message = "Required field") @Email(message = "Invalid field value") String email,
 			@NotNull(message = "Required field") String password, UserRole role) {
 		super();

@@ -1,7 +1,7 @@
 package com.merco.dealership.entities.enums;
 
 public enum VehicleType {
-	CAR(1), MOTORCYCLE(2), TRUCK(3), BUS(4), VAN(5), BOAT(6), MOTORHOME(7), BICYCLE(8), OTHERS(9);
+	CAR(1), MOTORCYCLE(2), VAN(3), BUS(4), TRUCK(5), BOAT(6), OTHER_VEHICLE_TYPE(7);
 
 	private int code;
 

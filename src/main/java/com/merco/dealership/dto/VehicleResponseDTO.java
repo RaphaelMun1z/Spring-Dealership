@@ -20,6 +20,12 @@ import com.merco.dealership.mapper.Mapper;
 
 public class VehicleResponseDTO extends RepresentationModel<VehicleResponseDTO> {
 	private String id;
+	private Double weight;
+	private Integer numberOfCylinders;
+	private String infotainmentSystem;
+	private Double fuelTankCapacity;
+	private Double enginePower;
+	private Integer passengerCapacity;
 	private String brand;
 	private String model;
 	private VehicleType type;
@@ -34,7 +40,6 @@ public class VehicleResponseDTO extends RepresentationModel<VehicleResponseDTO> 
 	private VehicleAvailability availability;
 	private String description;
 	private LocalDate lastUpdate;
-	private String location;
 	private List<VehicleSpecificDetailResponseDTO> specificDetails = new ArrayList<>();
 	private Set<VehicleImageFile> images = new HashSet<>();
 
@@ -43,6 +48,12 @@ public class VehicleResponseDTO extends RepresentationModel<VehicleResponseDTO> 
 
 	public VehicleResponseDTO(Vehicle vehicle) {
 		this.id = vehicle.getId();
+		this.weight = vehicle.getWeight();
+		this.numberOfCylinders = vehicle.getNumberOfCylinders();
+		this.infotainmentSystem = vehicle.getInfotainmentSystem();
+		this.fuelTankCapacity = vehicle.getFuelTankCapacity();
+		this.enginePower = vehicle.getEnginePower();
+		this.passengerCapacity = vehicle.getPassengerCapacity();
 		this.brand = vehicle.getBrand();
 		this.model = vehicle.getModel();
 		this.type = vehicle.getType();
@@ -51,13 +62,11 @@ public class VehicleResponseDTO extends RepresentationModel<VehicleResponseDTO> 
 		this.color = vehicle.getColor();
 		this.mileage = vehicle.getMileage();
 		this.fuelType = vehicle.getFuelType();
-		this.transmissionType = vehicle.getTransmissionType();
 		this.salePrice = vehicle.getSalePrice();
 		this.status = vehicle.getStatus();
 		this.availability = vehicle.getAvailability();
 		this.description = vehicle.getDescription();
 		this.lastUpdate = vehicle.getLastUpdate();
-		this.location = vehicle.getLocation();
 		this.specificDetails = Mapper.modelMapperList(vehicle.getSpecificDetails(),
 				VehicleSpecificDetailResponseDTO.class);
 		this.images = vehicle.getImages();
@@ -69,6 +78,54 @@ public class VehicleResponseDTO extends RepresentationModel<VehicleResponseDTO> 
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
+
+	public Integer getNumberOfCylinders() {
+		return numberOfCylinders;
+	}
+
+	public void setNumberOfCylinders(Integer numberOfCylinders) {
+		this.numberOfCylinders = numberOfCylinders;
+	}
+
+	public String getInfotainmentSystem() {
+		return infotainmentSystem;
+	}
+
+	public void setInfotainmentSystem(String infotainmentSystem) {
+		this.infotainmentSystem = infotainmentSystem;
+	}
+
+	public Double getFuelTankCapacity() {
+		return fuelTankCapacity;
+	}
+
+	public void setFuelTankCapacity(Double fuelTankCapacity) {
+		this.fuelTankCapacity = fuelTankCapacity;
+	}
+
+	public Double getEnginePower() {
+		return enginePower;
+	}
+
+	public void setEnginePower(Double enginePower) {
+		this.enginePower = enginePower;
+	}
+
+	public Integer getPassengerCapacity() {
+		return passengerCapacity;
+	}
+
+	public void setPassengerCapacity(Integer passengerCapacity) {
+		this.passengerCapacity = passengerCapacity;
 	}
 
 	public String getBrand() {
@@ -181,14 +238,6 @@ public class VehicleResponseDTO extends RepresentationModel<VehicleResponseDTO> 
 
 	public void setLastUpdate(LocalDate lastUpdate) {
 		this.lastUpdate = lastUpdate;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public List<VehicleSpecificDetailResponseDTO> getSpecificDetails() {
