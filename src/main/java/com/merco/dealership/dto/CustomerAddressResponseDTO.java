@@ -30,7 +30,7 @@ public class CustomerAddressResponseDTO  extends RepresentationModel<CustomerAdd
 		this.complement = customerAddress.getComplement();
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

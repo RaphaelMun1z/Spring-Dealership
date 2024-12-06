@@ -32,7 +32,7 @@ public class CustomerService {
 		List<CustomerResponseDTO> customersDTO = Mapper.modelMapperList(repository.findAll(),
 				CustomerResponseDTO.class);
 		customersDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(CustomerController.class).findById(i.getResourceId())).withSelfRel()));
+				.forEach(i -> i.add(linkTo(methodOn(CustomerController.class).findById(i.getId())).withSelfRel()));
 		return customersDTO;
 	}
 
@@ -44,12 +44,16 @@ public class CustomerService {
 	}
 
 	@Transactional
-	public Customer create(Customer obj) {
+	public CustomerResponseDTO create(Customer obj) {
 		try {
-			Customer Customer = repository.save(obj);
-			return Customer;
+			Customer customer = repository.save(obj);
+			CustomerResponseDTO customerDTO = Mapper.modelMapper(customer, CustomerResponseDTO.class);
+			customerDTO.add(linkTo(methodOn(CustomerController.class).findById(customer.getId())).withSelfRel());
+			return customerDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
+		} catch (Exception e) {
+			throw new RuntimeException("Teste");
 		}
 	}
 

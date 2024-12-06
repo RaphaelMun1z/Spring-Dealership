@@ -56,7 +56,7 @@ class BranchServiceTest {
 
 		var result = service.findById("id_teste");
 		assertNotNull(result);
-		assertNotNull(result.getResourceId());
+		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 		assertTrue(result.toString().contains("links: [</branches/id_teste>;rel=\"self\"]"));
 		assertEquals(null, result.getAddress());

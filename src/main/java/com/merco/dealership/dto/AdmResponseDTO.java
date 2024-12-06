@@ -20,7 +20,7 @@ public class AdmResponseDTO extends RepresentationModel<AdmResponseDTO> {
 		this.email = adm.getEmail();
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

@@ -31,8 +31,8 @@ public class InventoryItemService {
 	public List<InventoryItemResponseDTO> findAll() {
 		List<InventoryItemResponseDTO> inventoryItemsDTO = Mapper.modelMapperList(repository.findAll(),
 				InventoryItemResponseDTO.class);
-		inventoryItemsDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(InventoryItemController.class).findById(i.getResourceId())).withSelfRel()));
+		inventoryItemsDTO.stream().forEach(
+				i -> i.add(linkTo(methodOn(InventoryItemController.class).findById(i.getId())).withSelfRel()));
 		return inventoryItemsDTO;
 	}
 
@@ -44,10 +44,14 @@ public class InventoryItemService {
 	}
 
 	@Transactional
-	public InventoryItem create(InventoryItem obj) {
+	public InventoryItemResponseDTO create(InventoryItem obj) {
 		try {
-			InventoryItem InventoryItem = repository.save(obj);
-			return InventoryItem;
+			InventoryItem inventoryItem = repository.save(obj);
+			InventoryItemResponseDTO inventoryItemDTO = Mapper.modelMapper(inventoryItem,
+					InventoryItemResponseDTO.class);
+			inventoryItemDTO
+					.add(linkTo(methodOn(InventoryItemController.class).findById(inventoryItem.getId())).withSelfRel());
+			return inventoryItemDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

@@ -32,7 +32,7 @@ public class VehicleSpecificDetailService {
 		List<VehicleSpecificDetailResponseDTO> vehicleSpecificDetailDTO = Mapper.modelMapperList(repository.findAll(),
 				VehicleSpecificDetailResponseDTO.class);
 		vehicleSpecificDetailDTO.stream().forEach(
-				i -> i.add(linkTo(methodOn(VehicleSpecificDetailController.class).findById(i.getResourceId())).withSelfRel()));
+				i -> i.add(linkTo(methodOn(VehicleSpecificDetailController.class).findById(i.getId())).withSelfRel()));
 		return vehicleSpecificDetailDTO;
 	}
 
@@ -47,10 +47,15 @@ public class VehicleSpecificDetailService {
 	}
 
 	@Transactional
-	public VehicleSpecificDetail create(VehicleSpecificDetail obj) {
+	public VehicleSpecificDetailResponseDTO create(VehicleSpecificDetail obj) {
 		try {
-			VehicleSpecificDetail VehicleSpecificDetail = repository.save(obj);
-			return VehicleSpecificDetail;
+			VehicleSpecificDetail vehicleSpecificDetail = repository.save(obj);
+			VehicleSpecificDetailResponseDTO vehicleSpecificDetailDTO = Mapper.modelMapper(vehicleSpecificDetail,
+					VehicleSpecificDetailResponseDTO.class);
+			vehicleSpecificDetailDTO
+					.add(linkTo(methodOn(VehicleSpecificDetailController.class).findById(vehicleSpecificDetail.getId()))
+							.withSelfRel());
+			return vehicleSpecificDetailDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

@@ -9,7 +9,7 @@ import com.merco.dealership.entities.enums.ContractStatus;
 import com.merco.dealership.entities.enums.PaymentTerms;
 import com.merco.dealership.mapper.Mapper;
 
-public class ContractResponseDTO  extends RepresentationModel<ContractResponseDTO> {
+public class ContractResponseDTO extends RepresentationModel<ContractResponseDTO> {
 	private String id;
 	private String contractNumber;
 	private String contractType;
@@ -39,7 +39,7 @@ public class ContractResponseDTO  extends RepresentationModel<ContractResponseDT
 		this.sale = Mapper.modelMapper(contract.getSale(), SaleResponseDTO.class);
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

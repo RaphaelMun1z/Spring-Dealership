@@ -31,8 +31,8 @@ public class ContractService {
 	public List<ContractResponseDTO> findAll() {
 		List<ContractResponseDTO> contractsDTO = Mapper.modelMapperList(repository.findAll(),
 				ContractResponseDTO.class);
-		contractsDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(ContractController.class).findById(i.getResourceId())).withSelfRel()));
+		contractsDTO.stream().forEach(
+				i -> i.add(linkTo(methodOn(ContractController.class).findById(i.getId())).withSelfRel()));
 		return contractsDTO;
 	}
 
@@ -44,10 +44,12 @@ public class ContractService {
 	}
 
 	@Transactional
-	public Contract create(Contract obj) {
+	public ContractResponseDTO create(Contract obj) {
 		try {
-			Contract Contract = repository.save(obj);
-			return Contract;
+			Contract contract = repository.save(obj);
+			ContractResponseDTO contractDTO = Mapper.modelMapper(contract, ContractResponseDTO.class);
+			contractDTO.add(linkTo(methodOn(ContractController.class).findById(contract.getId())).withSelfRel());
+			return contractDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

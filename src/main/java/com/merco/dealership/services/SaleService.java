@@ -30,7 +30,7 @@ public class SaleService {
 
 	public List<SaleResponseDTO> findAll() {
 		List<SaleResponseDTO> salesDTO = Mapper.modelMapperList(repository.findAll(), SaleResponseDTO.class);
-		salesDTO.stream().forEach(i -> i.add(linkTo(methodOn(SaleController.class).findById(i.getResourceId())).withSelfRel()));
+		salesDTO.stream().forEach(i -> i.add(linkTo(methodOn(SaleController.class).findById(i.getId())).withSelfRel()));
 		return salesDTO;
 	}
 
@@ -42,10 +42,12 @@ public class SaleService {
 	}
 
 	@Transactional
-	public Sale create(Sale obj) {
+	public SaleResponseDTO create(Sale obj) {
 		try {
-			Sale Sale = repository.save(obj);
-			return Sale;
+			Sale sale = repository.save(obj);
+			SaleResponseDTO saleDTO = Mapper.modelMapper(sale, SaleResponseDTO.class);
+			saleDTO.add(linkTo(methodOn(SaleController.class).findById(sale.getId())).withSelfRel());
+			return saleDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

@@ -30,8 +30,8 @@ public class VehicleService {
 
 	public List<VehicleResponseDTO> findAll() {
 		List<VehicleResponseDTO> vehiclesDTO = Mapper.modelMapperList(repository.findAll(), VehicleResponseDTO.class);
-		vehiclesDTO.stream().forEach(
-				i -> i.add(linkTo(methodOn(VehicleController.class).findById(i.getId())).withSelfRel()));
+		vehiclesDTO.stream()
+				.forEach(i -> i.add(linkTo(methodOn(VehicleController.class).findById(i.getId())).withSelfRel()));
 		return vehiclesDTO;
 	}
 
@@ -43,10 +43,12 @@ public class VehicleService {
 	}
 
 	@Transactional
-	public Vehicle create(Vehicle obj) {
+	public VehicleResponseDTO create(Vehicle obj) {
 		try {
-			Vehicle Vehicle = repository.save(obj);
-			return Vehicle;
+			Vehicle vehicle = repository.save(obj);
+			VehicleResponseDTO vehicleDTO = Mapper.modelMapper(vehicle, VehicleResponseDTO.class);
+			vehicleDTO.add(linkTo(methodOn(VehicleController.class).findById(vehicle.getId())).withSelfRel());
+			return vehicleDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

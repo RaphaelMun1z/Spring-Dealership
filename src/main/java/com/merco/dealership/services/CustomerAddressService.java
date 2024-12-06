@@ -31,23 +31,28 @@ public class CustomerAddressService {
 	public List<CustomerAddressResponseDTO> findAll() {
 		List<CustomerAddressResponseDTO> customersAddressDTO = Mapper.modelMapperList(repository.findAll(),
 				CustomerAddressResponseDTO.class);
-		customersAddressDTO.stream().forEach(
-				i -> i.add(linkTo(methodOn(CustomerAddressController.class).findById(i.getResourceId())).withSelfRel()));
+		customersAddressDTO.stream().forEach(i -> i
+				.add(linkTo(methodOn(CustomerAddressController.class).findById(i.getId())).withSelfRel()));
 		return customersAddressDTO;
 	}
 
 	public CustomerAddressResponseDTO findById(String id) {
-		CustomerAddress customer = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-		CustomerAddressResponseDTO customerAddressDTO = Mapper.modelMapper(customer, CustomerAddressResponseDTO.class);
+		CustomerAddress customerAddress = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+		CustomerAddressResponseDTO customerAddressDTO = Mapper.modelMapper(customerAddress,
+				CustomerAddressResponseDTO.class);
 		customerAddressDTO.add(linkTo(methodOn(CustomerAddressController.class).findById(id)).withSelfRel());
 		return customerAddressDTO;
 	}
 
 	@Transactional
-	public CustomerAddress create(CustomerAddress obj) {
+	public CustomerAddressResponseDTO create(CustomerAddress obj) {
 		try {
-			CustomerAddress CustomerAddress = repository.save(obj);
-			return CustomerAddress;
+			CustomerAddress customerAddress = repository.save(obj);
+			CustomerAddressResponseDTO customerAddressDTO = Mapper.modelMapper(customerAddress,
+					CustomerAddressResponseDTO.class);
+			customerAddressDTO.add(
+					linkTo(methodOn(CustomerAddressController.class).findById(customerAddress.getId())).withSelfRel());
+			return customerAddressDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

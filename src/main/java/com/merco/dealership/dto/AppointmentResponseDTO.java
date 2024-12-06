@@ -34,7 +34,7 @@ public class AppointmentResponseDTO extends RepresentationModel<AppointmentRespo
 				InventoryItemResponseDTO.class);
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

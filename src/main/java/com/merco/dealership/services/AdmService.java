@@ -8,10 +8,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.AdmController;
+import com.merco.dealership.dto.AdmRegisterRequestDTO;
 import com.merco.dealership.dto.AdmResponseDTO;
 import com.merco.dealership.entities.Adm;
 import com.merco.dealership.mapper.Mapper;
@@ -30,7 +32,7 @@ public class AdmService {
 
 	public List<AdmResponseDTO> findAll() {
 		List<AdmResponseDTO> admsDTO = Mapper.modelMapperList(repository.findAll(), AdmResponseDTO.class);
-		admsDTO.stream().forEach(i -> i.add(linkTo(methodOn(AdmController.class).findById(i.getResourceId())).withSelfRel()));
+		admsDTO.stream().forEach(i -> i.add(linkTo(methodOn(AdmController.class).findById(i.getId())).withSelfRel()));
 		return admsDTO;
 	}
 
@@ -42,10 +44,15 @@ public class AdmService {
 	}
 
 	@Transactional
-	public Adm create(Adm obj) {
+	public AdmResponseDTO create(AdmRegisterRequestDTO obj) {
 		try {
-			Adm adm = repository.save(obj);
-			return adm;
+			Adm adm = Mapper.modelMapper(obj, Adm.class);
+			String encryptedPassword = new BCryptPasswordEncoder().encode(obj.getPassword());
+			adm.setPassword(encryptedPassword);
+			repository.save(adm);
+			AdmResponseDTO admResponse = Mapper.modelMapper(adm, AdmResponseDTO.class);
+			admResponse.add(linkTo(methodOn(AdmController.class).findById(admResponse.getId())).withSelfRel());
+			return admResponse;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

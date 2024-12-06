@@ -33,7 +33,7 @@ public class CustomerResponseDTO  extends RepresentationModel<CustomerResponseDT
 		this.validCnh = customer.getValidCnh();
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

@@ -3,7 +3,6 @@ package com.merco.dealership.infra.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -26,9 +25,8 @@ public class SecurityConfigurations {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.headers(headers -> headers.frameOptions().disable())
-				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("**").permitAll()
+				//.headers(headers -> headers.frameOptions().disable())
+				.authorizeHttpRequests(authorize -> authorize.requestMatchers("**").permitAll()
 //						.requestMatchers("/h2-console/**").permitAll()
 //						.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 //						.requestMatchers("/adm/**").hasAnyRole("ADM")
@@ -44,8 +42,7 @@ public class SecurityConfigurations {
 //						.requestMatchers("/vehicles/**").hasAnyRole("ADM", "SELLER")
 //						.requestMatchers("/vehicle-specific-details/**").hasAnyRole("ADM", "SELLER")
 //						.requestMatchers("/users/**").authenticated()
-						)
-				.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class).build();
+				).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
 	@Bean

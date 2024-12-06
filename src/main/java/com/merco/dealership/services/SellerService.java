@@ -3,7 +3,6 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.SellerController;
+import com.merco.dealership.dto.SellerRegisterRequestDTO;
 import com.merco.dealership.dto.SellerResponseDTO;
 import com.merco.dealership.entities.Seller;
 import com.merco.dealership.mapper.Mapper;
@@ -33,7 +33,7 @@ public class SellerService {
 	public List<SellerResponseDTO> findAll() {
 		List<SellerResponseDTO> sellersDTO = Mapper.modelMapperList(repository.findAll(), SellerResponseDTO.class);
 		sellersDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(SellerController.class).findById(i.getResourceId())).withSelfRel()));
+				.forEach(i -> i.add(linkTo(methodOn(SellerController.class).findById(i.getId())).withSelfRel()));
 		return sellersDTO;
 	}
 
@@ -45,13 +45,15 @@ public class SellerService {
 	}
 
 	@Transactional
-	public Seller create(Seller obj) {
+	public SellerResponseDTO create(SellerRegisterRequestDTO obj) {
 		try {
-			String encryptedPassword = new BCryptPasswordEncoder().encode(obj.getPassword());
-			Seller seller = new Seller(null, "CHARLIE WILLIAMS", "(51) 98765-4321", "charlie.williams@example.com",
-					encryptedPassword, LocalDate.of(2019, 2, 17), 4800.0, 0.08, "Active");
+			Seller seller = Mapper.modelMapper(obj, Seller.class);
+			String encryptedPassword = new BCryptPasswordEncoder().encode(seller.getPassword());
+			seller.setPassword(encryptedPassword);
 			repository.save(seller);
-			return seller;
+			SellerResponseDTO sellerDTO = Mapper.modelMapper(seller, SellerResponseDTO.class);
+			sellerDTO.add(linkTo(methodOn(SellerController.class).findById(sellerDTO.getId())).withSelfRel());
+			return sellerDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

@@ -37,7 +37,7 @@ public class BranchResponseDTO extends RepresentationModel<BranchResponseDTO> {
 		this.address = Mapper.modelMapper(branch.getAddress(), BranchAddressResponseDTO.class);
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

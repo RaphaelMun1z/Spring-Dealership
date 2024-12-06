@@ -30,7 +30,7 @@ public abstract class Address implements Serializable {
 	private String street;
 
 	@NotNull(message = "Required field")
-	private int number;
+	private Integer number;
 
 	@NotNull(message = "Required field")
 	@Pattern(regexp = "^[A-Z]+(.)*")
@@ -57,8 +57,8 @@ public abstract class Address implements Serializable {
 
 	}
 
-	protected Address(String id, String street, int number, String district, String city, String state, String country,
-			String cep, String complement) {
+	protected Address(String id, String street, Integer number, String district, String city, String state,
+			String country, String cep, String complement) {
 		this.id = id;
 		this.street = street;
 		this.number = number;
@@ -86,11 +86,11 @@ public abstract class Address implements Serializable {
 		this.street = street;
 	}
 
-	public int getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 
-	public void setNumber(int number) {
+	public void setNumber(Integer number) {
 		this.number = number;
 	}
 

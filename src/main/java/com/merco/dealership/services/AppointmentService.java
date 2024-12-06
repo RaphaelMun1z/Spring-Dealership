@@ -31,8 +31,8 @@ public class AppointmentService {
 	public List<AppointmentResponseDTO> findAll() {
 		List<AppointmentResponseDTO> appointmentsDTO = Mapper.modelMapperList(repository.findAll(),
 				AppointmentResponseDTO.class);
-		appointmentsDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(AppointmentController.class).findById(i.getResourceId())).withSelfRel()));
+		appointmentsDTO.stream().forEach(
+				i -> i.add(linkTo(methodOn(AppointmentController.class).findById(i.getId())).withSelfRel()));
 		return appointmentsDTO;
 	}
 
@@ -44,10 +44,13 @@ public class AppointmentService {
 	}
 
 	@Transactional
-	public Appointment create(Appointment obj) {
+	public AppointmentResponseDTO create(Appointment obj) {
 		try {
-			Appointment Appointment = repository.save(obj);
-			return Appointment;
+			Appointment appointment = repository.save(obj);
+			AppointmentResponseDTO appointmentDTO = Mapper.modelMapper(appointment, AppointmentResponseDTO.class);
+			appointmentDTO
+					.add(linkTo(methodOn(AppointmentController.class).findById(appointment.getId())).withSelfRel());
+			return appointmentDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

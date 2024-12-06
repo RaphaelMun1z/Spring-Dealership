@@ -19,7 +19,6 @@ spring:
         jdbc:
           lob: 
             non_contextual_creation: true
-        ddl-auto: none
         format_sql: true
   flyway:
     baseline-on-migrate: true

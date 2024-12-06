@@ -33,7 +33,7 @@ public class InventoryItemResponseDTO  extends RepresentationModel<InventoryItem
 		this.vehicle = Mapper.modelMapper(inventoryItem.getVehicle(), VehicleResponseDTO.class);
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

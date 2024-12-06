@@ -37,7 +37,7 @@ public class SaleResponseDTO  extends RepresentationModel<SaleResponseDTO> {
 		this.inventoryItem = Mapper.modelMapper(sale.getInventoryItem(), InventoryItemResponseDTO.class);
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

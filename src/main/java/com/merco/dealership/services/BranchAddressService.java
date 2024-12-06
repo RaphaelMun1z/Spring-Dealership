@@ -31,8 +31,8 @@ public class BranchAddressService {
 	public List<BranchAddressResponseDTO> findAll() {
 		List<BranchAddressResponseDTO> branchesAdressDTO = Mapper.modelMapperList(repository.findAll(),
 				BranchAddressResponseDTO.class);
-		branchesAdressDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(BranchAddressController.class).findById(i.getResourceId())).withSelfRel()));
+		branchesAdressDTO.stream().forEach(
+				i -> i.add(linkTo(methodOn(BranchAddressController.class).findById(i.getId())).withSelfRel()));
 		return branchesAdressDTO;
 	}
 
@@ -44,10 +44,14 @@ public class BranchAddressService {
 	}
 
 	@Transactional
-	public BranchAddress create(BranchAddress obj) {
+	public BranchAddressResponseDTO create(BranchAddress obj) {
 		try {
-			BranchAddress BranchAddress = repository.save(obj);
-			return BranchAddress;
+			BranchAddress branchAddress = repository.save(obj);
+			BranchAddressResponseDTO branchAddressDTO = Mapper.modelMapper(branchAddress,
+					BranchAddressResponseDTO.class);
+			branchAddressDTO
+					.add(linkTo(methodOn(BranchAddressController.class).findById(branchAddress.getId())).withSelfRel());
+			return branchAddressDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

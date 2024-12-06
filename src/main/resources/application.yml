@@ -12,11 +12,11 @@ spring:
   application:
     name: dealership
   profiles:
-    active: dev
+    active: test
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}

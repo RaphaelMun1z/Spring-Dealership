@@ -4,7 +4,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import com.merco.dealership.entities.Seller;
 
-public class SellerResponseDTO  extends RepresentationModel<SellerResponseDTO> {
+public class SellerResponseDTO extends RepresentationModel<SellerResponseDTO> {
 	private String id;
 	private String name;
 	private String phone;
@@ -20,7 +20,7 @@ public class SellerResponseDTO  extends RepresentationModel<SellerResponseDTO> {
 		this.email = seller.getEmail();
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

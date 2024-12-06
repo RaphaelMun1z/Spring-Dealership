@@ -16,7 +16,7 @@ public class VehicleSpecificDetailResponseDTO extends RepresentationModel<Vehicl
 		this.detail = vehicleSpecificDetail.getDetail();
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 

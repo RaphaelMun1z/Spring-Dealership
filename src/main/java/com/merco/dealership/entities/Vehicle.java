@@ -38,10 +38,10 @@ public class Vehicle implements Serializable {
 	private String model;
 
 	@NotNull(message = "Required field")
-	private Integer type;
+	private Integer type = 1;
 
 	@NotNull(message = "Required field")
-	private Integer category;
+	private Integer category = 1;
 
 	@NotNull(message = "Required field")
 	private LocalDate manufactureYear;
@@ -53,17 +53,17 @@ public class Vehicle implements Serializable {
 	private Double mileage;
 
 	@NotNull(message = "Required field")
-	private Integer fuelType;
+	private Integer fuelType = 1;
 
 	@NotNull(message = "Required field")
-	private Integer transmissionType;
+	private Integer transmissionType = 1;
 
 	@NotNull(message = "Required field")
 	private Double salePrice;
 
-	private Integer status;
+	private Integer status = 1;
 
-	private Integer availability;
+	private Integer availability = 1;
 
 	@NotNull(message = "Required field")
 	private String description;

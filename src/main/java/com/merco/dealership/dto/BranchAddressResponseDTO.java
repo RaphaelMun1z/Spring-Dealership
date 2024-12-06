@@ -3,6 +3,7 @@ package com.merco.dealership.dto;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.merco.dealership.entities.BranchAddress;
+import com.merco.dealership.mapper.Mapper;
 
 public class BranchAddressResponseDTO extends RepresentationModel<BranchAddressResponseDTO> {
 	private String id;
@@ -14,6 +15,7 @@ public class BranchAddressResponseDTO extends RepresentationModel<BranchAddressR
 	private String country;
 	private String cep;
 	private String complement;
+	private BranchResponseDTO branch;
 
 	public BranchAddressResponseDTO() {
 	}
@@ -28,9 +30,10 @@ public class BranchAddressResponseDTO extends RepresentationModel<BranchAddressR
 		this.country = branchAddress.getCountry();
 		this.cep = branchAddress.getCep();
 		this.complement = branchAddress.getComplement();
+		this.branch = Mapper.modelMapper(branchAddress.getBranch(), BranchResponseDTO.class);
 	}
 
-	public String getResourceId() {
+	public String getId() {
 		return id;
 	}
 
@@ -100,6 +103,14 @@ public class BranchAddressResponseDTO extends RepresentationModel<BranchAddressR
 
 	public void setComplement(String complement) {
 		this.complement = complement;
+	}
+
+	public BranchResponseDTO getBranch() {
+		return branch;
+	}
+
+	public void setBranch(BranchResponseDTO branch) {
+		this.branch = branch;
 	}
 
 }

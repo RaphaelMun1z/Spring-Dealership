@@ -30,8 +30,8 @@ public class BranchService {
 
 	public List<BranchResponseDTO> findAll() {
 		List<BranchResponseDTO> branchesDTO = Mapper.modelMapperList(repository.findAll(), BranchResponseDTO.class);
-		branchesDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getResourceId())).withSelfRel()));
+		branchesDTO.stream().forEach(
+				i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getId())).withSelfRel()));
 		return branchesDTO;
 	}
 
@@ -43,10 +43,12 @@ public class BranchService {
 	}
 
 	@Transactional
-	public Branch create(Branch obj) {
+	public BranchResponseDTO create(Branch obj) {
 		try {
-			Branch Branch = repository.save(obj);
-			return Branch;
+			Branch branch = repository.save(obj);
+			BranchResponseDTO branchDTO = Mapper.modelMapper(branch, BranchResponseDTO.class);
+			branchDTO.add(linkTo(methodOn(BranchController.class).findById(branch.getId())).withSelfRel());
+			return branchDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
 		}

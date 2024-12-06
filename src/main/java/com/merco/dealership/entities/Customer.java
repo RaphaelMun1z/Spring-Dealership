@@ -9,6 +9,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.merco.dealership.entities.enums.ClientType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,9 +31,11 @@ public class Customer implements Serializable {
 	private String name;
 
 	@NotNull(message = "Required field")
+	@Column(unique = true)
 	private String cpf;
 
 	@NotNull(message = "Required field")
+	@Column(unique = true)
 	private String email;
 
 	@NotNull(message = "Required field")
