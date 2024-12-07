@@ -18,6 +18,7 @@ import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.BranchRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
+import com.merco.dealership.services.exceptions.RequiredObjectIsNullException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -30,8 +31,8 @@ public class BranchService {
 
 	public List<BranchResponseDTO> findAll() {
 		List<BranchResponseDTO> branchesDTO = Mapper.modelMapperList(repository.findAll(), BranchResponseDTO.class);
-		branchesDTO.stream().forEach(
-				i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getId())).withSelfRel()));
+		branchesDTO.stream()
+				.forEach(i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getId())).withSelfRel()));
 		return branchesDTO;
 	}
 
@@ -45,6 +46,8 @@ public class BranchService {
 	@Transactional
 	public BranchResponseDTO create(Branch obj) {
 		try {
+			if (obj == null)
+				throw new RequiredObjectIsNullException();
 			Branch branch = repository.save(obj);
 			BranchResponseDTO branchDTO = Mapper.modelMapper(branch, BranchResponseDTO.class);
 			branchDTO.add(linkTo(methodOn(BranchController.class).findById(branch.getId())).withSelfRel());

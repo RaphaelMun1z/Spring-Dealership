@@ -9,32 +9,12 @@ import com.merco.dealership.entities.Branch;
 
 public class MockBranch {
 	public Branch mockEntity() {
-		return mockEntity("_id_teste");
-	}
-
-	public BranchResponseDTO mockDTO() {
-		return mockDTO(0);
-	}
-
-	public List<Branch> mockEntityList() {
-		List<Branch> branches = new ArrayList<Branch>();
-		for (int i = 0; i < 14; i++) {
-			branches.add(mockEntity("_id_teste"));
-		}
-		return branches;
-	}
-
-	public List<BranchResponseDTO> mockDTOList() {
-		List<BranchResponseDTO> branches = new ArrayList<>();
-		for (int i = 0; i < 14; i++) {
-			branches.add(mockDTO(i));
-		}
-		return branches;
+		return mockEntity("id1");
 	}
 
 	public Branch mockEntity(String id) {
 		Branch branch = new Branch();
-		branch.setId("Id - Test" + id);
+		branch.setId(id);
 		branch.setAddress(null);
 		branch.setPhoneNumber("PhoneNumber - Test" + id);
 		branch.setEmail("Email - Test" + id);
@@ -47,18 +27,39 @@ public class MockBranch {
 		return branch;
 	}
 
-	public BranchResponseDTO mockDTO(Integer number) {
+	public List<Branch> mockEntityList() {
+		List<Branch> branches = new ArrayList<Branch>();
+		for (int i = 0; i < 14; i++) {
+			branches.add(mockEntity(String.valueOf("id" + i)));
+		}
+		return branches;
+	}
+
+	public BranchResponseDTO mockDTO() {
+		return mockDTO("id1");
+	}
+
+	public BranchResponseDTO mockDTO(String id) {
 		BranchResponseDTO branch = new BranchResponseDTO();
-		branch.setId("ID - Test" + number);
+		branch.setId(id);
 		branch.setAddress(null);
-		branch.setPhoneNumber("PhoneNumber - Test" + number);
-		branch.setEmail("Email - Test" + number);
-		branch.setManagerName("ManagerName - Test" + number);
-		branch.setOpeningHours("OpeningHours - Test" + number);
-		branch.setBranchType("BranchType - Test" + number);
-		branch.setStatus("Status - Test" + number);
+		branch.setPhoneNumber("PhoneNumber - Test" + id);
+		branch.setEmail("Email - Test" + id);
+		branch.setManagerName("ManagerName - Test" + id);
+		branch.setOpeningHours("OpeningHours - Test" + id);
+		branch.setBranchType("BranchType - Test" + id);
+		branch.setStatus("Status - Test" + id);
 		branch.setCreatedAt(LocalDate.now());
 		branch.setUpdatedAt(LocalDate.now());
 		return branch;
 	}
+
+	public List<BranchResponseDTO> mockDTOList() {
+		List<BranchResponseDTO> branches = new ArrayList<>();
+		for (int i = 0; i < 14; i++) {
+			branches.add(mockDTO(String.valueOf("id" + i)));
+		}
+		return branches;
+	}
+
 }

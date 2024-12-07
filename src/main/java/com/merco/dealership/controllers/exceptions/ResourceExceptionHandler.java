@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
+import com.merco.dealership.services.exceptions.RequiredObjectIsNullException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,8 +59,8 @@ public class ResourceExceptionHandler {
 		Map<String, String> errors = new HashMap<>();
 		errors.put("Erro", "Data violation error");
 		HttpStatus status = HttpStatus.CONFLICT;
-		StandardError err = new StandardError(Instant.now(), status.value(), errors,
-				"Couldn't register the entity.", request.getRequestURI());
+		StandardError err = new StandardError(Instant.now(), status.value(), errors, "Couldn't register the entity.",
+				request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}
 
@@ -90,14 +91,24 @@ public class ResourceExceptionHandler {
 			InvalidFormatException invalidFormatException = (InvalidFormatException) rootCause;
 			String fieldName = invalidFormatException.getPath().get(0).getFieldName();
 			String invalidValue = invalidFormatException.getValue().toString();
-			errorMessage = String.format("Invalid value '%s'. Please use a valid value.", invalidValue,
-					fieldName);
+			errorMessage = String.format("Invalid value '%s'. Please use a valid value.", invalidValue, fieldName);
 			errors.put(fieldName, errorMessage);
 		}
-		
+
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		StandardError err = new StandardError(Instant.now(), status.value(), errors,
 				"The provided value is not valid for the expected field. Please ensure you use one of the values accepted by the server.",
+				request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
+	@ExceptionHandler(RequiredObjectIsNullException.class)
+	public ResponseEntity<StandardError> requiredObjectIsNull(RequiredObjectIsNullException e,
+			HttpServletRequest request) {
+		Map<String, String> errors = new HashMap<>();
+		errors.put("Erro", "Required object is null.");
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError err = new StandardError(Instant.now(), status.value(), errors, "Required object is null.",
 				request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}

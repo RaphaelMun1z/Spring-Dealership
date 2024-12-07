@@ -26,7 +26,14 @@ public class SecurityConfigurations {
 		return httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.headers(headers -> headers.frameOptions().disable())
-				.authorizeHttpRequests(authorize -> authorize.requestMatchers("**").permitAll()
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers(
+			                    "/swagger-ui.html",
+			                    "/swagger-ui/*",
+			                    "/v3/api-docs/**",
+			                    "/swagger-resources/**",
+			                    "**").permitAll()
+						//.requestMatchers("**").permitAll()
 //						.requestMatchers("/h2-console/**").permitAll()
 //						.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 //						.requestMatchers("/adm/**").hasAnyRole("ADM")
