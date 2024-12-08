@@ -10,7 +10,6 @@ spring:
       path: /h2-console
   jpa:
     show-sql: true
-    properties:
-      hibernate:
-        ddl-auto: update
-        format_sql: true
+    hibernate:
+      ddl-auto: update
+      format_sql: true

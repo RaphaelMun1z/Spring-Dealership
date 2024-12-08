@@ -32,4 +32,8 @@ public class BranchAddress extends Address implements Serializable {
 		return branch;
 	}
 
+	public void setBranch(Branch branch) {
+		this.branch = branch;
+	}
+
 }

@@ -1,18 +1,22 @@
 server:
-  port: 8080
+  port: 8889
   compression:
       enabled: true
   servlet:
     context-path: /api
-#endpoints:
-#  enabled: false
-#  health:
-#    enabled: true
 spring:
   application:
     name: dealership
-  profiles:
-    active: dev
+  security:
+    enabled: false
+    user:
+      name: user
+      password: password
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    open-in-view: false
   datasource:
     servlet:
       multipart:
@@ -30,5 +34,3 @@ spring-doc:
   pathsToMatch: /**
   swagger-ui:
     use-root-path: true
-cors:
-  originPatterns: http://localhost:8080,http://localhost:3000

@@ -1,5 +1,6 @@
 package com.merco.dealership.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -17,7 +18,9 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "tb_branches")
-public class Branch {
+public class Branch implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
