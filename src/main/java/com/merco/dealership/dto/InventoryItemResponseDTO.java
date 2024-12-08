@@ -7,7 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.mapper.Mapper;
 
-public class InventoryItemResponseDTO  extends RepresentationModel<InventoryItemResponseDTO> {
+public class InventoryItemResponseDTO extends RepresentationModel<InventoryItemResponseDTO> {
 	private String id;
 	private LocalDate stockEntryDate;
 	private LocalDate stockExitDate;

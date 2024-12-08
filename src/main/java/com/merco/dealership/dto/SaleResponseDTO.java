@@ -7,7 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 import com.merco.dealership.entities.Sale;
 import com.merco.dealership.mapper.Mapper;
 
-public class SaleResponseDTO  extends RepresentationModel<SaleResponseDTO> {
+public class SaleResponseDTO extends RepresentationModel<SaleResponseDTO> {
 	private String id;
 	private LocalDate saleDate;
 	private Double grossAmount;

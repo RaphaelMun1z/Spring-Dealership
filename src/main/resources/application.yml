@@ -31,4 +31,4 @@ spring-doc:
   swagger-ui:
     use-root-path: true
 cors:
-  originPatterns: http://localhost:8080,http://localhost:3000
+  originPatterns: http://localhost:8080,http://localhost:3000,http://localhost:8889

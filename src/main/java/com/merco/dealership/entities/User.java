@@ -54,11 +54,19 @@ public abstract class User implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
+	private boolean isAccountNonExpired;
+
+	private boolean isAccountNonLocked;
+
+	private boolean isCredentialsNonExpired;
+
+	private boolean isEnabled;
+
 	protected User() {
 		super();
 	}
 
-	protected User(String id, @NotNull(message = "Required field") @Pattern(regexp = "^[A-Z]+(.)*") String name,
+	public User(String id, @NotNull(message = "Required field") @Pattern(regexp = "^[A-Z]+(.)*") String name,
 			String phone, @NotNull(message = "Required field") @Email(message = "Invalid field value") String email,
 			@NotNull(message = "Required field") String password, UserRole role) {
 		super();
@@ -68,6 +76,10 @@ public abstract class User implements UserDetails {
 		this.email = email;
 		this.password = password;
 		this.role = role;
+		this.isAccountNonExpired = true;
+		this.isAccountNonLocked = true;
+		this.isCredentialsNonExpired = true;
+		this.isEnabled = true;
 	}
 
 	public String getId() {
@@ -110,6 +122,10 @@ public abstract class User implements UserDetails {
 		this.password = password;
 	}
 
+	public String getRole() {
+		return role.getRole();
+	}
+
 	public void setRole(UserRole role) {
 		if (role == null) {
 			throw new IllegalStateException("Role cannot be null");
@@ -136,22 +152,22 @@ public abstract class User implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return true;
+		return this.isAccountNonExpired;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return this.isAccountNonLocked;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return true;
+		return this.isCredentialsNonExpired;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return this.isEnabled;
 	}
 
 	@Override
