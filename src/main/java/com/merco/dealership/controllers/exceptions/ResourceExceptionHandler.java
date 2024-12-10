@@ -27,7 +27,7 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("Erro", "Resource not found");
+		errors.put("error", "Resource not found");
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		StandardError err = new StandardError(Instant.now(), status.value(), errors, e.getMessage(),
 				request.getRequestURI());
@@ -37,7 +37,7 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(DatabaseException.class)
 	public ResponseEntity<StandardError> database(DatabaseException e, HttpServletRequest request) {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("Erro", "Database error");
+		errors.put("error", "Database error");
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		StandardError err = new StandardError(Instant.now(), status.value(), errors, e.getMessage(),
 				request.getRequestURI());
@@ -47,7 +47,7 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(DataViolationException.class)
 	public ResponseEntity<StandardError> dataViolation(DataViolationException e, HttpServletRequest request) {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("Erro", "Data violation error");
+		errors.put("error", "Data violation error");
 		HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 		StandardError err = new StandardError(Instant.now(), status.value(), errors, e.getMessage(),
 				request.getRequestURI());
@@ -58,7 +58,7 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> dataIntegrityViolation(DataIntegrityViolationException e,
 			HttpServletRequest request) {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("Erro", "Data violation error");
+		errors.put("error", "Data violation error");
 		HttpStatus status = HttpStatus.CONFLICT;
 		StandardError err = new StandardError(Instant.now(), status.value(), errors, "Couldn't register the entity.",
 				request.getRequestURI());
@@ -107,7 +107,7 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> requiredObjectIsNull(RequiredObjectIsNullException e,
 			HttpServletRequest request) {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("Erro", "Required object is null.");
+		errors.put("error", "Required object is null.");
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		StandardError err = new StandardError(Instant.now(), status.value(), errors, "Required object is null.",
 				request.getRequestURI());
@@ -117,7 +117,7 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<StandardError> badCredentials(BadCredentialsException e, HttpServletRequest request) {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("Erro", "Bad credentials.");
+		errors.put("error", "Bad credentials.");
 		HttpStatus status = HttpStatus.UNAUTHORIZED;
 		StandardError err = new StandardError(Instant.now(), status.value(), errors, "Bad credentials.",
 				request.getRequestURI());
