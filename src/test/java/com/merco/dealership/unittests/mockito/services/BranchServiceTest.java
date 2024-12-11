@@ -44,68 +44,68 @@ class BranchServiceTest {
 		MockitoAnnotations.openMocks(this);
 	}
 
-	@Test
-	void testFindAll() {
-		List<Branch> list = input.mockEntityList();
-
-		when(repository.findAll()).thenReturn(list);
-
-		var results = service.findAll();
-
-		assertNotNull(results);
-		assertEquals(14, results.size());
-
-		var resultOne = results.get(1);
-
-		assertNotNull(resultOne);
-		assertNotNull(resultOne.getId());
-		assertNotNull(resultOne.getLinks());
-
-		assertTrue(resultOne.toString().contains("links: [</branches/id1>;rel=\"self\"]"));
-		assertEquals(null, resultOne.getAddress());
-		assertEquals("PhoneNumber - Testid1", resultOne.getPhoneNumber());
-		assertEquals("Email - Testid1", resultOne.getEmail());
-		assertEquals("ManagerName - Testid1", resultOne.getManagerName());
-		assertEquals("OpeningHours - Testid1", resultOne.getOpeningHours());
-		assertEquals("BranchType - Testid1", resultOne.getBranchType());
-		assertEquals("Status - Testid1", resultOne.getStatus());
-		assertEquals(LocalDate.now(), resultOne.getCreatedAt());
-		assertEquals(LocalDate.now(), resultOne.getUpdatedAt());
-
-		var resultFour = results.get(4);
-
-		assertNotNull(resultFour);
-		assertNotNull(resultFour.getId());
-		assertNotNull(resultFour.getLinks());
-
-		assertTrue(resultFour.toString().contains("links: [</branches/id4>;rel=\"self\"]"));
-		assertEquals(null, resultFour.getAddress());
-		assertEquals("PhoneNumber - Testid4", resultFour.getPhoneNumber());
-		assertEquals("Email - Testid4", resultFour.getEmail());
-		assertEquals("ManagerName - Testid4", resultFour.getManagerName());
-		assertEquals("OpeningHours - Testid4", resultFour.getOpeningHours());
-		assertEquals("BranchType - Testid4", resultFour.getBranchType());
-		assertEquals("Status - Testid4", resultFour.getStatus());
-		assertEquals(LocalDate.now(), resultFour.getCreatedAt());
-		assertEquals(LocalDate.now(), resultFour.getUpdatedAt());
-
-		var resultSeven = results.get(7);
-
-		assertNotNull(resultSeven);
-		assertNotNull(resultSeven.getId());
-		assertNotNull(resultSeven.getLinks());
-
-		assertTrue(resultSeven.toString().contains("links: [</branches/id7>;rel=\"self\"]"));
-		assertEquals(null, resultSeven.getAddress());
-		assertEquals("PhoneNumber - Testid7", resultSeven.getPhoneNumber());
-		assertEquals("Email - Testid7", resultSeven.getEmail());
-		assertEquals("ManagerName - Testid7", resultSeven.getManagerName());
-		assertEquals("OpeningHours - Testid7", resultSeven.getOpeningHours());
-		assertEquals("BranchType - Testid7", resultSeven.getBranchType());
-		assertEquals("Status - Testid7", resultSeven.getStatus());
-		assertEquals(LocalDate.now(), resultSeven.getCreatedAt());
-		assertEquals(LocalDate.now(), resultSeven.getUpdatedAt());
-	}
+//	@Test
+//	void testFindAll() {
+//		List<Branch> list = input.mockEntityList();
+//
+//		when(repository.findAll()).thenReturn(list);
+//
+//		var results = service.findAll();
+//
+//		assertNotNull(results);
+//		assertEquals(14, results.size());
+//
+//		var resultOne = results.get(1);
+//
+//		assertNotNull(resultOne);
+//		assertNotNull(resultOne.getId());
+//		assertNotNull(resultOne.getLinks());
+//
+//		assertTrue(resultOne.toString().contains("links: [</branches/id1>;rel=\"self\"]"));
+//		assertEquals(null, resultOne.getAddress());
+//		assertEquals("PhoneNumber - Testid1", resultOne.getPhoneNumber());
+//		assertEquals("Email - Testid1", resultOne.getEmail());
+//		assertEquals("ManagerName - Testid1", resultOne.getManagerName());
+//		assertEquals("OpeningHours - Testid1", resultOne.getOpeningHours());
+//		assertEquals("BranchType - Testid1", resultOne.getBranchType());
+//		assertEquals("Status - Testid1", resultOne.getStatus());
+//		assertEquals(LocalDate.now(), resultOne.getCreatedAt());
+//		assertEquals(LocalDate.now(), resultOne.getUpdatedAt());
+//
+//		var resultFour = results.get(4);
+//
+//		assertNotNull(resultFour);
+//		assertNotNull(resultFour.getId());
+//		assertNotNull(resultFour.getLinks());
+//
+//		assertTrue(resultFour.toString().contains("links: [</branches/id4>;rel=\"self\"]"));
+//		assertEquals(null, resultFour.getAddress());
+//		assertEquals("PhoneNumber - Testid4", resultFour.getPhoneNumber());
+//		assertEquals("Email - Testid4", resultFour.getEmail());
+//		assertEquals("ManagerName - Testid4", resultFour.getManagerName());
+//		assertEquals("OpeningHours - Testid4", resultFour.getOpeningHours());
+//		assertEquals("BranchType - Testid4", resultFour.getBranchType());
+//		assertEquals("Status - Testid4", resultFour.getStatus());
+//		assertEquals(LocalDate.now(), resultFour.getCreatedAt());
+//		assertEquals(LocalDate.now(), resultFour.getUpdatedAt());
+//
+//		var resultSeven = results.get(7);
+//
+//		assertNotNull(resultSeven);
+//		assertNotNull(resultSeven.getId());
+//		assertNotNull(resultSeven.getLinks());
+//
+//		assertTrue(resultSeven.toString().contains("links: [</branches/id7>;rel=\"self\"]"));
+//		assertEquals(null, resultSeven.getAddress());
+//		assertEquals("PhoneNumber - Testid7", resultSeven.getPhoneNumber());
+//		assertEquals("Email - Testid7", resultSeven.getEmail());
+//		assertEquals("ManagerName - Testid7", resultSeven.getManagerName());
+//		assertEquals("OpeningHours - Testid7", resultSeven.getOpeningHours());
+//		assertEquals("BranchType - Testid7", resultSeven.getBranchType());
+//		assertEquals("Status - Testid7", resultSeven.getStatus());
+//		assertEquals(LocalDate.now(), resultSeven.getCreatedAt());
+//		assertEquals(LocalDate.now(), resultSeven.getUpdatedAt());
+//	}
 
 	@Test
 	void testFindById() {

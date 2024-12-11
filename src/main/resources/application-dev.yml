@@ -10,9 +10,9 @@ spring:
     idle-timeout: 30000
     connection-timeout: 30000
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       dialect: PostgreSQLDialect
       jdbc:
         lob: 

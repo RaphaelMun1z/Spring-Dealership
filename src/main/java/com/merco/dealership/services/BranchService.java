@@ -3,11 +3,11 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +29,11 @@ public class BranchService {
 	@Autowired
 	private BranchRepository repository;
 
-	public List<BranchResponseDTO> findAll() {
-		List<BranchResponseDTO> branchesDTO = Mapper.modelMapperList(repository.findAll(), BranchResponseDTO.class);
-		branchesDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getId())).withSelfRel()));
-		return branchesDTO;
+	public Page<BranchResponseDTO> findAll(Pageable pageable) {
+		Page<Branch> branchPage = repository.findAll(pageable);
+		Page<BranchResponseDTO> branchPageDTO = branchPage.map(p -> Mapper.modelMapper(p, BranchResponseDTO.class));
+		branchPageDTO.map(i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getId())).withSelfRel()));
+		return branchPageDTO;
 	}
 
 	public BranchResponseDTO findById(String id) {
