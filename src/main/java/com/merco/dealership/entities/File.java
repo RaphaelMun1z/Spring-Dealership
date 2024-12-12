@@ -26,7 +26,7 @@ public abstract class File implements Serializable {
 	private String name;
 
 	@NotNull(message = "Required field")
-	private String path;
+	private String downloadUri;
 
 	@NotNull(message = "Required field")
 	private String type;
@@ -37,10 +37,10 @@ public abstract class File implements Serializable {
 	public File() {
 	}
 
-	public File(String id, String name, String path, String type, Long size) {
+	public File(String id, String name, String downloadUri, String type, Long size) {
 		this.id = id;
 		this.name = name;
-		this.path = path;
+		this.downloadUri = downloadUri;
 		this.type = type;
 		this.size = size;
 	}
@@ -61,12 +61,12 @@ public abstract class File implements Serializable {
 		this.name = name;
 	}
 
-	public String getPath() {
-		return path;
+	public String getDownloadUri() {
+		return downloadUri;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setDownloadUri(String downloadUri) {
+		this.downloadUri = downloadUri;
 	}
 
 	public String getType() {

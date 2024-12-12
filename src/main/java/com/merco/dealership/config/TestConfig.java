@@ -45,7 +45,7 @@ import com.merco.dealership.repositories.SellerRepository;
 import com.merco.dealership.repositories.VehicleSpecificDetailRepository;
 
 @Configuration
-@Profile("dev")
+@Profile("test")
 public class TestConfig implements CommandLineRunner {
 	@Autowired
 	private AdmRepository admRepository;

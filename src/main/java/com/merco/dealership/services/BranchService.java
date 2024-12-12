@@ -8,6 +8,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +33,17 @@ public class BranchService {
 	@Autowired
 	private BranchRepository repository;
 
-	public Page<BranchResponseDTO> findAll(Pageable pageable) {
+	@Autowired
+	PagedResourcesAssembler<BranchResponseDTO> assembler;
+
+	public PagedModel<EntityModel<BranchResponseDTO>> findAll(Pageable pageable) {
 		Page<Branch> branchPage = repository.findAll(pageable);
 		Page<BranchResponseDTO> branchPageDTO = branchPage.map(p -> Mapper.modelMapper(p, BranchResponseDTO.class));
 		branchPageDTO.map(i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getId())).withSelfRel()));
-		return branchPageDTO;
+		Link link = linkTo(
+				methodOn(BranchController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc"))
+				.withSelfRel();
+		return assembler.toModel(branchPageDTO, link);
 	}
 
 	public BranchResponseDTO findById(String id) {

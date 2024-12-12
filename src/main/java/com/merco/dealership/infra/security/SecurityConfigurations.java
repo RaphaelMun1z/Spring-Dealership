@@ -45,6 +45,7 @@ public class SecurityConfigurations {
 						.requestMatchers("/inventory-items/**").hasAnyRole("ADM", "SELLER")
 						.requestMatchers("/vehicles/**").hasAnyRole("ADM", "SELLER")
 						.requestMatchers("/vehicle-specific-details/**").hasAnyRole("ADM", "SELLER")
+						.requestMatchers("/file/**").hasAnyRole("ADM", "SELLER")
 						.requestMatchers("/users/**").authenticated())
 				.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
