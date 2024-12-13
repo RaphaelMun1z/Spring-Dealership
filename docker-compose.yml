@@ -1,0 +1,30 @@
+services:
+  api:
+    container_name: api
+    image: application
+    ports:
+      - "8889:8889"
+    depends_on:
+      - db
+    restart: always
+    command: mvn spring-boot:run
+    build:
+      context: .
+    networks:
+      - postgres-compose-network
+  db:
+    container_name: db
+    image: postgres:16.3
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dealership_database
+    ports:
+      - "5000:5432"
+    restart: always
+    networks:
+      - postgres-compose-network
+networks:
+  postgres-compose-network:
+    driver: bridge
