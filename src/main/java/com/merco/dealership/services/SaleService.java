@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +32,17 @@ public class SaleService {
 	@Autowired
 	private SaleRepository repository;
 
-	public List<SaleResponseDTO> findAll() {
-		List<SaleResponseDTO> salesDTO = Mapper.modelMapperList(repository.findAll(), SaleResponseDTO.class);
-		salesDTO.stream().forEach(i -> i.add(linkTo(methodOn(SaleController.class).findById(i.getId())).withSelfRel()));
-		return salesDTO;
+	@Autowired
+	PagedResourcesAssembler<SaleResponseDTO> assembler;
+
+	public PagedModel<EntityModel<SaleResponseDTO>> findAll(Pageable pageable) {
+		Page<Sale> salePage = repository.findAll(pageable);
+		Page<SaleResponseDTO> salePageDTO = salePage.map(p -> Mapper.modelMapper(p, SaleResponseDTO.class));
+		salePageDTO.map(i -> i.add(linkTo(methodOn(SaleController.class).findById(i.getId())).withSelfRel()));
+		Link link = linkTo(
+				methodOn(SaleController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc"))
+				.withSelfRel();
+		return assembler.toModel(salePageDTO, link);
 	}
 
 	public SaleResponseDTO findById(String id) {

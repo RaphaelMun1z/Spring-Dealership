@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +32,19 @@ public class AppointmentService {
 	@Autowired
 	private AppointmentRepository repository;
 
-	public List<AppointmentResponseDTO> findAll() {
-		List<AppointmentResponseDTO> appointmentsDTO = Mapper.modelMapperList(repository.findAll(),
-				AppointmentResponseDTO.class);
-		appointmentsDTO.stream().forEach(
-				i -> i.add(linkTo(methodOn(AppointmentController.class).findById(i.getId())).withSelfRel()));
-		return appointmentsDTO;
+	@Autowired
+	PagedResourcesAssembler<AppointmentResponseDTO> assembler;
+
+	public PagedModel<EntityModel<AppointmentResponseDTO>> findAll(Pageable pageable) {
+		Page<Appointment> appointmentPage = repository.findAll(pageable);
+		Page<AppointmentResponseDTO> appointmentPageDTO = appointmentPage
+				.map(a -> Mapper.modelMapper(a, AppointmentResponseDTO.class));
+		appointmentPageDTO
+				.map(i -> i.add(linkTo(methodOn(AppointmentController.class).findById(i.getId())).withSelfRel()));
+		Link link = linkTo(
+				methodOn(AppointmentController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc"))
+				.withSelfRel();
+		return assembler.toModel(appointmentPageDTO, link);
 	}
 
 	public AppointmentResponseDTO findById(String id) {

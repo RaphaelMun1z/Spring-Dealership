@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +32,18 @@ public class CustomerAddressService {
 	@Autowired
 	private CustomerAddressRepository repository;
 
-	public List<CustomerAddressResponseDTO> findAll() {
-		List<CustomerAddressResponseDTO> customersAddressDTO = Mapper.modelMapperList(repository.findAll(),
-				CustomerAddressResponseDTO.class);
-		customersAddressDTO.stream().forEach(i -> i
-				.add(linkTo(methodOn(CustomerAddressController.class).findById(i.getId())).withSelfRel()));
-		return customersAddressDTO;
+	@Autowired
+	PagedResourcesAssembler<CustomerAddressResponseDTO> assembler;
+
+	public PagedModel<EntityModel<CustomerAddressResponseDTO>> findAll(Pageable pageable) {
+		Page<CustomerAddress> customerAddressPage = repository.findAll(pageable);
+		Page<CustomerAddressResponseDTO> customerAddressPageDTO = customerAddressPage
+				.map(p -> Mapper.modelMapper(p, CustomerAddressResponseDTO.class));
+		customerAddressPageDTO
+				.map(i -> i.add(linkTo(methodOn(CustomerAddressController.class).findById(i.getId())).withSelfRel()));
+		Link link = linkTo(methodOn(CustomerAddressController.class).findAll(pageable.getPageNumber(),
+				pageable.getPageSize(), "asc")).withSelfRel();
+		return assembler.toModel(customerAddressPageDTO, link);
 	}
 
 	public CustomerAddressResponseDTO findById(String id) {

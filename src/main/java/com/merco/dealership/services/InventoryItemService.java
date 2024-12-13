@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +32,18 @@ public class InventoryItemService {
 	@Autowired
 	private InventoryItemRepository repository;
 
-	public List<InventoryItemResponseDTO> findAll() {
-		List<InventoryItemResponseDTO> inventoryItemsDTO = Mapper.modelMapperList(repository.findAll(),
-				InventoryItemResponseDTO.class);
-		inventoryItemsDTO.stream().forEach(
-				i -> i.add(linkTo(methodOn(InventoryItemController.class).findById(i.getId())).withSelfRel()));
-		return inventoryItemsDTO;
+	@Autowired
+	PagedResourcesAssembler<InventoryItemResponseDTO> assembler;
+
+	public PagedModel<EntityModel<InventoryItemResponseDTO>> findAll(Pageable pageable) {
+		Page<InventoryItem> inventoryItemPage = repository.findAll(pageable);
+		Page<InventoryItemResponseDTO> inventoryItemPageDTO = inventoryItemPage
+				.map(p -> Mapper.modelMapper(p, InventoryItemResponseDTO.class));
+		inventoryItemPageDTO
+				.map(i -> i.add(linkTo(methodOn(InventoryItemController.class).findById(i.getId())).withSelfRel()));
+		Link link = linkTo(methodOn(InventoryItemController.class).findAll(pageable.getPageNumber(),
+				pageable.getPageSize(), "asc")).withSelfRel();
+		return assembler.toModel(inventoryItemPageDTO, link);
 	}
 
 	public InventoryItemResponseDTO findById(String id) {

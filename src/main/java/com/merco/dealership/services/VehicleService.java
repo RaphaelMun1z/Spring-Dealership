@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +32,17 @@ public class VehicleService {
 	@Autowired
 	private VehicleRepository<Vehicle> repository;
 
-	public List<VehicleResponseDTO> findAll() {
-		List<VehicleResponseDTO> vehiclesDTO = Mapper.modelMapperList(repository.findAll(), VehicleResponseDTO.class);
-		vehiclesDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(VehicleController.class).findById(i.getId())).withSelfRel()));
-		return vehiclesDTO;
+	@Autowired
+	PagedResourcesAssembler<VehicleResponseDTO> assembler;
+
+	public PagedModel<EntityModel<VehicleResponseDTO>> findAll(Pageable pageable) {
+		Page<Vehicle> vehiclePage = repository.findAll(pageable);
+		Page<VehicleResponseDTO> vehiclePageDTO = vehiclePage.map(p -> Mapper.modelMapper(p, VehicleResponseDTO.class));
+		vehiclePageDTO.map(i -> i.add(linkTo(methodOn(VehicleController.class).findById(i.getId())).withSelfRel()));
+		Link link = linkTo(
+				methodOn(VehicleController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc"))
+				.withSelfRel();
+		return assembler.toModel(vehiclePageDTO, link);
 	}
 
 	public VehicleResponseDTO findById(String id) {

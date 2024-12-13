@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +32,18 @@ public class ContractService {
 	@Autowired
 	private ContractRepository repository;
 
-	public List<ContractResponseDTO> findAll() {
-		List<ContractResponseDTO> contractsDTO = Mapper.modelMapperList(repository.findAll(),
-				ContractResponseDTO.class);
-		contractsDTO.stream().forEach(
-				i -> i.add(linkTo(methodOn(ContractController.class).findById(i.getId())).withSelfRel()));
-		return contractsDTO;
+	@Autowired
+	PagedResourcesAssembler<ContractResponseDTO> assembler;
+
+	public PagedModel<EntityModel<ContractResponseDTO>> findAll(Pageable pageable) {
+		Page<Contract> contractPage = repository.findAll(pageable);
+		Page<ContractResponseDTO> contractPageDTO = contractPage
+				.map(p -> Mapper.modelMapper(p, ContractResponseDTO.class));
+		contractPageDTO.map(i -> i.add(linkTo(methodOn(ContractController.class).findById(i.getId())).withSelfRel()));
+		Link link = linkTo(
+				methodOn(ContractController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc"))
+				.withSelfRel();
+		return assembler.toModel(contractPageDTO, link);
 	}
 
 	public ContractResponseDTO findById(String id) {

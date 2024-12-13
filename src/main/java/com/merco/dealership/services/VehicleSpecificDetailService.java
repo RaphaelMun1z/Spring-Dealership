@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +32,18 @@ public class VehicleSpecificDetailService {
 	@Autowired
 	private VehicleSpecificDetailRepository repository;
 
-	public List<VehicleSpecificDetailResponseDTO> findAll() {
-		List<VehicleSpecificDetailResponseDTO> vehicleSpecificDetailDTO = Mapper.modelMapperList(repository.findAll(),
-				VehicleSpecificDetailResponseDTO.class);
-		vehicleSpecificDetailDTO.stream().forEach(
+	@Autowired
+	PagedResourcesAssembler<VehicleSpecificDetailResponseDTO> assembler;
+
+	public PagedModel<EntityModel<VehicleSpecificDetailResponseDTO>> findAll(Pageable pageable) {
+		Page<VehicleSpecificDetail> vehicleSpecificDetailPage = repository.findAll(pageable);
+		Page<VehicleSpecificDetailResponseDTO> vehicleSpecificDetailPageDTO = vehicleSpecificDetailPage
+				.map(p -> Mapper.modelMapper(p, VehicleSpecificDetailResponseDTO.class));
+		vehicleSpecificDetailPageDTO.map(
 				i -> i.add(linkTo(methodOn(VehicleSpecificDetailController.class).findById(i.getId())).withSelfRel()));
-		return vehicleSpecificDetailDTO;
+		Link link = linkTo(methodOn(VehicleSpecificDetailController.class).findAll(pageable.getPageNumber(),
+				pageable.getPageSize(), "asc")).withSelfRel();
+		return assembler.toModel(vehicleSpecificDetailPageDTO, link);
 	}
 
 	public VehicleSpecificDetailResponseDTO findById(String id) {

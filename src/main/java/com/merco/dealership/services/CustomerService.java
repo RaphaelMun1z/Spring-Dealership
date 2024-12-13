@@ -3,11 +3,15 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +32,18 @@ public class CustomerService {
 	@Autowired
 	private CustomerRepository repository;
 
-	public List<CustomerResponseDTO> findAll() {
-		List<CustomerResponseDTO> customersDTO = Mapper.modelMapperList(repository.findAll(),
-				CustomerResponseDTO.class);
-		customersDTO.stream()
-				.forEach(i -> i.add(linkTo(methodOn(CustomerController.class).findById(i.getId())).withSelfRel()));
-		return customersDTO;
+	@Autowired
+	PagedResourcesAssembler<CustomerResponseDTO> assembler;
+
+	public PagedModel<EntityModel<CustomerResponseDTO>> findAll(Pageable pageable) {
+		Page<Customer> customerPage = repository.findAll(pageable);
+		Page<CustomerResponseDTO> customerPageDTO = customerPage
+				.map(p -> Mapper.modelMapper(p, CustomerResponseDTO.class));
+		customerPageDTO.map(i -> i.add(linkTo(methodOn(CustomerController.class).findById(i.getId())).withSelfRel()));
+		Link link = linkTo(
+				methodOn(CustomerController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc"))
+				.withSelfRel();
+		return assembler.toModel(customerPageDTO, link);
 	}
 
 	public CustomerResponseDTO findById(String id) {
