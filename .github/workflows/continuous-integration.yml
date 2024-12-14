@@ -25,11 +25,11 @@ jobs:
         cache: maven
         
     - name: Build Application JAR
-      working-directory: ./dealership
+      working-directory: ./
       run: mvn clean package -D skipTests
 
     - name: Docker Compose Build
-      working-directory: ./dealership
+      working-directory: ./
       run: docker compose build
 
     - name: Push to Docker Hub Container Registry
