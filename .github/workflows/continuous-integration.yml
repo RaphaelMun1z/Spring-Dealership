@@ -25,16 +25,12 @@ jobs:
         cache: maven
         
     - name: Build Application JAR
-      working-directory: ./dealership
-      run: |
-        - pwd
-        mvn clean package -D skipTests
+      working-directory:  /home/runner/work/dealership/dealership
+      run: mvn clean package -D skipTests
 
     - name: Docker Compose Build
-      working-directory: ./dealership
-      run: |
-        - pwd
-        docker compose build
+      working-directory: /home/runner/work/dealership/dealership
+      run: docker compose build
 
     - name: Push to Docker Hub Container Registry
       run: |
