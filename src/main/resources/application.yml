@@ -17,7 +17,7 @@ spring:
         max-file-size: 200MB
         max-request-size: 215MB
 file:
-  upload-dir: C:\Users\rapha\OneDrive\Área de Trabalho\MERCO\Diagramas Dealership
+  upload-dir: D:\
 api:
   security:
     token:
@@ -27,4 +27,4 @@ spring-doc:
   swagger-ui:
     use-root-path: true
 cors:
-  originPatterns: http://localhost:8080,http://localhost:3000,http://localhost:8889,http://localhost:80
+  originPatterns: http://localhost:8080,http://localhost:8889,http://localhost:80

@@ -33,7 +33,7 @@ public class SecurityConfigurations {
 						.contentSecurityPolicy(cps -> cps.policyDirectives("script-src 'self' .....")))
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/*", "/v3/api-docs/**",
-								"/swagger-resources/**", "/h2-console/**")
+								"/swagger-resources/**", "/h2-console/**", "**")
 						.permitAll().requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 						.requestMatchers("/adm/**").hasAnyRole("ADM").requestMatchers("/sellers/**").hasAnyRole("ADM")
 						.requestMatchers("/customers/**").hasAnyRole("ADM", "SELLER")

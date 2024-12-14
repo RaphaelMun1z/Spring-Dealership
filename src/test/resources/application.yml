@@ -31,5 +31,7 @@ spring-doc:
     - /api/**
   swagger-ui:
     use-root-path: true
+file:
+  upload-dir: /home/runner/work/dealership/uploadDir
 cors:
   originPatterns: http://localhost:8080,http://localhost:3000,http://localhost:8889
