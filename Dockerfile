@@ -1,6 +1,8 @@
-FROM openjdk:21
-VOLUME /tmp
-ADD target/dealership-0.0.1-SNAPSHOT.jar app.jar
+FROM maven:3.8.5-openjdk-21 AS build
+COPY . .
+RUN mvn clean package -DskipTests
+
+FROM openjdk:17.0.1-jdk-slim
+COPY --from=build /target/demo-0.0.1-SNAPSHOT.jar demo.jar
 EXPOSE 8889
-RUN bash -c 'touch /app.jar'
-ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar" ]
+ENTRYPOINT ["java","-jar","demo.jar"]
