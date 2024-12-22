@@ -1,0 +1,1 @@
+insert into "tb_users" ("email", "id", "is_account_non_expired", "is_account_non_locked", "is_credentials_non_expired", "is_enabled", "name", "password", "phone", "role") values ('irineu@gmail.com', 'a1', true, true, true, true, 'Irineu', '$2a$10$0P9rooXJBsWKpHufu19Xwei7JC3QSw8C1KqfBRxB5zfMVS4RNZkEu', '(11) 91234-5678', 'ADM');

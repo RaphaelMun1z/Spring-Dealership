@@ -8,7 +8,7 @@ spring:
   application:
     name: dealership
   profiles:
-    active: dev
+    active: dev2
   datasource:
     servlet:
       multipart:
