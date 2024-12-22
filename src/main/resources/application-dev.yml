@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/dealership_database
-    username: postgres
-    password: password
+    url: jdbc:postgresql://neondb_owner:moYF5xhW4ujd@ep-jolly-base-a8m96qnx-pooler.eastus2.azure.neon.tech/neondb?sslmode=require
+    username: neondb_owner
+    password: moYF5xhW4ujd
   profile: dev
   hikari:
     minimum-idle: 5
