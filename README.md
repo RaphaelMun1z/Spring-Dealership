@@ -1,6 +1,6 @@
 ## 📌 Dealership
 
-<img src="./readme-assets/banner-github-portfolio.png"/>
+<img src="./Banner Dealership.png"/>
 
 ##
 
