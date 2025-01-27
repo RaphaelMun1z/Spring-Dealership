@@ -35,10 +35,10 @@ jobs:
 
     - name: Push to Docker Hub Container Registry
       run: |
-        docker tag ${{ secrets.DOCKER_USERNAME }}/application:latest ${{ secrets.DOCKER_USERNAME }}/application:${{ github.run_id }}
+        docker tag ${{ secrets.DOCKER_USERNAME }}/dealership:latest ${{ secrets.DOCKER_USERNAME }}/dealership:${{ github.run_id }}
         
-        docker push ${{ secrets.DOCKER_USERNAME }}/application:${{ github.run_id }}
-        docker push ${{ secrets.DOCKER_USERNAME }}/application:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/dealership:${{ github.run_id }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/dealership:latest
         
 
     - name: Update dependency graph
