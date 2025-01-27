@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://ep-jolly-base-a8m96qnx.eastus2.azure.neon.tech/neondb?sslmode=require
+    username: neondb_owner
+    password: moYF5xhW4ujd
+  profile: dev2
+  hikari:
+    minimum-idle: 5
+    maximum-pool-size: 10
+    idle-timeout: 30000
+    connection-timeout: 30000
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      dialect: PostgreSQLDialect
+      jdbc:
+        lob: 
+          non_contextual_creation: true
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://ep-jolly-base-a8m96qnx.eastus2.azure.neon.tech/neondb?sslmode=require
+    user: neondb_owner
+    password: moYF5xhW4ujd
+    baseline-on-migrate: true
