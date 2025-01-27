@@ -1,7 +1,7 @@
 services:
   api:
     container_name: api
-    image: raphaelmuniz/application
+    image: raphaelmuniz/dealership
     ports:
       - "8889:8889"
     depends_on:
