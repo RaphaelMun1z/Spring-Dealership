@@ -35,6 +35,7 @@ public class ContractService {
 	@Autowired
 	PagedResourcesAssembler<ContractResponseDTO> assembler;
 
+	@Transactional(readOnly = true)
 	public PagedModel<EntityModel<ContractResponseDTO>> findAll(Pageable pageable) {
 		Page<Contract> contractPage = repository.findAll(pageable);
 		Page<ContractResponseDTO> contractPageDTO = contractPage

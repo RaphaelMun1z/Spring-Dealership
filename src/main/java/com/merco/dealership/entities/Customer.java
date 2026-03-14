@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "tb_customers")
@@ -54,14 +55,17 @@ public class Customer implements Serializable {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "id.customer", orphanRemoval = true)
+	@BatchSize(size = 20)
 	private Set<CustomerAddressMapping> customerAddressesMapping = new HashSet<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "customer")
+	@BatchSize(size = 20)
 	private Set<Appointment> appointments = new HashSet<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "customer")
+	@BatchSize(size = 20)
 	private Set<Sale> sales = new HashSet<>();
 
 	public Customer() {

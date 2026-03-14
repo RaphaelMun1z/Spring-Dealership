@@ -3,7 +3,6 @@ spring:
     url: jdbc:postgresql://ep-jolly-base-a8m96qnx.eastus2.azure.neon.tech/neondb?sslmode=require
     username: neondb_owner
     password: moYF5xhW4ujd
-  profile: dev2
   hikari:
     minimum-idle: 5
     maximum-pool-size: 10
@@ -17,6 +16,7 @@ spring:
       jdbc:
         lob: 
           non_contextual_creation: true
+    open-in-view: false
   flyway:
     enabled: true
     url: jdbc:postgresql://ep-jolly-base-a8m96qnx.eastus2.azure.neon.tech/neondb?sslmode=require

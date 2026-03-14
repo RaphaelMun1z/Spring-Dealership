@@ -24,6 +24,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -97,12 +98,15 @@ public abstract class Vehicle implements Serializable {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "vehicle")
+	@BatchSize(size = 20)
 	private Set<InventoryItem> inventoryItems = new HashSet<>();
 
 	@OneToMany(mappedBy = "id.vehicle", orphanRemoval = true)
+	@BatchSize(size = 20)
 	private Set<VehicleConfiguration> specificDetails = new HashSet<>();
 
 	@OneToMany(mappedBy = "vehicle")
+	@BatchSize(size = 10)
 	private Set<VehicleImageFile> images = new HashSet<>();
 
 	protected Vehicle() {

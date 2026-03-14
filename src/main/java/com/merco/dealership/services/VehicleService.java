@@ -35,6 +35,7 @@ public class VehicleService {
 	@Autowired
 	PagedResourcesAssembler<VehicleResponseDTO> assembler;
 
+	@Transactional(readOnly = true)
 	public PagedModel<EntityModel<VehicleResponseDTO>> findAll(Pageable pageable) {
 		Page<Vehicle> vehiclePage = repository.findAll(pageable);
 		Page<VehicleResponseDTO> vehiclePageDTO = vehiclePage.map(p -> Mapper.modelMapper(p, VehicleResponseDTO.class));

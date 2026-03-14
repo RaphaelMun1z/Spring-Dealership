@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS "tb_addresses" (
 	"number" INTEGER NOT NULL,
 	"state" VARCHAR(255) NOT NULL,
 	"street" VARCHAR(255) NOT NULL,
-	PRIMARY KEY ("id")
+	PRIMARY KEY ("id"),
+    CONSTRAINT "uk_address_details" UNIQUE ("street", "number", "district", "city", "state", "cep", "country")
 );
 
 -- Copiando dados para a tabela public.tb_addresses: -1 rows

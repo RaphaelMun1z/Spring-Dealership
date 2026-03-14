@@ -45,111 +45,107 @@ import com.merco.dealership.repositories.SellerRepository;
 import com.merco.dealership.repositories.VehicleSpecificDetailRepository;
 
 @Configuration
-@Profile("dev")
+@Profile("test")
 public class TestConfig implements CommandLineRunner {
-	@Autowired
-	private AdmRepository admRepository;
+	private final AdmRepository admRepository;
+	private final SellerRepository sellerRepository;
+	private final SaleRepository saleRepository;
+	private final InventoryRepository inventoryRepository;
+	private final ContractRepository contractRepository;
+	private final AppointmentRepository appointmentRepository;
+	private final CustomerRepository customerRepository;
+	private final CustomerAddressRepository customerAddressRepository;
+	private final VehicleSpecificDetailRepository vehicleSpecificDetailRepository;
+	private final CarRepository carRepository;
+	private final BranchRepository branchRepository;
+	private final BranchAddressRepository branchAddressRepository;
 
-	@Autowired
-	private SellerRepository sellerRepository;
-
-	@Autowired
-	private SaleRepository saleRepository;
-
-	@Autowired
-	private InventoryRepository inventoryRepository;
-
-	@Autowired
-	private ContractRepository contractRepository;
-
-	@Autowired
-	private AppointmentRepository appointmentRepository;
-
-	@Autowired
-	private CustomerRepository customerRepository;
-
-	@Autowired
-	private CustomerAddressRepository customerAddressRepository;
-
-	@Autowired
-	private VehicleSpecificDetailRepository vehicleSpecificDetailRepository;
-
-	@Autowired
-	private CarRepository carRepository;
-
-	@Autowired
-	private BranchRepository branchRepository;
-
-	@Autowired
-	private BranchAddressRepository branchAddressRepository;
+	public TestConfig(
+			AdmRepository admRepository,
+			SellerRepository sellerRepository,
+			SaleRepository saleRepository,
+			InventoryRepository inventoryRepository,
+			ContractRepository contractRepository,
+			AppointmentRepository appointmentRepository,
+			CustomerRepository customerRepository,
+			CustomerAddressRepository customerAddressRepository,
+			VehicleSpecificDetailRepository vehicleSpecificDetailRepository,
+			CarRepository carRepository,
+			BranchRepository branchRepository,
+			BranchAddressRepository branchAddressRepository
+	) {
+		this.admRepository = admRepository;
+		this.sellerRepository = sellerRepository;
+		this.saleRepository = saleRepository;
+		this.inventoryRepository = inventoryRepository;
+		this.contractRepository = contractRepository;
+		this.appointmentRepository = appointmentRepository;
+		this.customerRepository = customerRepository;
+		this.customerAddressRepository = customerAddressRepository;
+		this.vehicleSpecificDetailRepository = vehicleSpecificDetailRepository;
+		this.carRepository = carRepository;
+		this.branchRepository = branchRepository;
+		this.branchAddressRepository = branchAddressRepository;
+	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		Adm adm = new Adm(null, "Irineu", "(11) 91234-5678", "irineu@gmail.com",
-				"$2a$10$0P9rooXJBsWKpHufu19Xwei7JC3QSw8C1KqfBRxB5zfMVS4RNZkEu");
+		// ADM
+		Adm adm = admRepository.save(new Adm(null, "Irineu", "(11) 91234-5678", "irineu@gmail.com",
+				"$2a$10$0P9rooXJBsWKpHufu19Xwei7JC3QSw8C1KqfBRxB5zfMVS4RNZkEu"));
 
-		BranchAddress branchAddress1 = new BranchAddress(null, "Other Street", 456, "Apt 1A", "Downtown", "Paraná",
-				"PR", "12345-678", "Brazil");
+		// Branch e endereço
+		BranchAddress branchAddress = branchAddressRepository.save(new BranchAddress(null, "Other Street", 456,
+				"Apt 1A", "Downtown", "Paraná", "PR", "12345-678", "Brazil"));
+		Branch branch = branchRepository.save(new Branch(null, "Main Branch", branchAddress, "(11) 91212-1212",
+				"mainbranch@example.com", "John Doe", "8:00 AM - 6:00 PM", "Dealership", "Active",
+				LocalDate.of(2023, 1, 1), LocalDate.of(2023, 11, 30)));
 
-		Branch branch1 = new Branch(null, "Main Branch", branchAddress1, "(11) 91212-1212", "mainbranch@example.com",
-				"John Doe", "8:00 AM - 6:00 PM", "Dealership", "Active", LocalDate.of(2023, 1, 1),
-				LocalDate.of(2023, 11, 30));
+		// Sellers
+		sellerRepository.saveAll(Arrays.asList(
+				new Seller(null, "JOHN DOE", "(11) 98765-4321", "john.doe@example.com", "securePass123",
+						LocalDate.of(2023, 6, 15), 5000.0, 0.05, "Active"),
+				new Seller(null, "JANE SMITH", "(21) 98765-4321", "jane.smith@example.com", "securePass456",
+						LocalDate.of(2022, 8, 10), 5500.0, 0.07, "Active"),
+				new Seller(null, "ALICE JOHNSON", "(31) 98765-4321", "alice.johnson@example.com",
+						"securePass789", LocalDate.of(2021, 4, 5), 6000.0, 0.06, "Inactive"),
+				new Seller(null, "BOB MARTINEZ", "(41) 98765-4321", "bob.martinez@example.com",
+						"securePass012", LocalDate.of(2020, 12, 20), 4500.0, 0.04, "Active")
+		));
 
-		Seller seller1 = new Seller(null, "JOHN DOE", "(11) 98765-4321", "john.doe@example.com", "securePass123",
-				LocalDate.of(2023, 6, 15), 5000.0, 0.05, "Active");
-		Seller seller2 = new Seller(null, "JANE SMITH", "(21) 98765-4321", "jane.smith@example.com", "securePass456",
-				LocalDate.of(2022, 8, 10), 5500.0, 0.07, "Active");
-		Seller seller3 = new Seller(null, "ALICE JOHNSON", "(31) 98765-4321", "alice.johnson@example.com",
-				"securePass789", LocalDate.of(2021, 4, 5), 6000.0, 0.06, "Inactive");
-		Seller seller4 = new Seller(null, "BOB MARTINEZ", "(41) 98765-4321", "bob.martinez@example.com",
-				"securePass012", LocalDate.of(2020, 12, 20), 4500.0, 0.04, "Active");
-		CustomerAddress customerAddress1 = new CustomerAddress(null, "Main Street", 123, "Apt 4B", "Downtown",
-				"São Paulo", "SP", "01000-000", "Brazil");
+		// Customer
+		CustomerAddress customerAddress = customerAddressRepository.save(new CustomerAddress(null, "Main Street", 123,
+				"Apt 4B", "Downtown", "São Paulo", "SP", "01000-000", "Brazil"));
+		Customer customer = customerRepository.save(new Customer(null, "John Doe", "(12) 93456-7890",
+				"johndoe@example.com", "1234567890", LocalDate.of(1990, 1, 1),
+				LocalDate.now(), ClientType.INDIVIDUAL, true));
 
-		Customer customer1 = new Customer(null, "John Doe", "(12) 93456-7890", "johndoe@example.com", "1234567890",
-				LocalDate.of(1990, 1, 1), LocalDate.now(), ClientType.INDIVIDUAL, true);
+		// Vehicle details
+		VehicleSpecificDetail vsd1 = new VehicleSpecificDetail(null, "Sunroof with panoramic view");
+		VehicleSpecificDetail vsd2 = new VehicleSpecificDetail(null, "Leather seats");
+		vehicleSpecificDetailRepository.saveAll(Arrays.asList(vsd1, vsd2));
 
-		Car car1 = new Car(null, "Toyota", "Corolla", VehicleType.CAR, VehicleCategory.SEDAN,
-				LocalDate.of(2020, 5, 15), "Black", 30000.0, 1500.0, FuelType.GASOLINE, 4, "Premium Sound System", 50.0,
-				140.0, 5, 75000.0, VehicleStatus.NEW, VehicleAvailability.AVAILABLE, "Excellent condition, low mileage",
-				LocalDate.of(2024, 11, 30), branch1, new HashSet<>(), new HashSet<>(), new HashSet<>(), 6, "ABS", 15.0,
-				12.0, 10.0, 5, "Power Steering", 17, 4, 470.0, "FWD");
+		// Car e Inventory
+		Car car = carRepository.save(new Car(null, "Toyota", "Corolla", VehicleType.CAR, VehicleCategory.SEDAN,
+				LocalDate.of(2020, 5, 15), "Black", 30000.0, 1500.0, FuelType.GASOLINE, 4,
+				"Premium Sound System", 50.0, 140.0, 5, 75000.0, VehicleStatus.NEW, VehicleAvailability.AVAILABLE,
+				"Excellent condition, low mileage", LocalDate.of(2024, 11, 30), branch, new HashSet<>(), new HashSet<>(),
+				new HashSet<>(), 6, "ABS", 15.0, 12.0, 10.0, 5, "Power Steering", 17, 4, 470.0, "FWD"));
+		InventoryItem inventory = inventoryRepository.save(new InventoryItem(null, car, LocalDate.of(2024, 11, 20),
+				null, 80000.0, 0.15, "Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456"));
 
-		VehicleSpecificDetail vehicleSpecificDetail1 = new VehicleSpecificDetail(null, "Sunroof with panoramic view");
-		VehicleSpecificDetail vehicleSpecificDetail2 = new VehicleSpecificDetail(null, "Leather seats");
-		VehicleSpecificDetail vehicleSpecificDetail3 = new VehicleSpecificDetail(null, "Premium sound system");
-		VehicleSpecificDetail vehicleSpecificDetail4 = new VehicleSpecificDetail(null, "Adaptive cruise control");
-		VehicleSpecificDetail vehicleSpecificDetail5 = new VehicleSpecificDetail(null, "Automatic parking assistance");
+		// Sale e Contract
+		Sale sale = saleRepository.save(new Sale(null, sellerRepository.findById("1").orElseThrow(), customer, inventory,
+				LocalDate.now(), 25000.0, 24000.0, 1000.0, "Credit Card", 12, "RC123456"));
+		Contract contract = contractRepository.save(new Contract(null, "CN12345", sale, "Sale",
+				LocalDate.now(), LocalDate.now().plusDays(15), 95000.0, PaymentTerms.PIX,
+				ContractStatus.SIGNED, "None", "contract_attachment.pdf"));
+		sale.setContract(contract);
+		saleRepository.save(sale);
 
-		InventoryItem inventoryItem1 = new InventoryItem(null, car1, LocalDate.of(2024, 11, 20), null, 80000.0, 0.15,
-				"Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456");
-
-		Sale sale1 = new Sale(null, seller1, customer1, inventoryItem1, LocalDate.of(1990, 1, 1), 25000.0, 24000.0,
-				1000.0, "Credit Card", 12, "RC123456");
-
-		Contract contract1 = new Contract(null, "CN12345", sale1, "Sale", LocalDate.of(2024, 11, 29),
-				LocalDate.of(2024, 12, 15), 95000.0, PaymentTerms.PIX, ContractStatus.SIGNED, "None",
-				"contract_attachment.pdf");
-
-		Appointment appointment1 = new Appointment(null, LocalDate.of(2024, 12, 1), AppointmentType.TEST_DRIVE,
-				AppointmentStatus.PENDING, customer1, seller1);
-
-		admRepository.save(adm);
-		branchAddressRepository.save(branchAddress1);
-		branchRepository.save(branch1);
-		sellerRepository.saveAll(Arrays.asList(seller1, seller2, seller3, seller4));
-		customerAddressRepository.save(customerAddress1);
-		customerRepository.save(customer1);
-		vehicleSpecificDetailRepository.saveAll(Arrays.asList(vehicleSpecificDetail1, vehicleSpecificDetail2,
-				vehicleSpecificDetail3, vehicleSpecificDetail4, vehicleSpecificDetail5));
-		carRepository.save(car1);
-		inventoryRepository.save(inventoryItem1);
-		saleRepository.save(sale1);
-		contractRepository.save(contract1);
-		sale1.setContract(contract1);
-		sale1.setInventoryItem(inventoryItem1);
-		saleRepository.save(sale1);
-		appointmentRepository.save(appointment1);
+		// Appointment
+		appointmentRepository.save(new Appointment(null, LocalDate.now().plusDays(1), AppointmentType.TEST_DRIVE,
+				AppointmentStatus.PENDING, customer, sellerRepository.findById("1").orElseThrow()));
 	}
 
 }

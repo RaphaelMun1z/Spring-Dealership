@@ -28,7 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<model-mapper.version>3.0.0</model-mapper.version>
+		<model-mapper.version>3.2.6</model-mapper.version>
 		<testcontainers.version>1.20.1</testcontainers.version>
 		<rest-assured.version>5.5.0</rest-assured.version>
 	</properties>

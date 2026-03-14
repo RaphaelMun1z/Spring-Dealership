@@ -5,19 +5,15 @@ import java.util.Objects;
 
 import com.merco.dealership.entities.validation.constraints.CEP;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "tb_addresses")
+@Table(name = "tb_addresses", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "street", "number", "district", "city", "state", "cep", "country" })
+})
 public abstract class Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 

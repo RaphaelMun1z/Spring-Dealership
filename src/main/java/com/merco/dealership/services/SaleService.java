@@ -35,6 +35,7 @@ public class SaleService {
 	@Autowired
 	PagedResourcesAssembler<SaleResponseDTO> assembler;
 
+	@Transactional(readOnly = true)
 	public PagedModel<EntityModel<SaleResponseDTO>> findAll(Pageable pageable) {
 		Page<Sale> salePage = repository.findAll(pageable);
 		Page<SaleResponseDTO> salePageDTO = salePage.map(p -> Mapper.modelMapper(p, SaleResponseDTO.class));

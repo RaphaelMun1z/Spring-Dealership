@@ -10,8 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "tb_branches_address", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "street", "number", "district", "city", "state", "cep", "country" }) })
+@Table(name = "tb_branches_address")
 public class BranchAddress extends Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 

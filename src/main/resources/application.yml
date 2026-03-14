@@ -8,7 +8,7 @@ spring:
   application:
     name: dealership
   profiles:
-    active: dev2
+    active: dev
   datasource:
     servlet:
       multipart:
@@ -26,5 +26,3 @@ spring-doc:
   pathsToMatch: /**
   swagger-ui:
     use-root-path: true
-cors:
-  originPatterns: http://localhost:8080,http://localhost:8889,http://localhost:80

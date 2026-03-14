@@ -35,6 +35,7 @@ public class AppointmentService {
 	@Autowired
 	PagedResourcesAssembler<AppointmentResponseDTO> assembler;
 
+	@Transactional(readOnly = true)
 	public PagedModel<EntityModel<AppointmentResponseDTO>> findAll(Pageable pageable) {
 		Page<Appointment> appointmentPage = repository.findAll(pageable);
 		Page<AppointmentResponseDTO> appointmentPageDTO = appointmentPage

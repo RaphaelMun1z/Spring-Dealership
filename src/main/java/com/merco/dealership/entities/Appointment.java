@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "tb_appointments")
@@ -47,6 +48,7 @@ public class Appointment implements Serializable {
 	private Seller seller;
 
 	@OneToMany(mappedBy = "id.appointment", orphanRemoval = true)
+	@BatchSize(size = 20)
 	private Set<InventoryItemCommitment> inventoryItemCommitments = new HashSet<>();
 
 	public Appointment() {

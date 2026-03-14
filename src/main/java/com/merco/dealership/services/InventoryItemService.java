@@ -35,6 +35,7 @@ public class InventoryItemService {
 	@Autowired
 	PagedResourcesAssembler<InventoryItemResponseDTO> assembler;
 
+	@Transactional(readOnly = true)
 	public PagedModel<EntityModel<InventoryItemResponseDTO>> findAll(Pageable pageable) {
 		Page<InventoryItem> inventoryItemPage = repository.findAll(pageable);
 		Page<InventoryItemResponseDTO> inventoryItemPageDTO = inventoryItemPage
