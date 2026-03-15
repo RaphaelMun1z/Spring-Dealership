@@ -26,6 +26,12 @@ public class SecurityFilter extends OncePerRequestFilter {
 	UserRepository<User> userRepository;
 
 	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		String path = request.getRequestURI();
+		return path.contains("/actuator/health");
+	}
+
+	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		var token = this.recoverToken(request);

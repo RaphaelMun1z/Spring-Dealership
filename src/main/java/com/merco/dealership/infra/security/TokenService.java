@@ -21,41 +21,48 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class TokenService {
 	@Value("${api.security.token.secret:secret}")
-	private String secret = "secret";
+	private String secret;
 
-	Algorithm algorithm = null;
+	private Algorithm algorithm;
+	private static final String ISSUER = "autostock-api";
 
 	@PostConstruct
 	protected void init() {
-		secret = Base64.getEncoder().encodeToString(secret.getBytes());
-		algorithm = Algorithm.HMAC256(secret.getBytes());
+		algorithm = Algorithm.HMAC256(secret);
 	}
 
 	public TokenDTO generateToken(User user) {
 		try {
-			String username = user.getUsername();
-			Instant createdAt = LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"));
+			Instant createdAt = Instant.now();
 			Instant expiration = genExpirationDate();
-			String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-			String token = JWT.create().withClaim("role", user.getRole()).withIssuedAt(createdAt)
-					.withExpiresAt(expiration).withIssuer(issuerUrl).withSubject(user.getEmail()).sign(algorithm)
-					.strip();
-			return new TokenDTO(username, createdAt, expiration, token);
+
+			String token = JWT.create()
+					.withIssuer(ISSUER)
+					.withSubject(user.getEmail())
+					.withClaim("role", user.getRole())
+					.withIssuedAt(createdAt)
+					.withExpiresAt(expiration)
+					.sign(algorithm);
+
+			return new TokenDTO(user.getUsername(), createdAt, expiration, token);
 		} catch (JWTCreationException exception) {
-			throw new RuntimeException("Error while generating token", exception);
+			throw new RuntimeException("Erro ao gerar token JWT", exception);
 		}
 	}
 
 	public String validateToken(String token) {
 		try {
-			String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-			return JWT.require(algorithm).withIssuer(issuerUrl).build().verify(token).getSubject();
+			return JWT.require(algorithm)
+					.withIssuer(ISSUER)
+					.build()
+					.verify(token)
+					.getSubject();
 		} catch (JWTVerificationException exception) {
-			return "";
+			return null;
 		}
 	}
 
 	private Instant genExpirationDate() {
-		return LocalDateTime.now().plusHours(12).toInstant(ZoneOffset.of("-03:00"));
+		return LocalDateTime.now().plusHours(12).toInstant(ZoneOffset.UTC);
 	}
 }
