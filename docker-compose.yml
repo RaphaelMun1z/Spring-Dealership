@@ -1,9 +1,9 @@
 services:
-  api:
-    container_name: api
-    image: raphaelmuniz/dealership
+  backend:
+    container_name: backend
+    image: raphaelmuniz/dealership-backend
     ports:
-      - "8889:8889"
+      - "8080:8080"
     depends_on:
       - db
     restart: always
