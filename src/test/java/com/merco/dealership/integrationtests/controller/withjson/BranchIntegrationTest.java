@@ -1,32 +1,24 @@
 package com.merco.dealership.integrationtests.controller.withjson;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonParseException;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.DeserializationFeature;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonMappingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.merco.dealership.configs.TestConfigs;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.merco.dealership.dto.BranchAddressResponseDTO;
 import com.merco.dealership.dto.BranchResponseDTO;
 import com.merco.dealership.dto.LoginRequestDTO;
 import com.merco.dealership.dto.LoginResponseDTO;
+
+import org.junit.jupiter.api.*;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.merco.dealership.configs.TestConfigs;
 import com.merco.dealership.integrationtests.testcontainers.AbstractIntegrationTest;
 
 import io.restassured.RestAssured;
@@ -36,107 +28,138 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
-@SpringBootApplication
-@SpringBootTest(classes = BranchIntegrationTest.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@TestMethodOrder(OrderAnnotation.class)
-public class BranchIntegrationTest extends AbstractIntegrationTest {
-	private static RequestSpecification specification;
-	private static ObjectMapper objectMapper;
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Tag("integracao")
+@DisplayName("Testes de Integração - Controller de Filiais")
+class BranchIntegrationTest extends AbstractIntegrationTest {
 
-	private static BranchResponseDTO branch;
+    @LocalServerPort
+    private int port;
 
-	@LocalServerPort
-	private String port;
+    private RequestSpecification specification;
+    private ObjectMapper objectMapper;
+    private BranchResponseDTO branch;
 
-	@BeforeEach
-	void setup1() {
-		RestAssured.port = Integer.parseInt(port);
-	}
+    @BeforeAll
+    @DisplayName("Configuração inicial do ambiente de testes")
+    void configurarAmbiente() {
 
-	@BeforeAll
-	public static void setup() {
-		objectMapper = new ObjectMapper();
-		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		branch = new BranchResponseDTO();
-	}
+        objectMapper = new ObjectMapper();
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.registerModule(new JavaTimeModule());
 
-	@Test
-	@Order(0)
-	public void authorization() throws JsonMappingException, JsonProcessingException {
-		LoginRequestDTO user = new LoginRequestDTO("irineu@gmail.com", "irineu123");
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = port;
+        RestAssured.basePath = "/api";
 
-		System.out.println("-------------------------");
-		try {
-			var accessToken = given().basePath("/api/auth/login")
-					.port(TestConfigs.SERVER_PORT).body(user).when().post().then().statusCode(200).extract().body()
-					.as(LoginResponseDTO.class).getToken();
-			//var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtIiwiaWF0IjoxNzMzNzU4MTE3LCJleHAiOjE3MzM4MDEzMTcsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9hcGkiLCJzdWIiOiJpcmluZXVAZ21haWwuY29tIn0.179rPyN9toRVIv_lckwzuTEAJ-GEGtV7XBf3ts1EmNA";
+        LoginRequestDTO usuario =
+                new LoginRequestDTO("admin@dealer.com", "irineu123");
 
-			specification = new RequestSpecBuilder()
-					.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-					.setBasePath("/api/branches").setPort(TestConfigs.SERVER_PORT)
-					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-					.addFilter(new ResponseLoggingFilter(LogDetail.ALL)).build();
-		} catch (Exception e) {
-			System.out.println("===================Erro: " + e.getMessage());
-		}
-	}
+        String accessToken =
+                given()
+                        .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                        .body(usuario)
+                        .when()
+                        .post("/auth/login")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .as(LoginResponseDTO.class)
+                        .getToken()
+                        .getAccessToken();
 
-	@Test
-	@Order(1)
-	public void connectionEstablished() throws JsonMappingException, JsonProcessingException {
-		assertTrue(Initializer.postgresql.isCreated());
-		assertTrue(Initializer.postgresql.isRunning());
-	}
+        specification = new RequestSpecBuilder()
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
+                .setBasePath("/api/branches")
+                .setPort(port)
+                .addFilter(new RequestLoggingFilter(LogDetail.ALL))
+                .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+                .build();
+    }
 
-	@Test
-	@Order(2)
-	public void testCreate() throws JsonParseException, JsonMappingException, IOException {
-		mockEntity();
+    @Test
+    @Order(1)
+    @DisplayName("Deve iniciar o container PostgreSQL corretamente")
+    void deveIniciarContainerPostgres() {
+        assertTrue(Initializer.postgresql.isCreated());
+        assertTrue(Initializer.postgresql.isRunning());
+    }
 
-		var content = given().spec(specification).contentType(TestConfigs.CONTENT_TYPE_JSON)
-				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL).body(branch).when().post().then()
-				.statusCode(200).extract().body().asString();
+    @Test
+    @Order(2)
+    @DisplayName("Deve criar uma filial com sucesso quando os dados forem válidos")
+    void deveCriarFilialComSucesso() throws IOException {
 
-		BranchResponseDTO createdBranch = objectMapper.readValue(content, BranchResponseDTO.class);
-		branch = createdBranch;
+        mockFilialValida();
 
-		assertNotNull(createdBranch);
+        var content =
+                given()
+                        .spec(specification)
+                        .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                        .body(branch)
+                        .when()
+                        .post()
+                        .then()
+                        .statusCode(201)
+                        .extract()
+                        .asString();
 
-		assertNotNull(createdBranch.getId());
-		// assertNotNull(createdBranch.getAddress());
-		assertNotNull(createdBranch.getPhoneNumber());
-		assertNotNull(createdBranch.getEmail());
-		assertNotNull(createdBranch.getManagerName());
-		assertNotNull(createdBranch.getOpeningHours());
-		assertNotNull(createdBranch.getBranchType());
-		assertNotNull(createdBranch.getStatus());
-		assertNotNull(createdBranch.getCreatedAt());
-		assertNotNull(createdBranch.getUpdatedAt());
+        BranchResponseDTO filialCriada =
+                objectMapper.readValue(content, BranchResponseDTO.class);
 
-		assertTrue(createdBranch.getId().length() > 0);
+        assertNotNull(filialCriada);
+        assertNotNull(filialCriada.getId());
+        assertFalse(filialCriada.getId().isEmpty());
 
-		// assertEquals(null, createdBranch.getAddress());
-		assertEquals("PhoneNumber - Test", createdBranch.getPhoneNumber());
-		assertEquals("Email - Test", createdBranch.getEmail());
-		assertEquals("ManagerName - Test", createdBranch.getManagerName());
-		assertEquals("OpeningHours - Test", createdBranch.getOpeningHours());
-		assertEquals("BranchType - Test", createdBranch.getBranchType());
-		assertEquals("Status - Test", createdBranch.getStatus());
-		assertEquals(LocalDate.now(), createdBranch.getCreatedAt());
-		assertEquals(LocalDate.now(), createdBranch.getUpdatedAt());
-	}
+        assertEquals("Branch Test", filialCriada.getName());
+        assertEquals("(11) 91234-5678", filialCriada.getPhoneNumber());
+        assertEquals("branch@test.com", filialCriada.getEmail());
+        assertEquals("Manager Test", filialCriada.getManagerName());
+        assertEquals("08:00 - 18:00", filialCriada.getOpeningHours());
+        assertEquals("HEADQUARTERS", filialCriada.getBranchType());
+        assertEquals("ACTIVE", filialCriada.getStatus());
 
-	private void mockEntity() throws JsonMappingException, JsonProcessingException {
-		// branch.setAddress(null);
-		branch.setPhoneNumber("PhoneNumber - Test");
-		branch.setEmail("Email - Test");
-		branch.setManagerName("ManagerName - Test");
-		branch.setOpeningHours("OpeningHours - Test");
-		branch.setBranchType("BranchType - Test");
-		branch.setStatus("Status - Test");
-		branch.setCreatedAt(LocalDate.now());
-		branch.setUpdatedAt(LocalDate.now());
-	}
+        assertEquals(LocalDate.now(), filialCriada.getCreatedAt());
+        assertEquals(LocalDate.now(), filialCriada.getUpdatedAt());
 
+        assertNotNull(filialCriada.getAddress());
+        assertEquals("Rua Teste", filialCriada.getAddress().getStreet());
+        assertEquals(123, filialCriada.getAddress().getNumber());
+        assertEquals("Centro", filialCriada.getAddress().getDistrict());
+        assertEquals("São Paulo", filialCriada.getAddress().getCity());
+        assertEquals("SP", filialCriada.getAddress().getState());
+        assertEquals("Brasil", filialCriada.getAddress().getCountry());
+        assertEquals("12345-678", filialCriada.getAddress().getCep());
+        assertEquals("Sala 1", filialCriada.getAddress().getComplement());
+    }
+
+    private void mockFilialValida() {
+
+        branch = new BranchResponseDTO();
+
+        branch.setName("Branch Test");
+        branch.setPhoneNumber("(11) 91234-5678");
+        branch.setEmail("branch@test.com");
+        branch.setManagerName("Manager Test");
+        branch.setOpeningHours("08:00 - 18:00");
+        branch.setBranchType("HEADQUARTERS");
+        branch.setStatus("ACTIVE");
+        branch.setCreatedAt(LocalDate.now());
+        branch.setUpdatedAt(LocalDate.now());
+
+        BranchAddressResponseDTO endereco = new BranchAddressResponseDTO();
+        endereco.setStreet("Rua Teste");
+        endereco.setNumber(123);
+        endereco.setDistrict("Centro");
+        endereco.setCity("São Paulo");
+        endereco.setState("SP");
+        endereco.setCountry("Brasil");
+        endereco.setCep("12345-678");
+        endereco.setComplement("Sala 1");
+
+        branch.setAddress(endereco);
+    }
 }

@@ -1,17 +1,15 @@
 services:
   backend:
-    container_name: backend
-    image: raphaelmuniz/dealership-backend
+    container_name: DealershipProject
+    image: raphaelmuniz/dealership-backend:1.0.0
     ports:
       - "8080:8080"
     depends_on:
       - db
     restart: always
-    command: mvn spring-boot:run
-    build:
-      context: .
     networks:
       - postgres-compose-network
+
   db:
     container_name: db
     image: postgres:16.3
@@ -25,6 +23,7 @@ services:
     restart: always
     networks:
       - postgres-compose-network
+
 networks:
   postgres-compose-network:
     driver: bridge

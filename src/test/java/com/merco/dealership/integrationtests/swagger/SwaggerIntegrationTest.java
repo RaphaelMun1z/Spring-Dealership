@@ -4,39 +4,59 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import com.merco.dealership.configs.TestConfigs;
 import com.merco.dealership.integrationtests.testcontainers.AbstractIntegrationTest;
 
 import io.restassured.RestAssured;
 
-@SpringBootApplication
-@SpringBootTest(classes = SwaggerIntegrationTest.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Tag("integracao")
+@DisplayName("Testes de Integração - Swagger UI")
 public class SwaggerIntegrationTest extends AbstractIntegrationTest {
+
 	@LocalServerPort
-	private String port;
+	private int port;
 
 	@BeforeEach
+	@DisplayName("Configuração da porta e contexto do RestAssured")
 	void setUp() {
-		RestAssured.port = Integer.parseInt(port);
+		RestAssured.port = port;
+		RestAssured.basePath = "/api";
 	}
 
 	@Test
+	@Order(1)
+	@DisplayName("Deve iniciar o container PostgreSQL corretamente")
 	void connectionEstablished() {
 		assertTrue(Initializer.postgresql.isCreated());
 		assertTrue(Initializer.postgresql.isRunning());
 	}
 
 	@Test
+	@Order(2)
+	@DisplayName("Deve carregar a página HTML do Swagger UI com status 200")
 	public void shouldDisplaySwaggerUiPage() {
-		var content = given().auth().basic("user", "password")
-				.basePath("/api/swagger-ui/index.html").port(TestConfigs.SERVER_PORT).when().get().then()
-				.statusCode(200).extract().body().asString();
+
+		var content = given()
+				.when()
+				.get("/swagger-ui/index.html")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
 		assertTrue(content.contains("Swagger UI"));
 	}
-
 }

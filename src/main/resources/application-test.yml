@@ -13,3 +13,5 @@ spring:
     hibernate:
       ddl-auto: update
       format_sql: true
+cors:
+  originPatterns: http://localhost:3000,http://localhost:8080

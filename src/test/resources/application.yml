@@ -1,5 +1,5 @@
 server:
-  port: 8889
+  port: 8080
   compression:
       enabled: true
   servlet:
@@ -24,7 +24,7 @@ spring:
 api:
   security:
     token:
-      secret: ${JWT_SECRET}
+      secret: ${JWT_SECRET:teste123}
 spring-doc:
   pathsToMatch:
     - /auth/**
@@ -33,3 +33,5 @@ spring-doc:
     use-root-path: true
 file:
   upload-dir: /home/runner/work/dealership/uploadDir
+cors:
+  originPatterns: http://localhost:3000,http://localhost:8080

@@ -6,13 +6,7 @@ import java.util.Objects;
 
 import com.merco.dealership.entities.validation.constraints.PhoneNumber;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -51,7 +45,7 @@ public class Branch implements Serializable {
 	private LocalDate updatedAt;
 
 	@NotNull(message = "Required field")
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "branch_address_id")
 	private BranchAddress address;
 

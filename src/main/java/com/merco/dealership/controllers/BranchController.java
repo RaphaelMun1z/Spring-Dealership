@@ -2,12 +2,14 @@ package com.merco.dealership.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,12 +35,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping(value = "/branches")
 @Tag(name = "Branches", description = "Endpoints for Managing Branches")
 public class BranchController {
-	@Autowired
-	private BranchService service;
+	private final BranchService service;
+
+	public BranchController(BranchService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	@Operation(summary = "Finds all Branches", description = "Finds all Branches", tags = { "Branches" }, responses = {
@@ -51,10 +59,16 @@ public class BranchController {
 	public ResponseEntity<PagedModel<EntityModel<BranchResponseDTO>>> findAll(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "size", defaultValue = "12") Integer size,
-			@RequestParam(value = "direction", defaultValue = "asc") String direction) {
+			@RequestParam(value = "direction", defaultValue = "asc") String direction,
+			PagedResourcesAssembler<BranchResponseDTO> assembler) {
 		Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "id"));
-		return ResponseEntity.ok().body(service.findAll(pageable));
+
+		Page<BranchResponseDTO> branchPage = service.findAll(pageable);
+
+		Link link = linkTo(methodOn(BranchController.class).findAll(page, size, direction, null)).withSelfRel();
+
+		return ResponseEntity.ok().body(assembler.toModel(branchPage, link));
 	}
 
 	@GetMapping(value = "/{id}")
@@ -101,8 +115,8 @@ public class BranchController {
 			@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
 			@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
 			@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content) })
-	public ResponseEntity<Branch> patch(@PathVariable String id, @RequestBody Branch obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<BranchResponseDTO> patch(@PathVariable String id, @RequestBody Branch obj) {
+		BranchResponseDTO branchDTO = service.patch(id, obj);
+		return ResponseEntity.ok().body(branchDTO);
 	}
 }
