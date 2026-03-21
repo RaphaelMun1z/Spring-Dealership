@@ -1,25 +1,23 @@
 package com.merco.dealership.infra.security;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Base64;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.merco.dealership.dto.TokenDTO;
+import com.merco.dealership.dto.res.TokenDTO;
 import com.merco.dealership.entities.User;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
 public class TokenService {
+
 	@Value("${api.security.token.secret:secret}")
 	private String secret;
 
@@ -58,11 +56,12 @@ public class TokenService {
 					.verify(token)
 					.getSubject();
 		} catch (JWTVerificationException exception) {
+			System.out.println("Erro na validação do JWT: " + exception.getMessage());
 			return null;
 		}
 	}
 
 	private Instant genExpirationDate() {
-		return LocalDateTime.now().plusHours(12).toInstant(ZoneOffset.UTC);
+		return Instant.now().plus(12, ChronoUnit.HOURS);
 	}
 }

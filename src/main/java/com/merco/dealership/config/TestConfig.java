@@ -93,8 +93,8 @@ public class TestConfig implements CommandLineRunner {
 		admRepository.save(new Adm(null, "Irineu", "(11) 91234-5678", "irineu@gmail.com",
 				"$2a$10$0P9rooXJBsWKpHufu19Xwei7JC3QSw8C1KqfBRxB5zfMVS4RNZkEu"));
 
-		BranchAddress branchAddress = branchAddressRepository.save(new BranchAddress(null, "Other Street", 456,
-				"Apt 1A", "Downtown", "Paraná", "PR", "12345-678", "Brazil"));
+		BranchAddress branchAddress = new BranchAddress(null, "Other Street", 456,
+				"Apt 1A", "Downtown", "Paraná", "PR", "12345-678", "Brazil");
 		Branch branch = branchRepository.save(new Branch(null, "Main Branch", branchAddress, "(11) 91212-1212",
 				"mainbranch@example.com", "John Doe", "8:00 AM - 6:00 PM", "Dealership", "Active",
 				LocalDate.of(2023, 1, 1), LocalDate.of(2023, 11, 30)));

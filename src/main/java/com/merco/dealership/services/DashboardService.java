@@ -1,6 +1,6 @@
 package com.merco.dealership.services;
 
-import com.merco.dealership.dto.DashboardStatsResponseDTO;
+import com.merco.dealership.dto.res.DashboardStatsResponseDTO;
 import com.merco.dealership.repositories.CustomerRepository;
 import com.merco.dealership.repositories.InventoryItemRepository;
 import com.merco.dealership.repositories.SaleRepository;

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.AdmController;
-import com.merco.dealership.dto.AdmRegisterRequestDTO;
-import com.merco.dealership.dto.AdmResponseDTO;
+import com.merco.dealership.dto.req.AdmRegisterRequestDTO;
+import com.merco.dealership.dto.res.AdmResponseDTO;
 import com.merco.dealership.entities.Adm;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.AdmRepository;

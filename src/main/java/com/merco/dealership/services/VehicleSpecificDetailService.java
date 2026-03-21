@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.VehicleSpecificDetailController;
-import com.merco.dealership.dto.VehicleSpecificDetailResponseDTO;
+import com.merco.dealership.dto.res.VehicleSpecificDetailResponseDTO;
 import com.merco.dealership.entities.VehicleSpecificDetail;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.VehicleSpecificDetailRepository;

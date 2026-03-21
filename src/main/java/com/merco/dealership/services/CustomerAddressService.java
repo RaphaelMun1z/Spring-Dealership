@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.CustomerAddressController;
-import com.merco.dealership.dto.CustomerAddressResponseDTO;
+import com.merco.dealership.dto.res.CustomerAddressResponseDTO;
 import com.merco.dealership.entities.CustomerAddress;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.CustomerAddressRepository;

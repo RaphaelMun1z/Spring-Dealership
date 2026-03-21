@@ -1,7 +1,8 @@
-package com.merco.dealership.dto;
+package com.merco.dealership.dto.req;
 
 import java.time.LocalDate;
 
+import com.merco.dealership.dto.res.SellerResponseDTO;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.merco.dealership.entities.Seller;

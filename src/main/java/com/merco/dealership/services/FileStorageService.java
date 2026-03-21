@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.merco.dealership.config.FileStorageConfig;
-import com.merco.dealership.dto.UploadFileResponseDTO;
+import com.merco.dealership.dto.res.UploadFileResponseDTO;
 import com.merco.dealership.services.exceptions.DatabaseException;
 import com.merco.dealership.services.exceptions.FileStorageException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.VehicleResponseDTO;
-import com.merco.dealership.entities.Vehicle;
+import com.merco.dealership.dto.req.VehicleRequestDTO;
+import com.merco.dealership.dto.res.VehicleResponseDTO;
 import com.merco.dealership.services.VehicleService;
 
 import jakarta.validation.Valid;
@@ -30,10 +30,13 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/vehicles")
 public class VehicleController {
-	@Autowired
-	private VehicleService service;
+	private final VehicleService service;
 
-	@GetMapping
+    public VehicleController(VehicleService service) {
+        this.service = service;
+    }
+
+    @GetMapping
 	public ResponseEntity<PagedModel<EntityModel<VehicleResponseDTO>>> findAll(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "size", defaultValue = "12") Integer size,
@@ -49,11 +52,11 @@ public class VehicleController {
 	}
 
 	@PostMapping
-	public ResponseEntity<VehicleResponseDTO> insert(@RequestBody @Valid Vehicle obj) {
-		VehicleResponseDTO VehicleDTO = service.create(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(VehicleDTO.getId())
+	public ResponseEntity<VehicleResponseDTO> insert(@RequestBody @Valid VehicleRequestDTO dto) {
+		VehicleResponseDTO responseDTO = service.create(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(responseDTO.getId())
 				.toUri();
-		return ResponseEntity.created(uri).body(VehicleDTO);
+		return ResponseEntity.created(uri).body(responseDTO);
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -63,8 +66,8 @@ public class VehicleController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Vehicle> patch(@PathVariable String id, @RequestBody Vehicle obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<VehicleResponseDTO> patch(@PathVariable String id, @RequestBody VehicleRequestDTO dto) {
+		VehicleResponseDTO responseDTO = service.patch(id, dto);
+		return ResponseEntity.ok().body(responseDTO);
 	}
 }

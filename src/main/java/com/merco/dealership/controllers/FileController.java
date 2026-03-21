@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.UploadFileResponseDTO;
+import com.merco.dealership.dto.res.UploadFileResponseDTO;
 import com.merco.dealership.services.FileStorageService;
 
 import jakarta.servlet.http.HttpServletRequest;

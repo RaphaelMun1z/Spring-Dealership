@@ -23,3 +23,5 @@ spring:
 
   flyway:
     enabled: false
+cors:
+  originPatterns: http://localhost:4200

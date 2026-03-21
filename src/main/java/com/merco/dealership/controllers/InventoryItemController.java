@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.InventoryItemResponseDTO;
+import com.merco.dealership.dto.res.InventoryItemResponseDTO;
 import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.services.InventoryItemService;
 

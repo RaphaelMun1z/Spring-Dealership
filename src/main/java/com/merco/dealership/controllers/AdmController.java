@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.AdmRegisterRequestDTO;
-import com.merco.dealership.dto.AdmResponseDTO;
+import com.merco.dealership.dto.req.AdmRegisterRequestDTO;
+import com.merco.dealership.dto.res.AdmResponseDTO;
 import com.merco.dealership.entities.Adm;
 import com.merco.dealership.services.AdmService;
 

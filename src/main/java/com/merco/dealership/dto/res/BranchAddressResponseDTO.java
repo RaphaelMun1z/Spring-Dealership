@@ -1,10 +1,10 @@
-package com.merco.dealership.dto;
+package com.merco.dealership.dto.res;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.CustomerAddress;
+import com.merco.dealership.entities.BranchAddress;
 
-public class CustomerAddressResponseDTO  extends RepresentationModel<CustomerAddressResponseDTO> {
+public class BranchAddressResponseDTO extends RepresentationModel<BranchAddressResponseDTO> {
 	private String id;
 	private String street;
 	private int number;
@@ -15,19 +15,19 @@ public class CustomerAddressResponseDTO  extends RepresentationModel<CustomerAdd
 	private String cep;
 	private String complement;
 
-	public CustomerAddressResponseDTO() {
+	public BranchAddressResponseDTO() {
 	}
 
-	public CustomerAddressResponseDTO(CustomerAddress customerAddress) {
-		this.id = customerAddress.getId();
-		this.street = customerAddress.getStreet();
-		this.number = customerAddress.getNumber();
-		this.district = customerAddress.getDistrict();
-		this.city = customerAddress.getCity();
-		this.state = customerAddress.getState();
-		this.country = customerAddress.getCountry();
-		this.cep = customerAddress.getCep();
-		this.complement = customerAddress.getComplement();
+	public BranchAddressResponseDTO(BranchAddress branchAddress) {
+		this.id = branchAddress.getId();
+		this.street = branchAddress.getStreet();
+		this.number = branchAddress.getNumber();
+		this.district = branchAddress.getDistrict();
+		this.city = branchAddress.getCity();
+		this.state = branchAddress.getState();
+		this.country = branchAddress.getCountry();
+		this.cep = branchAddress.getCep();
+		this.complement = branchAddress.getComplement();
 	}
 
 	public String getId() {

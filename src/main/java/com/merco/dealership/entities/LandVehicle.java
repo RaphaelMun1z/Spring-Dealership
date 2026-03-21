@@ -63,7 +63,8 @@ public abstract class LandVehicle extends Vehicle implements Serializable {
 	}
 
 	public TransmissionType getTransmissionType() {
-		return TransmissionType.valueOf(transmissionType);
+		if (this.transmissionType == null) return null;
+		return TransmissionType.valueOf(this.transmissionType);
 	}
 
 	public void setTransmissionType(TransmissionType transmissionType) {

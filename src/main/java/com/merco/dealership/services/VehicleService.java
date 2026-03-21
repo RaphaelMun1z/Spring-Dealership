@@ -3,7 +3,8 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.merco.dealership.entities.*;
+import com.merco.dealership.repositories.BranchRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -16,8 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.VehicleController;
-import com.merco.dealership.dto.VehicleResponseDTO;
-import com.merco.dealership.entities.Vehicle;
+import com.merco.dealership.dto.req.VehicleRequestDTO;
+import com.merco.dealership.dto.res.VehicleResponseDTO;
+import com.merco.dealership.entities.enums.FuelType;
+import com.merco.dealership.entities.enums.VehicleAvailability;
+import com.merco.dealership.entities.enums.VehicleCategory;
+import com.merco.dealership.entities.enums.VehicleStatus;
+import com.merco.dealership.entities.enums.VehicleType;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.VehicleRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
@@ -29,11 +35,16 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class VehicleService {
-	@Autowired
-	private VehicleRepository<Vehicle> repository;
 
-	@Autowired
-	PagedResourcesAssembler<VehicleResponseDTO> assembler;
+	private final VehicleRepository<Vehicle> repository;
+	private final BranchRepository branchRepository;
+	private final PagedResourcesAssembler<VehicleResponseDTO> assembler;
+
+	public VehicleService(VehicleRepository<Vehicle> repository, BranchRepository branchRepository, PagedResourcesAssembler<VehicleResponseDTO> assembler) {
+		this.repository = repository;
+        this.branchRepository = branchRepository;
+        this.assembler = assembler;
+	}
 
 	@Transactional(readOnly = true)
 	public PagedModel<EntityModel<VehicleResponseDTO>> findAll(Pageable pageable) {
@@ -54,9 +65,11 @@ public class VehicleService {
 	}
 
 	@Transactional
-	public VehicleResponseDTO create(Vehicle obj) {
+	public VehicleResponseDTO create(VehicleRequestDTO dto) {
 		try {
-			Vehicle vehicle = repository.save(obj);
+			Vehicle entity = instantiateVehicleByType(dto.getType());
+			updateData(entity, dto);
+			Vehicle vehicle = repository.save(entity);
 			VehicleResponseDTO vehicleDTO = Mapper.modelMapper(vehicle, VehicleResponseDTO.class);
 			vehicleDTO.add(linkTo(methodOn(VehicleController.class).findById(vehicle.getId())).withSelfRel());
 			return vehicleDTO;
@@ -81,12 +94,14 @@ public class VehicleService {
 	}
 
 	@Transactional
-	public Vehicle patch(String id, Vehicle obj) {
+	public VehicleResponseDTO patch(String id, VehicleRequestDTO dto) {
 		try {
 			Vehicle entity = repository.getReferenceById(id);
-			updateData(entity, obj);
-			Vehicle Vehicle = repository.save(entity);
-			return Vehicle;
+			updateData(entity, dto);
+			Vehicle vehicle = repository.save(entity);
+			VehicleResponseDTO responseDTO = Mapper.modelMapper(vehicle, VehicleResponseDTO.class);
+			responseDTO.add(linkTo(methodOn(VehicleController.class).findById(vehicle.getId())).withSelfRel());
+			return responseDTO;
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -96,12 +111,44 @@ public class VehicleService {
 		}
 	}
 
-	private void updateData(Vehicle entity, Vehicle obj) {
-//		if (obj.getName() != null)
-//			entity.setName(obj.getName());
-//		if (obj.getEmail() != null)
-//			entity.setEmail(obj.getEmail());
-//		if (obj.getPhone() != null)
-//			entity.setPhone(obj.getPhone());
+	private Vehicle instantiateVehicleByType(String typeStr) {
+		if (typeStr == null) throw new IllegalArgumentException();
+		return switch (typeStr.toUpperCase()) {
+			case "CAR" -> new Car();
+			case "MOTORCYCLE" -> new Motorcycle();
+			case "VAN" -> new Van();
+			case "TRUCK" -> new Truck();
+			case "BUS" -> new Bus();
+			case "BOAT" -> new Boat();
+			default -> new OtherVehicleType();
+		};
+	}
+
+	private void updateData(Vehicle entity, VehicleRequestDTO dto) {
+		if (dto.getBranchId() != null) {
+			Branch branch = branchRepository.findById(dto.getBranchId())
+					.orElseThrow(() -> new ResourceNotFoundException("Filial não encontrada"));
+			entity.setBranch(branch);
+		}
+
+		if (dto.getBrand() != null) entity.setBrand(dto.getBrand());
+		if (dto.getModel() != null) entity.setModel(dto.getModel());
+		if (dto.getManufactureYear() != null) entity.setManufactureYear(dto.getManufactureYear());
+		if (dto.getColor() != null) entity.setColor(dto.getColor());
+		if (dto.getMileage() != null) entity.setMileage(dto.getMileage());
+		if (dto.getWeight() != null) entity.setWeight(dto.getWeight());
+		if (dto.getNumberOfCylinders() != null) entity.setNumberOfCylinders(dto.getNumberOfCylinders());
+		if (dto.getInfotainmentSystem() != null) entity.setInfotainmentSystem(dto.getInfotainmentSystem());
+		if (dto.getFuelTankCapacity() != null) entity.setFuelTankCapacity(dto.getFuelTankCapacity());
+		if (dto.getEnginePower() != null) entity.setEnginePower(dto.getEnginePower());
+		if (dto.getPassengerCapacity() != null) entity.setPassengerCapacity(dto.getPassengerCapacity());
+		if (dto.getSalePrice() != null) entity.setSalePrice(dto.getSalePrice());
+		if (dto.getDescription() != null) entity.setDescription(dto.getDescription());
+
+		if (dto.getType() != null) entity.setType(VehicleType.valueOf(dto.getType()));
+		if (dto.getCategory() != null) entity.setCategory(VehicleCategory.valueOf(dto.getCategory()));
+		if (dto.getFuelType() != null) entity.setFuelType(FuelType.valueOf(dto.getFuelType()));
+		if (dto.getStatus() != null) entity.setStatus(VehicleStatus.valueOf(dto.getStatus()));
+		if (dto.getAvailability() != null) entity.setAvailability(VehicleAvailability.valueOf(dto.getAvailability()));
 	}
 }

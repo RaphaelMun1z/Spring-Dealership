@@ -1,15 +1,6 @@
-services:
-  backend:
-    container_name: DealershipProject
-    image: raphaelmuniz/dealership-backend:1.0.0
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    restart: always
-    networks:
-      - postgres-compose-network
+name: dealership-project
 
+services:
   db:
     container_name: db
     image: postgres:16.3
@@ -18,12 +9,34 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: dealership_database
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d dealership_database" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     ports:
       - "5000:5432"
     restart: always
     networks:
       - postgres-compose-network
 
+  backend:
+    container_name: backend
+    image: raphaelmuniz/dealership-backend:1.0.1
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/dealership_database
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - CORS_ORIGINPATTERNS=http://localhost:4200
+    networks:
+      - postgres-compose-network
+    depends_on:
+      db:
+        condition: service_healthy
 networks:
   postgres-compose-network:
     driver: bridge

@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.merco.dealership.entities.enums.FuelType;
 import com.merco.dealership.entities.enums.VehicleAvailability;
 import com.merco.dealership.entities.enums.VehicleCategory;
@@ -26,6 +28,21 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.BatchSize;
 
+@JsonTypeInfo(
+		use = JsonTypeInfo.Id.NAME,
+		include = JsonTypeInfo.As.EXISTING_PROPERTY,
+		property = "type",
+		visible = true
+)
+@JsonSubTypes({
+		@JsonSubTypes.Type(value = Car.class, name = "CAR"),
+		@JsonSubTypes.Type(value = Motorcycle.class, name = "MOTORCYCLE"),
+		@JsonSubTypes.Type(value = Van.class, name = "VAN"),
+		@JsonSubTypes.Type(value = Truck.class, name = "TRUCK"),
+		@JsonSubTypes.Type(value = Bus.class, name = "BUS"),
+		@JsonSubTypes.Type(value = Boat.class, name = "BOAT"),
+		@JsonSubTypes.Type(value = OtherVehicleType.class, name = "OTHER")
+})
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "tb_vehicles")

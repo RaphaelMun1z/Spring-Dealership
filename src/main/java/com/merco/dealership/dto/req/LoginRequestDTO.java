@@ -1,4 +1,4 @@
-package com.merco.dealership.dto;
+package com.merco.dealership.dto.req;
 
 import org.springframework.hateoas.RepresentationModel;
 

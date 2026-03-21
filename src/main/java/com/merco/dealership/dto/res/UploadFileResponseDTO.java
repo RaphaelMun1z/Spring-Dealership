@@ -1,4 +1,4 @@
-package com.merco.dealership.dto;
+package com.merco.dealership.dto.res;
 
 public class UploadFileResponseDTO {
 	private String fileName;

@@ -1,6 +1,6 @@
 package com.merco.dealership.controllers;
 
-import com.merco.dealership.dto.DashboardStatsResponseDTO;
+import com.merco.dealership.dto.res.DashboardStatsResponseDTO;
 import com.merco.dealership.services.DashboardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

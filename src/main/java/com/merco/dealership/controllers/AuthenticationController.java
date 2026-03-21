@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.merco.dealership.dto.LoginRequestDTO;
-import com.merco.dealership.dto.LoginResponseDTO;
+import com.merco.dealership.dto.req.LoginRequestDTO;
+import com.merco.dealership.dto.res.LoginResponseDTO;
 import com.merco.dealership.services.AuthorizationService;
 
 import jakarta.validation.Valid;

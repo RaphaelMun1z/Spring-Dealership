@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.CustomerController;
-import com.merco.dealership.dto.CustomerResponseDTO;
+import com.merco.dealership.dto.res.CustomerResponseDTO;
 import com.merco.dealership.entities.Customer;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.CustomerRepository;

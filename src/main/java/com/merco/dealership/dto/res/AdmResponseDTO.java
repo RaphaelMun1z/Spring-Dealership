@@ -1,23 +1,23 @@
-package com.merco.dealership.dto;
+package com.merco.dealership.dto.res;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.Seller;
+import com.merco.dealership.entities.Adm;
 
-public class SellerResponseDTO extends RepresentationModel<SellerResponseDTO> {
+public class AdmResponseDTO extends RepresentationModel<AdmResponseDTO> {
 	private String id;
 	private String name;
 	private String phone;
 	private String email;
 
-	public SellerResponseDTO() {
+	public AdmResponseDTO() {
 	}
 
-	public SellerResponseDTO(Seller seller) {
-		this.id = seller.getId();
-		this.name = seller.getName();
-		this.phone = seller.getPhone();
-		this.email = seller.getEmail();
+	public AdmResponseDTO(Adm adm) {
+		this.id = adm.getId();
+		this.name = adm.getName();
+		this.phone = adm.getPhone();
+		this.email = adm.getEmail();
 	}
 
 	public String getId() {

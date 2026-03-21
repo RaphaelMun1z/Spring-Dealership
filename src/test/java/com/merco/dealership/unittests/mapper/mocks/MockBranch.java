@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.merco.dealership.dto.BranchResponseDTO;
+import com.merco.dealership.dto.res.BranchResponseDTO;
 import com.merco.dealership.entities.Branch;
 
 public class MockBranch {

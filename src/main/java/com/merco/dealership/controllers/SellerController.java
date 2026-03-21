@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.SellerRegisterRequestDTO;
-import com.merco.dealership.dto.SellerResponseDTO;
+import com.merco.dealership.dto.req.SellerRegisterRequestDTO;
+import com.merco.dealership.dto.res.SellerResponseDTO;
 import com.merco.dealership.entities.Seller;
 import com.merco.dealership.services.SellerService;
 

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.AppointmentController;
-import com.merco.dealership.dto.AppointmentResponseDTO;
+import com.merco.dealership.dto.res.AppointmentResponseDTO;
 import com.merco.dealership.entities.Appointment;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.AppointmentRepository;

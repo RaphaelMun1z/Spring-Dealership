@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.merco.dealership.dto.VehicleSpecificDetailResponseDTO;
+import com.merco.dealership.dto.res.VehicleSpecificDetailResponseDTO;
 import com.merco.dealership.entities.VehicleSpecificDetail;
 import com.merco.dealership.services.VehicleSpecificDetailService;
 

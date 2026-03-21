@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.merco.dealership.dto.LoginRequestDTO;
-import com.merco.dealership.dto.LoginResponseDTO;
-import com.merco.dealership.dto.TokenDTO;
+import com.merco.dealership.dto.req.LoginRequestDTO;
+import com.merco.dealership.dto.res.LoginResponseDTO;
+import com.merco.dealership.dto.res.TokenDTO;
 import com.merco.dealership.entities.User;
 import com.merco.dealership.infra.security.TokenService;
 import com.merco.dealership.repositories.UserRepository;

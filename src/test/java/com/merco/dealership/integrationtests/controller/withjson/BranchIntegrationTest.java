@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.merco.dealership.dto.BranchAddressResponseDTO;
-import com.merco.dealership.dto.BranchResponseDTO;
-import com.merco.dealership.dto.LoginRequestDTO;
-import com.merco.dealership.dto.LoginResponseDTO;
+import com.merco.dealership.dto.res.BranchAddressResponseDTO;
+import com.merco.dealership.dto.res.BranchResponseDTO;
+import com.merco.dealership.dto.req.LoginRequestDTO;
+import com.merco.dealership.dto.res.LoginResponseDTO;
 
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;

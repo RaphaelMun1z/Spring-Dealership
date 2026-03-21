@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.BranchAddressController;
-import com.merco.dealership.dto.BranchAddressResponseDTO;
+import com.merco.dealership.dto.res.BranchAddressResponseDTO;
 import com.merco.dealership.entities.BranchAddress;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.BranchAddressRepository;
