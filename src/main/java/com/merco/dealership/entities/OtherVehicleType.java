@@ -19,7 +19,6 @@ import jakarta.validation.constraints.NotNull;
 public class OtherVehicleType extends Vehicle implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String description;
 	private String usage;
 
 	public OtherVehicleType() {
@@ -43,14 +42,6 @@ public class OtherVehicleType extends Vehicle implements Serializable {
 		super(id, brand, model, type, category, manufactureYear, color, mileage, weight, fuelType, numberOfCylinders,
 				infotainmentSystem, fuelTankCapacity, enginePower, passengerCapacity, salePrice, status, availability,
 				description, lastUpdate, branch, inventoryItems, specificDetails, images);
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getUsage() {

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.SaleRequestDTO;
 import com.merco.dealership.dto.res.SaleResponseDTO;
-import com.merco.dealership.entities.Sale;
 import com.merco.dealership.services.SaleService;
 
 import jakarta.validation.Valid;
@@ -30,10 +30,13 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/sales")
 public class SaleController {
-	@Autowired
-	private SaleService service;
+	private final SaleService service;
 
-	@GetMapping
+    public SaleController(SaleService service) {
+        this.service = service;
+    }
+
+    @GetMapping
 	public ResponseEntity<PagedModel<EntityModel<SaleResponseDTO>>> findAll(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "size", defaultValue = "12") Integer size,
@@ -49,8 +52,8 @@ public class SaleController {
 	}
 
 	@PostMapping
-	public ResponseEntity<SaleResponseDTO> insert(@RequestBody @Valid Sale obj) {
-		SaleResponseDTO saleDTO = service.create(obj);
+	public ResponseEntity<SaleResponseDTO> insert(@RequestBody @Valid SaleRequestDTO dto) {
+		SaleResponseDTO saleDTO = service.create(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(saleDTO.getId())
 				.toUri();
 		return ResponseEntity.created(uri).body(saleDTO);
@@ -63,8 +66,8 @@ public class SaleController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Sale> patch(@PathVariable String id, @RequestBody Sale obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<SaleResponseDTO> patch(@PathVariable String id, @RequestBody SaleRequestDTO dto) {
+		SaleResponseDTO responseDTO = service.patch(id, dto);
+		return ResponseEntity.ok().body(responseDTO);
 	}
 }

@@ -146,7 +146,10 @@ public class Customer implements Serializable {
 	}
 
 	public ClientType getClientType() {
-		return ClientType.valueOf(clientType);
+		if (this.clientType == null) {
+			return null;
+		}
+		return ClientType.valueOf(this.clientType);
 	}
 
 	public void setClientType(ClientType clientType) {

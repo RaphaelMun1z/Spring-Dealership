@@ -3,7 +3,8 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDate;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -16,10 +17,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.SaleController;
+import com.merco.dealership.dto.req.SaleRequestDTO;
 import com.merco.dealership.dto.res.SaleResponseDTO;
+import com.merco.dealership.entities.Customer;
+import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.entities.Sale;
+import com.merco.dealership.entities.Seller;
 import com.merco.dealership.mapper.Mapper;
+import com.merco.dealership.repositories.CustomerRepository;
+import com.merco.dealership.repositories.InventoryItemRepository;
 import com.merco.dealership.repositories.SaleRepository;
+import com.merco.dealership.repositories.SellerRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;
@@ -29,13 +37,26 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class SaleService {
-	@Autowired
-	private SaleRepository repository;
 
-	@Autowired
-	PagedResourcesAssembler<SaleResponseDTO> assembler;
+	private final SaleRepository repository;
 
-	@Transactional(readOnly = true)
+	private final InventoryItemRepository inventoryRepository;
+
+	private final CustomerRepository customerRepository;
+
+	private final SellerRepository sellerRepository;
+
+	private final PagedResourcesAssembler<SaleResponseDTO> assembler;
+
+    public SaleService(SaleRepository repository, InventoryItemRepository inventoryRepository, CustomerRepository customerRepository, SellerRepository sellerRepository, PagedResourcesAssembler<SaleResponseDTO> assembler) {
+        this.repository = repository;
+        this.inventoryRepository = inventoryRepository;
+        this.customerRepository = customerRepository;
+        this.sellerRepository = sellerRepository;
+        this.assembler = assembler;
+    }
+
+    @Transactional(readOnly = true)
 	public PagedModel<EntityModel<SaleResponseDTO>> findAll(Pageable pageable) {
 		Page<Sale> salePage = repository.findAll(pageable);
 		Page<SaleResponseDTO> salePageDTO = salePage.map(p -> Mapper.modelMapper(p, SaleResponseDTO.class));
@@ -54,9 +75,28 @@ public class SaleService {
 	}
 
 	@Transactional
-	public SaleResponseDTO create(Sale obj) {
+	public SaleResponseDTO create(SaleRequestDTO dto) {
 		try {
-			Sale sale = repository.save(obj);
+			// 1. Busca o item no inventário
+			InventoryItem inventoryItem = inventoryRepository.findById(dto.getInventoryId())
+					.orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado no estoque"));
+
+			// 2. Validação de segurança: Impede a venda se o carro já tiver data de saída
+			if (inventoryItem.getStockExitDate() != null) {
+				throw new DataViolationException("Este veículo já foi vendido.");
+			}
+
+			// 3. Baixa no estoque
+			inventoryItem.setStockExitDate(dto.getSaleDate() != null ? dto.getSaleDate() : LocalDate.now());
+			inventoryRepository.save(inventoryItem);
+
+			// 4. Constrói a entidade Sale a partir do DTO
+			Sale sale = new Sale();
+			updateData(sale, dto);
+
+			// 5. Salva a venda na base de dados
+			sale = repository.save(sale);
+
 			SaleResponseDTO saleDTO = Mapper.modelMapper(sale, SaleResponseDTO.class);
 			saleDTO.add(linkTo(methodOn(SaleController.class).findById(sale.getId())).withSelfRel());
 			return saleDTO;
@@ -68,11 +108,17 @@ public class SaleService {
 	@Transactional
 	public void delete(String id) {
 		try {
-			if (repository.existsById(id)) {
-				repository.deleteById(id);
-			} else {
-				throw new ResourceNotFoundException(id);
+			Sale sale = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+
+			if (sale.getInventoryItem() != null) {
+				InventoryItem inventoryItem = inventoryRepository.findById(sale.getInventoryItem().getId()).orElse(null);
+				if (inventoryItem != null) {
+					inventoryItem.setStockExitDate(null); // Devolve o veículo ao estoque
+					inventoryRepository.save(inventoryItem);
+				}
 			}
+
+			repository.delete(sale);
 		} catch (EmptyResultDataAccessException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (DataIntegrityViolationException e) {
@@ -81,12 +127,15 @@ public class SaleService {
 	}
 
 	@Transactional
-	public Sale patch(String id, Sale obj) {
+	public SaleResponseDTO patch(String id, SaleRequestDTO dto) {
 		try {
-			Sale entity = repository.getReferenceById(id);
-			updateData(entity, obj);
-			Sale Sale = repository.save(entity);
-			return Sale;
+			Sale entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+			updateData(entity, dto);
+			entity = repository.save(entity);
+
+			SaleResponseDTO responseDTO = Mapper.modelMapper(entity, SaleResponseDTO.class);
+			responseDTO.add(linkTo(methodOn(SaleController.class).findById(entity.getId())).withSelfRel());
+			return responseDTO;
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -96,12 +145,32 @@ public class SaleService {
 		}
 	}
 
-	private void updateData(Sale entity, Sale obj) {
-//		if (obj.getName() != null)
-//			entity.setName(obj.getName());
-//		if (obj.getEmail() != null)
-//			entity.setEmail(obj.getEmail());
-//		if (obj.getPhone() != null)
-//			entity.setPhone(obj.getPhone());
+	private void updateData(Sale entity, SaleRequestDTO dto) {
+		if (dto.getReceipt() != null) entity.setReceipt(dto.getReceipt());
+		if (dto.getPaymentMethod() != null) entity.setPaymentMethod(dto.getPaymentMethod());
+		if (dto.getGrossAmount() != null) entity.setGrossAmount(dto.getGrossAmount());
+		if (dto.getNetAmount() != null) entity.setNetAmount(dto.getNetAmount());
+		if (dto.getAppliedDiscount() != null) entity.setAppliedDiscount(dto.getAppliedDiscount());
+		if (dto.getInstallmentsNumber() != null) entity.setInstallmentsNumber(dto.getInstallmentsNumber());
+		if (dto.getSaleDate() != null) entity.setSaleDate(dto.getSaleDate());
+
+		// Mapeamento dos Relacionamentos a partir dos IDs enviados pelo Frontend
+		if (dto.getCustomerId() != null && !dto.getCustomerId().isBlank()) {
+			Customer customer = customerRepository.findById(dto.getCustomerId())
+					.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+			entity.setCustomer(customer);
+		}
+
+		if (dto.getSellerId() != null && !dto.getSellerId().isBlank()) {
+			Seller seller = sellerRepository.findById(dto.getSellerId())
+					.orElseThrow(() -> new ResourceNotFoundException("Vendedor não encontrado"));
+			entity.setSeller(seller);
+		}
+
+		if (dto.getInventoryId() != null && !dto.getInventoryId().isBlank()) {
+			InventoryItem item = inventoryRepository.findById(dto.getInventoryId())
+					.orElseThrow(() -> new ResourceNotFoundException("Item de estoque não encontrado"));
+			entity.setInventoryItem(item);
+		}
 	}
 }
