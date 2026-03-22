@@ -59,12 +59,12 @@ class VehicleIntegrationTest extends AbstractIntegrationTest {
 
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
-        RestAssured.basePath = "/api";
 
-        LoginRequestDTO usuario = new LoginRequestDTO("admin@dealer.com", "irineu123");
+        LoginRequestDTO usuario = new LoginRequestDTO("admin@auto.com", "Auto123@");
 
         String accessToken =
                 given()
+                        .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
                         .contentType(TestConfigs.CONTENT_TYPE_JSON)
                         .body(usuario)
                         .when()
@@ -77,27 +77,27 @@ class VehicleIntegrationTest extends AbstractIntegrationTest {
                         .getAccessToken();
 
         specification = new RequestSpecBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/vehicles")
+                .setBasePath("/vehicles")
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
 
         specificationBranchAddress = new RequestSpecBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/branches-address")
+                .setBasePath("/branches-address")
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
 
         specificationBranch = new RequestSpecBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/branches")
+                .setBasePath("/branches")
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))

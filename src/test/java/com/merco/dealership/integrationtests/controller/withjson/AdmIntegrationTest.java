@@ -51,12 +51,12 @@ class AdmIntegrationTest extends AbstractIntegrationTest {
 
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
-        RestAssured.basePath = "/api";
 
-        LoginRequestDTO usuario = new LoginRequestDTO("admin@dealer.com", "irineu123");
+        LoginRequestDTO usuario = new LoginRequestDTO("admin@auto.com", "Auto123@");
 
         String accessToken =
                 given()
+                        .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
                         .contentType(TestConfigs.CONTENT_TYPE_JSON)
                         .body(usuario)
                         .when()
@@ -69,9 +69,9 @@ class AdmIntegrationTest extends AbstractIntegrationTest {
                         .getAccessToken();
 
         specification = new RequestSpecBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/adm")
+                .setBasePath("/adm")
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))

@@ -18,7 +18,7 @@ import com.merco.dealership.integrationtests.testcontainers.AbstractIntegrationT
 
 import io.restassured.RestAssured;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Tag("integracao")
@@ -31,8 +31,8 @@ public class SwaggerIntegrationTest extends AbstractIntegrationTest {
 	@BeforeEach
 	@DisplayName("Configuração da porta e contexto do RestAssured")
 	void setUp() {
+		RestAssured.baseURI = "http://localhost";
 		RestAssured.port = port;
-		RestAssured.basePath = "/api";
 	}
 
 	@Test
@@ -49,6 +49,7 @@ public class SwaggerIntegrationTest extends AbstractIntegrationTest {
 	public void shouldDisplaySwaggerUiPage() {
 
 		var content = given()
+				.basePath("/")
 				.when()
 				.get("/swagger-ui/index.html")
 				.then()

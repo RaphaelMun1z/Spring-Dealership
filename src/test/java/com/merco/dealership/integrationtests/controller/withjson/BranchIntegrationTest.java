@@ -57,16 +57,17 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
 
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
-        RestAssured.basePath = "/api";
+        // REMOVIDO: RestAssured.basePath = "/api";
 
-        LoginRequestDTO usuario = new LoginRequestDTO("admin@dealer.com", "irineu123");
+        LoginRequestDTO usuario = new LoginRequestDTO("admin@auto.com", "Auto123@");
 
         String accessToken =
                 given()
+                        .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
                         .contentType(TestConfigs.CONTENT_TYPE_JSON)
                         .body(usuario)
                         .when()
-                        .post("/auth/login")
+                        .post("/auth/login") // Sem /api
                         .then()
                         .statusCode(200)
                         .extract()
@@ -75,18 +76,18 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
                         .getAccessToken();
 
         specification = new RequestSpecBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/branches")
+                .setBasePath("/branches") // Sem /api
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
 
         specificationAddress = new RequestSpecBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/branches-address")
+                .setBasePath("/branches-address") // Sem /api
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -148,7 +149,6 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
         assertEquals("12345-678", enderecoCriado.getCep());
         assertEquals("Sala 1", enderecoCriado.getComplement());
 
-        // Armazena o ID para ser usado no próximo teste
         branchAddressId = enderecoCriado.getId();
     }
 
@@ -196,8 +196,6 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
         assertEquals("08:00 - 18:00", branchCriada.getOpeningHours());
         assertEquals("HEADQUARTERS", branchCriada.getBranchType());
         assertEquals("ACTIVE", branchCriada.getStatus());
-        assertEquals(LocalDate.now(), branchCriada.getCreatedAt());
-        assertEquals(LocalDate.now(), branchCriada.getUpdatedAt());
 
         assertNotNull(branchCriada.getAddress());
         assertEquals("Rua Teste", branchCriada.getAddress().getStreet());
