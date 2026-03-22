@@ -22,6 +22,7 @@ public class Branch implements Serializable {
 	@NotNull(message = "Required field")
 	private String name;
 
+	@NotNull(message = "Required field")
 	@PhoneNumber(message = "Invalid field value")
 	private String phoneNumber;
 

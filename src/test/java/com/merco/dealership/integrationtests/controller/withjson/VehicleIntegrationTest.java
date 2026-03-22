@@ -9,10 +9,12 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.merco.dealership.dto.req.BranchAddressRequestDTO;
 import com.merco.dealership.dto.req.BranchRequestDTO;
+import com.merco.dealership.dto.req.LoginRequestDTO;
+import com.merco.dealership.dto.req.VehicleRequestDTO;
 import com.merco.dealership.dto.res.BranchAddressResponseDTO;
 import com.merco.dealership.dto.res.BranchResponseDTO;
-import com.merco.dealership.dto.req.LoginRequestDTO;
 import com.merco.dealership.dto.res.LoginResponseDTO;
+import com.merco.dealership.dto.res.VehicleResponseDTO;
 
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,21 +36,21 @@ import io.restassured.specification.RequestSpecification;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Tag("integracao")
-@DisplayName("Testes de Integração - Controller de Filiais")
-class BranchIntegrationTest extends AbstractIntegrationTest {
+@DisplayName("Testes de Integração - Controller de Veículos")
+class VehicleIntegrationTest extends AbstractIntegrationTest {
 
     @LocalServerPort
     private int port;
 
     private RequestSpecification specification;
-    private RequestSpecification specificationAddress;
+    private RequestSpecification specificationBranch;
+    private RequestSpecification specificationBranchAddress;
     private ObjectMapper objectMapper;
 
-    private BranchResponseDTO branchCriada;
-    private String branchAddressId;
+    private VehicleResponseDTO vehicleCriado;
+    private String branchId;
 
     @BeforeAll
-    @DisplayName("Configuração inicial do ambiente de testes")
     void configurarAmbiente() {
 
         objectMapper = new ObjectMapper();
@@ -77,16 +79,25 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
         specification = new RequestSpecBuilder()
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/branches")
+                .setBasePath("/api/vehicles")
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
 
-        specificationAddress = new RequestSpecBuilder()
+        specificationBranchAddress = new RequestSpecBuilder()
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
                 .setBasePath("/api/branches-address")
+                .setPort(port)
+                .addFilter(new RequestLoggingFilter(LogDetail.ALL))
+                .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+                .build();
+
+        specificationBranch = new RequestSpecBuilder()
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
+                .setBasePath("/api/branches")
                 .setPort(port)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -103,26 +114,26 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
         assertTrue(Initializer.postgresql.isRunning());
     }
 
-    // ─── create address (pré-requisito para criar branch) ─────────────────────────
+    // ─── pré-requisito: criar branch ──────────────────────────────────────────────
 
     @Test
     @Order(2)
-    @DisplayName("Deve criar um endereço de filial com sucesso")
-    void deveCriarEnderecoFilialComSucesso() throws IOException {
+    @DisplayName("Deve criar branch pré-requisito para o veículo")
+    void deveCriarBranchPreRequisito() throws IOException {
 
+        // Passo 1: criar endereço
         BranchAddressRequestDTO enderecoRequest = new BranchAddressRequestDTO();
-        enderecoRequest.setStreet("Rua Teste");
-        enderecoRequest.setNumber(123);
+        enderecoRequest.setStreet("Rua Veiculos");
+        enderecoRequest.setNumber(999);
         enderecoRequest.setDistrict("Centro");
-        enderecoRequest.setCity("São Paulo");
-        enderecoRequest.setState("SP");
+        enderecoRequest.setCity("Sao Paulo");
+        enderecoRequest.setState("Sao Paulo");
         enderecoRequest.setCountry("Brasil");
-        enderecoRequest.setCep("12345-678");
-        enderecoRequest.setComplement("Sala 1");
+        enderecoRequest.setCep("99999-000");
 
-        var content =
+        String enderecoContent =
                 given()
-                        .spec(specificationAddress)
+                        .spec(specificationBranchAddress)
                         .contentType(TestConfigs.CONTENT_TYPE_JSON)
                         .body(enderecoRequest)
                         .when()
@@ -133,47 +144,26 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
                         .asString();
 
         BranchAddressResponseDTO enderecoCriado =
-                objectMapper.readValue(content, BranchAddressResponseDTO.class);
+                objectMapper.readValue(enderecoContent, BranchAddressResponseDTO.class);
 
-        assertNotNull(enderecoCriado);
         assertNotNull(enderecoCriado.getId());
-        assertFalse(enderecoCriado.getId().isEmpty());
 
-        assertEquals("Rua Teste", enderecoCriado.getStreet());
-        assertEquals(123, enderecoCriado.getNumber());
-        assertEquals("Centro", enderecoCriado.getDistrict());
-        assertEquals("São Paulo", enderecoCriado.getCity());
-        assertEquals("SP", enderecoCriado.getState());
-        assertEquals("Brasil", enderecoCriado.getCountry());
-        assertEquals("12345-678", enderecoCriado.getCep());
-        assertEquals("Sala 1", enderecoCriado.getComplement());
-
-        // Armazena o ID para ser usado no próximo teste
-        branchAddressId = enderecoCriado.getId();
-    }
-
-    // ─── create branch ────────────────────────────────────────────────────────────
-
-    @Test
-    @Order(3)
-    @DisplayName("Deve criar uma filial com sucesso quando os dados forem válidos")
-    void deveCriarFilialComSucesso() throws IOException {
-
+        // Passo 2: criar branch com o endereço
         BranchRequestDTO branchRequest = new BranchRequestDTO();
-        branchRequest.setName("Branch Test");
+        branchRequest.setName("Branch Veiculos");
         branchRequest.setPhoneNumber("(11) 91234-5678");
-        branchRequest.setEmail("branch@test.com");
-        branchRequest.setManagerName("Manager Test");
+        branchRequest.setEmail("branch.veiculos@test.com");
+        branchRequest.setManagerName("Manager Veiculos");
         branchRequest.setOpeningHours("08:00 - 18:00");
-        branchRequest.setBranchType("HEADQUARTERS");
+        branchRequest.setBranchType("DEALERSHIP");
         branchRequest.setStatus("ACTIVE");
         branchRequest.setCreatedAt(LocalDate.now());
         branchRequest.setUpdatedAt(LocalDate.now());
-        branchRequest.setBranchAddressId(branchAddressId);
+        branchRequest.setBranchAddressId(enderecoCriado.getId());
 
-        var content =
+        String branchContent =
                 given()
-                        .spec(specification)
+                        .spec(specificationBranch)
                         .contentType(TestConfigs.CONTENT_TYPE_JSON)
                         .body(branchRequest)
                         .when()
@@ -183,67 +173,75 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
                         .extract()
                         .asString();
 
-        branchCriada = objectMapper.readValue(content, BranchResponseDTO.class);
+        BranchResponseDTO branchCriada =
+                objectMapper.readValue(branchContent, BranchResponseDTO.class);
 
-        assertNotNull(branchCriada);
         assertNotNull(branchCriada.getId());
         assertFalse(branchCriada.getId().isEmpty());
 
-        assertEquals("Branch Test", branchCriada.getName());
-        assertEquals("(11) 91234-5678", branchCriada.getPhoneNumber());
-        assertEquals("branch@test.com", branchCriada.getEmail());
-        assertEquals("Manager Test", branchCriada.getManagerName());
-        assertEquals("08:00 - 18:00", branchCriada.getOpeningHours());
-        assertEquals("HEADQUARTERS", branchCriada.getBranchType());
-        assertEquals("ACTIVE", branchCriada.getStatus());
-        assertEquals(LocalDate.now(), branchCriada.getCreatedAt());
-        assertEquals(LocalDate.now(), branchCriada.getUpdatedAt());
-
-        assertNotNull(branchCriada.getAddress());
-        assertEquals("Rua Teste", branchCriada.getAddress().getStreet());
-        assertEquals(123, branchCriada.getAddress().getNumber());
-        assertEquals("Centro", branchCriada.getAddress().getDistrict());
-        assertEquals("São Paulo", branchCriada.getAddress().getCity());
-        assertEquals("SP", branchCriada.getAddress().getState());
-        assertEquals("Brasil", branchCriada.getAddress().getCountry());
-        assertEquals("12345-678", branchCriada.getAddress().getCep());
-        assertEquals("Sala 1", branchCriada.getAddress().getComplement());
+        branchId = branchCriada.getId();
     }
 
-    // ─── findById ─────────────────────────────────────────────────────────────────
+    // ─── create ───────────────────────────────────────────────────────────────────
 
     @Test
-    @Order(4)
-    @DisplayName("Deve buscar a filial criada por ID com sucesso")
-    void deveBuscarFilialPorId() throws IOException {
+    @Order(3)
+    @DisplayName("Deve criar um veículo (CAR) com sucesso")
+    void deveCriarVehicleComSucesso() throws IOException {
+
+        assertNotNull(branchId, "branchId não pode ser nulo — verifique se o @Order(2) passou");
+
+        VehicleRequestDTO request = new VehicleRequestDTO();
+        request.setType("CAR");
+        request.setBrand("Toyota");
+        request.setModel("Corolla");
+        request.setColor("Prata");
+        request.setMileage(0.0);
+        request.setWeight(1400.0);
+        request.setNumberOfCylinders(4);
+        request.setInfotainmentSystem("Toyota Connect");
+        request.setFuelTankCapacity(50.0);
+        request.setEnginePower(170.0);
+        request.setPassengerCapacity(5);
+        request.setSalePrice(120000.0);
+        request.setDescription("Sedan executivo");
+        request.setManufactureYear(LocalDate.of(2024, 1, 1));
+        request.setCategory("SEDAN");
+        request.setFuelType("GASOLINE");
+        request.setStatus("NEW");
+        request.setAvailability("AVAILABLE");
+        request.setBranchId(branchId);
+        request.setTransmissionType("AUTOMATIC");
+        request.setDoors(4);
 
         var content =
                 given()
                         .spec(specification)
                         .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                        .pathParam("id", branchCriada.getId())
+                        .body(request)
                         .when()
-                        .get("/{id}")
+                        .post()
                         .then()
-                        .statusCode(200)
+                        .statusCode(201)
                         .extract()
                         .asString();
 
-        BranchResponseDTO filialEncontrada =
-                objectMapper.readValue(content, BranchResponseDTO.class);
+        vehicleCriado = objectMapper.readValue(content, VehicleResponseDTO.class);
 
-        assertNotNull(filialEncontrada);
-        assertEquals(branchCriada.getId(), filialEncontrada.getId());
-        assertEquals("Branch Test", filialEncontrada.getName());
-        assertEquals("branch@test.com", filialEncontrada.getEmail());
+        assertNotNull(vehicleCriado);
+        assertNotNull(vehicleCriado.getId());
+        assertEquals("Toyota", vehicleCriado.getBrand());
+        assertEquals("Corolla", vehicleCriado.getModel());
+        assertEquals("Prata", vehicleCriado.getColor());
+        assertEquals(120000.0, vehicleCriado.getSalePrice());
     }
 
     // ─── findAll ──────────────────────────────────────────────────────────────────
 
     @Test
-    @Order(5)
-    @DisplayName("Deve listar filiais com sucesso")
-    void deveListarFiliaisComSucesso() {
+    @Order(4)
+    @DisplayName("Deve listar veículos com sucesso")
+    void deveListarVehiclesComSucesso() {
 
         given()
                 .spec(specification)
@@ -254,22 +252,52 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
                 .statusCode(200);
     }
 
-    // ─── patch ────────────────────────────────────────────────────────────────────
+    // ─── findById ─────────────────────────────────────────────────────────────────
 
     @Test
-    @Order(6)
-    @DisplayName("Deve atualizar parcialmente a filial com sucesso")
-    void deveAtualizarFilialParcialmente() throws IOException {
+    @Order(5)
+    @DisplayName("Deve buscar o veículo criado por ID com sucesso")
+    void deveBuscarVehiclePorId() throws IOException {
 
-        BranchRequestDTO patchRequest = new BranchRequestDTO();
-        patchRequest.setName("Branch Test Atualizada");
-        patchRequest.setStatus("INACTIVE");
+        assertNotNull(vehicleCriado, "vehicleCriado não pode ser nulo — verifique se o @Order(3) passou");
 
         var content =
                 given()
                         .spec(specification)
                         .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                        .pathParam("id", branchCriada.getId())
+                        .pathParam("id", vehicleCriado.getId())
+                        .when()
+                        .get("/{id}")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .asString();
+
+        VehicleResponseDTO vehicleEncontrado = objectMapper.readValue(content, VehicleResponseDTO.class);
+
+        assertNotNull(vehicleEncontrado);
+        assertEquals(vehicleCriado.getId(), vehicleEncontrado.getId());
+        assertEquals("Toyota", vehicleEncontrado.getBrand());
+    }
+
+    // ─── patch ────────────────────────────────────────────────────────────────────
+
+    @Test
+    @Order(6)
+    @DisplayName("Deve atualizar parcialmente o veículo com sucesso")
+    void deveAtualizarVehicleParcialmente() throws IOException {
+
+        assertNotNull(vehicleCriado, "vehicleCriado não pode ser nulo — verifique se o @Order(3) passou");
+
+        VehicleRequestDTO patchRequest = new VehicleRequestDTO();
+        patchRequest.setColor("Preto");
+        patchRequest.setSalePrice(115000.0);
+
+        var content =
+                given()
+                        .spec(specification)
+                        .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                        .pathParam("id", vehicleCriado.getId())
                         .body(patchRequest)
                         .when()
                         .patch("/{id}")
@@ -278,26 +306,27 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
                         .extract()
                         .asString();
 
-        BranchResponseDTO filialAtualizada =
-                objectMapper.readValue(content, BranchResponseDTO.class);
+        VehicleResponseDTO vehicleAtualizado = objectMapper.readValue(content, VehicleResponseDTO.class);
 
-        assertNotNull(filialAtualizada);
-        assertEquals("Branch Test Atualizada", filialAtualizada.getName());
-        assertEquals("INACTIVE", filialAtualizada.getStatus());
-        assertEquals("branch@test.com", filialAtualizada.getEmail());
+        assertNotNull(vehicleAtualizado);
+        assertEquals("Preto", vehicleAtualizado.getColor());
+        assertEquals(115000.0, vehicleAtualizado.getSalePrice());
+        assertEquals("Toyota", vehicleAtualizado.getBrand());
     }
 
     // ─── delete ───────────────────────────────────────────────────────────────────
 
     @Test
     @Order(7)
-    @DisplayName("Deve deletar a filial com sucesso")
-    void deveDeletarFilialComSucesso() {
+    @DisplayName("Deve deletar o veículo com sucesso")
+    void deveDeletarVehicleComSucesso() {
+
+        assertNotNull(vehicleCriado, "vehicleCriado não pode ser nulo — verifique se o @Order(3) passou");
 
         given()
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("id", branchCriada.getId())
+                .pathParam("id", vehicleCriado.getId())
                 .when()
                 .delete("/{id}")
                 .then()
@@ -308,13 +337,15 @@ class BranchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @Order(8)
-    @DisplayName("Deve retornar 404 ao buscar filial deletada")
-    void deveRetornar404AoBuscarFilialDeletada() {
+    @DisplayName("Deve retornar 404 ao buscar veículo deletado")
+    void deveRetornar404AoBuscarVehicleDeletado() {
+
+        assertNotNull(vehicleCriado, "vehicleCriado não pode ser nulo — verifique se o @Order(3) passou");
 
         given()
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("id", branchCriada.getId())
+                .pathParam("id", vehicleCriado.getId())
                 .when()
                 .get("/{id}")
                 .then()

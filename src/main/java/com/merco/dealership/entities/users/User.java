@@ -39,6 +39,7 @@ public abstract class User implements UserDetails {
 	@Pattern(regexp = "^[A-Z]+(.)*")
 	private String name;
 
+	@NotNull(message = "Required field")
 	@PhoneNumber(message = "Invalid field value")
 	@Column(unique = true)
 	private String phone;

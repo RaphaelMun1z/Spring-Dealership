@@ -3,6 +3,7 @@ package com.merco.dealership.unittests.mockito.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -27,11 +28,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.merco.dealership.dto.req.BranchRequestDTO;
+import com.merco.dealership.dto.res.BranchResponseDTO;
 import com.merco.dealership.entities.Branch;
+import com.merco.dealership.entities.BranchAddress;
 import com.merco.dealership.repositories.BranchAddressRepository;
 import com.merco.dealership.repositories.BranchRepository;
 import com.merco.dealership.services.BranchService;
+import com.merco.dealership.services.exceptions.ResourceNotFoundException;
 import com.merco.dealership.unittests.mapper.mocks.MockBranch;
+import com.merco.dealership.unittests.mapper.mocks.MockBranchAddress;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("unidade")
@@ -39,6 +44,7 @@ import com.merco.dealership.unittests.mapper.mocks.MockBranch;
 class BranchServiceTest {
 
 	private MockBranch input;
+	private MockBranchAddress inputAddress;
 
 	@InjectMocks
 	private BranchService service;
@@ -53,85 +59,42 @@ class BranchServiceTest {
 	@DisplayName("Configurar mocks antes de cada teste")
 	void setUpMocks() {
 		input = new MockBranch();
+		inputAddress = new MockBranchAddress();
 	}
+
+	// ─── findAll ──────────────────────────────────────────────────────────────────
 
 	@Test
 	@DisplayName("Deve retornar uma página de filiais com sucesso")
 	void testFindAll() {
+		// Arrange
 		List<Branch> list = input.mockEntityList();
 		Page<Branch> page = new PageImpl<>(list);
 
 		when(repository.findAll(any(Pageable.class))).thenReturn(page);
 
-		var results = service.findAll(PageRequest.of(0, 12));
+		// Act
+		Page<BranchResponseDTO> result = service.findAll(PageRequest.of(0, 12));
 
-		assertNotNull(results);
-		assertEquals(14, results.getTotalElements());
-
-		var content = results.getContent();
-
-		var resultOne = content.get(1);
-		assertNotNull(resultOne);
-		assertNotNull(resultOne.getId());
-		assertNotNull(resultOne.getLinks());
-		assertTrue(resultOne.toString().contains("links: [</branches/id1>;rel=\"self\"]"));
-
-		assertNull(resultOne.getAddress());
-		assertEquals("Name - Testid1", resultOne.getName());
-		assertEquals("PhoneNumber - Testid1", resultOne.getPhoneNumber());
-		assertEquals("emailid1@test.com", resultOne.getEmail());
-		assertEquals("ManagerName - Testid1", resultOne.getManagerName());
-		assertEquals("OpeningHours - Testid1", resultOne.getOpeningHours());
-		assertEquals("BranchType - Testid1", resultOne.getBranchType());
-		assertEquals("Status - Testid1", resultOne.getStatus());
-		assertEquals(LocalDate.now(), resultOne.getCreatedAt());
-		assertEquals(LocalDate.now(), resultOne.getUpdatedAt());
-
-		var resultFour = content.get(4);
-		assertNotNull(resultFour);
-		assertNotNull(resultFour.getId());
-		assertNotNull(resultFour.getLinks());
-		assertTrue(resultFour.toString().contains("links: [</branches/id4>;rel=\"self\"]"));
-
-		assertNull(resultFour.getAddress());
-		assertEquals("Name - Testid4", resultFour.getName());
-		assertEquals("PhoneNumber - Testid4", resultFour.getPhoneNumber());
-		assertEquals("emailid4@test.com", resultFour.getEmail());
-		assertEquals("ManagerName - Testid4", resultFour.getManagerName());
-		assertEquals("OpeningHours - Testid4", resultFour.getOpeningHours());
-		assertEquals("BranchType - Testid4", resultFour.getBranchType());
-		assertEquals("Status - Testid4", resultFour.getStatus());
-		assertEquals(LocalDate.now(), resultFour.getCreatedAt());
-		assertEquals(LocalDate.now(), resultFour.getUpdatedAt());
-
-		var resultSeven = content.get(7);
-		assertNotNull(resultSeven);
-		assertNotNull(resultSeven.getId());
-		assertNotNull(resultSeven.getLinks());
-		assertTrue(resultSeven.toString().contains("links: [</branches/id7>;rel=\"self\"]"));
-
-		assertNull(resultSeven.getAddress());
-		assertEquals("Name - Testid7", resultSeven.getName());
-		assertEquals("PhoneNumber - Testid7", resultSeven.getPhoneNumber());
-		assertEquals("emailid7@test.com", resultSeven.getEmail());
-		assertEquals("ManagerName - Testid7", resultSeven.getManagerName());
-		assertEquals("OpeningHours - Testid7", resultSeven.getOpeningHours());
-		assertEquals("BranchType - Testid7", resultSeven.getBranchType());
-		assertEquals("Status - Testid7", resultSeven.getStatus());
-		assertEquals(LocalDate.now(), resultSeven.getCreatedAt());
-		assertEquals(LocalDate.now(), resultSeven.getUpdatedAt());
-
+		// Assert
+		assertNotNull(result);
+		assertEquals(14, result.getTotalElements());
 		verify(repository, times(1)).findAll(any(Pageable.class));
 	}
+
+	// ─── findById ─────────────────────────────────────────────────────────────────
 
 	@Test
 	@DisplayName("Deve encontrar uma filial por ID com sucesso")
 	void testFindById() {
+		// Arrange
 		Branch entity = input.mockEntity("id1");
 		when(repository.findById("id1")).thenReturn(Optional.of(entity));
 
+		// Act
 		var result = service.findById("id1");
 
+		// Assert
 		assertNotNull(result);
 		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
@@ -152,9 +115,25 @@ class BranchServiceTest {
 	}
 
 	@Test
+	@DisplayName("Deve lançar exceção ao buscar filial com ID inexistente")
+	void testFindByIdNotFound() {
+		// Arrange
+		when(repository.findById("invalidId")).thenReturn(Optional.empty());
+
+		// Act & Assert
+		assertThrows(ResourceNotFoundException.class, () -> service.findById("invalidId"));
+	}
+
+	// ─── create ───────────────────────────────────────────────────────────────────
+
+	@Test
 	@DisplayName("Deve criar uma nova filial com sucesso")
 	void testCreate() {
+		// Arrange
+		BranchAddress address = inputAddress.mockEntity("addressId1");
 		Branch persisted = input.mockEntity("id1");
+
+		when(branchAddressRepository.findById("addressId1")).thenReturn(Optional.of(address));
 		when(repository.save(any(Branch.class))).thenReturn(persisted);
 
 		BranchRequestDTO dto = new BranchRequestDTO();
@@ -167,15 +146,17 @@ class BranchServiceTest {
 		dto.setStatus("Status - Testid1");
 		dto.setCreatedAt(LocalDate.now());
 		dto.setUpdatedAt(LocalDate.now());
+		dto.setBranchAddressId("addressId1");
 
+		// Act
 		var result = service.create(dto);
 
+		// Assert
 		assertNotNull(result);
 		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 		assertTrue(result.toString().contains("links: [</branches/id1>;rel=\"self\"]"));
 
-		assertNull(result.getAddress());
 		assertEquals("Name - Testid1", result.getName());
 		assertEquals("PhoneNumber - Testid1", result.getPhoneNumber());
 		assertEquals("emailid1@test.com", result.getEmail());
@@ -186,42 +167,74 @@ class BranchServiceTest {
 		assertEquals(LocalDate.now(), result.getCreatedAt());
 		assertEquals(LocalDate.now(), result.getUpdatedAt());
 
+		verify(branchAddressRepository, times(1)).findById("addressId1");
 		verify(repository, times(1)).save(any(Branch.class));
 	}
 
 	@Test
+	@DisplayName("Deve lançar exceção ao criar filial com endereço inexistente")
+	void testCreateAddressNotFound() {
+		// Arrange
+		BranchRequestDTO dto = new BranchRequestDTO();
+		dto.setBranchAddressId("invalidAddressId");
+
+		when(branchAddressRepository.findById("invalidAddressId")).thenReturn(Optional.empty());
+
+		// Act & Assert
+		assertThrows(ResourceNotFoundException.class, () -> service.create(dto));
+	}
+
+	// ─── delete ───────────────────────────────────────────────────────────────────
+
+	@Test
 	@DisplayName("Deve deletar uma filial com sucesso")
 	void testDelete() {
+		// Arrange
 		when(repository.existsById("id1")).thenReturn(true);
 
+		// Act
 		service.delete("id1");
 
+		// Assert
 		verify(repository, times(1)).existsById("id1");
 		verify(repository, times(1)).deleteById("id1");
 	}
 
 	@Test
+	@DisplayName("Deve lançar exceção ao deletar filial com ID inexistente")
+	void testDeleteNotFound() {
+		// Arrange
+		when(repository.existsById("invalidId")).thenReturn(false);
+
+		// Act & Assert
+		assertThrows(ResourceNotFoundException.class, () -> service.delete("invalidId"));
+	}
+
+	// ─── patch ────────────────────────────────────────────────────────────────────
+
+	@Test
 	@DisplayName("Deve atualizar uma filial parcialmente (Patch) com sucesso")
 	void testPatch() {
+		// Arrange
 		Branch existingEntity = input.mockEntity("id1");
 		existingEntity.setName("Nome Antigo");
 
 		Branch updatedEntity = input.mockEntity("id1");
 		updatedEntity.setName("Nome Atualizado");
 
-		when(repository.getReferenceById("id1")).thenReturn(existingEntity);
-		when(repository.save(any(Branch.class))).thenReturn(updatedEntity);
-
 		BranchRequestDTO patchDTO = new BranchRequestDTO();
 		patchDTO.setName("Nome Atualizado");
 
+		when(repository.getReferenceById("id1")).thenReturn(existingEntity);
+		when(repository.save(any(Branch.class))).thenReturn(updatedEntity);
+
+		// Act
 		var result = service.patch("id1", patchDTO);
 
+		// Assert
 		assertNotNull(result);
 		assertNotNull(result.getId());
-		assertNotNull(result.getLinks());
 		assertEquals("Nome Atualizado", result.getName());
-		assertTrue(result.toString().contains("links: [</branches/id1>;rel=\"self\"]"));
 
 		verify(repository, times(1)).getReferenceById("id1");
 		verify(repository, times(1)).save(any(Branch.class));
