@@ -1,4 +1,4 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.users;
 
 import java.util.Collection;
 import java.util.List;

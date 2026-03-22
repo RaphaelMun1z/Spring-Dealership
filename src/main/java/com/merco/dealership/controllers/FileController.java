@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,10 +27,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping(value = "/file")
 public class FileController {
+
 	private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
-	@Autowired
-	private FileStorageService service;
+	private final FileStorageService service;
+
+	public FileController(FileStorageService service) {
+		this.service = service;
+	}
 
 	@PostMapping("/upload-file")
 	public UploadFileResponseDTO uploadFile(@RequestParam("file") MultipartFile file) {
@@ -43,7 +46,7 @@ public class FileController {
 
 	@PostMapping("/upload-multiple-files")
 	public List<UploadFileResponseDTO> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-		return Arrays.asList(files).stream().map(file -> uploadFile(file)).collect(Collectors.toList());
+		return Arrays.stream(files).map(this::uploadFile).collect(Collectors.toList());
 	}
 
 	@GetMapping("/download-file/{fileName:.+}")
@@ -65,5 +68,4 @@ public class FileController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
-
 }

@@ -3,7 +3,6 @@ package com.merco.dealership.controllers;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.AdmPatchRequestDTO;
 import com.merco.dealership.dto.req.AdmRegisterRequestDTO;
 import com.merco.dealership.dto.res.AdmResponseDTO;
-import com.merco.dealership.entities.Adm;
 import com.merco.dealership.services.AdmService;
 
 import jakarta.validation.Valid;
@@ -25,8 +24,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/adm")
 public class AdmController {
-	@Autowired
-	private AdmService service;
+
+	private final AdmService service;
+
+	public AdmController(AdmService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	public ResponseEntity<List<AdmResponseDTO>> findAll() {
@@ -52,8 +55,8 @@ public class AdmController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Adm> patch(@PathVariable String id, @RequestBody Adm obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<AdmResponseDTO> patch(@PathVariable String id, @RequestBody AdmPatchRequestDTO obj) {
+		AdmResponseDTO admDTO = service.patch(id, obj);
+		return ResponseEntity.ok().body(admDTO);
 	}
 }

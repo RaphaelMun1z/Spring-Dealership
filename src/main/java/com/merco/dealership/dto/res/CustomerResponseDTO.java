@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.Customer;
+import com.merco.dealership.entities.customerResources.Customer;
 import com.merco.dealership.entities.enums.ClientType;
 
 public class CustomerResponseDTO  extends RepresentationModel<CustomerResponseDTO> {

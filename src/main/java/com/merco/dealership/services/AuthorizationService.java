@@ -1,6 +1,5 @@
 package com.merco.dealership.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,21 +13,23 @@ import org.springframework.transaction.annotation.Transactional;
 import com.merco.dealership.dto.req.LoginRequestDTO;
 import com.merco.dealership.dto.res.LoginResponseDTO;
 import com.merco.dealership.dto.res.TokenDTO;
-import com.merco.dealership.entities.User;
+import com.merco.dealership.entities.users.User;
 import com.merco.dealership.infra.security.TokenService;
 import com.merco.dealership.repositories.UserRepository;
 
 @Service
 public class AuthorizationService implements UserDetailsService {
-	@Autowired
-	@Lazy
-	private AuthenticationManager authenticationManager;
 
-	@Autowired
-	private TokenService tokenService;
+	private final AuthenticationManager authenticationManager;
+	private final TokenService tokenService;
+	private final UserRepository<User> repository;
 
-	@Autowired
-	UserRepository<User> repository;
+	public AuthorizationService(@Lazy AuthenticationManager authenticationManager, TokenService tokenService,
+								UserRepository<User> repository) {
+		this.authenticationManager = authenticationManager;
+		this.tokenService = tokenService;
+		this.repository = repository;
+	}
 
 	@Transactional
 	public LoginResponseDTO login(LoginRequestDTO data) {

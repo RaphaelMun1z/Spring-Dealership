@@ -2,14 +2,14 @@ package com.merco.dealership.infra.security;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.merco.dealership.entities.User;
+import com.merco.dealership.entities.users.User;
 import com.merco.dealership.repositories.UserRepository;
 
 import jakarta.servlet.FilterChain;
@@ -20,20 +20,22 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-	@Autowired
-	TokenService tokenService;
+	private final TokenService tokenService;
+	private final UserRepository<User> userRepository;
 
-	@Autowired
-	UserRepository<User> userRepository;
+	public SecurityFilter(TokenService tokenService, UserRepository<User> userRepository) {
+		this.tokenService = tokenService;
+		this.userRepository = userRepository;
+	}
 
 	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
 		return path.contains("/actuator/health");
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain)
 			throws ServletException, IOException {
 
 		try {
@@ -64,7 +66,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 	private String recoverToken(HttpServletRequest request) {
 		var authHeader = request.getHeader("Authorization");
-		if (authHeader == null || authHeader.isEmpty() || !authHeader.startsWith("Bearer ")) {
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			return null;
 		}
 		return authHeader.substring(7);

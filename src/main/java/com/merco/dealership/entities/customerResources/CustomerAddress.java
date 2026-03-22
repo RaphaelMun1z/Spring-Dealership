@@ -1,13 +1,13 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.customerResources;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.merco.dealership.entities.abstractEntities.Address;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "tb_customers_address")

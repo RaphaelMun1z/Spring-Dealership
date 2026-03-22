@@ -3,7 +3,7 @@ package com.merco.dealership.dto.req;
 import com.merco.dealership.dto.res.AdmResponseDTO;
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.Adm;
+import com.merco.dealership.entities.users.Adm;
 import com.merco.dealership.entities.validation.constraints.PhoneNumber;
 
 import jakarta.persistence.Column;

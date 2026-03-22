@@ -8,6 +8,7 @@ import com.merco.dealership.dto.res.BranchResponseDTO;
 import com.merco.dealership.entities.Branch;
 
 public class MockBranch {
+
 	public Branch mockEntity() {
 		return mockEntity("id1");
 	}
@@ -15,9 +16,10 @@ public class MockBranch {
 	public Branch mockEntity(String id) {
 		Branch branch = new Branch();
 		branch.setId(id);
+		branch.setName("Name - Test" + id);
 		branch.setAddress(null);
 		branch.setPhoneNumber("PhoneNumber - Test" + id);
-		branch.setEmail("Email - Test" + id);
+		branch.setEmail("email" + id + "@test.com");
 		branch.setManagerName("ManagerName - Test" + id);
 		branch.setOpeningHours("OpeningHours - Test" + id);
 		branch.setBranchType("BranchType - Test" + id);
@@ -28,9 +30,9 @@ public class MockBranch {
 	}
 
 	public List<Branch> mockEntityList() {
-		List<Branch> branches = new ArrayList<Branch>();
+		List<Branch> branches = new ArrayList<>();
 		for (int i = 0; i < 14; i++) {
-			branches.add(mockEntity(String.valueOf("id" + i)));
+			branches.add(mockEntity("id" + i));
 		}
 		return branches;
 	}
@@ -42,9 +44,10 @@ public class MockBranch {
 	public BranchResponseDTO mockDTO(String id) {
 		BranchResponseDTO branch = new BranchResponseDTO();
 		branch.setId(id);
+		branch.setName("Name - Test" + id);
 		branch.setAddress(null);
 		branch.setPhoneNumber("PhoneNumber - Test" + id);
-		branch.setEmail("Email - Test" + id);
+		branch.setEmail("email" + id + "@test.com");
 		branch.setManagerName("ManagerName - Test" + id);
 		branch.setOpeningHours("OpeningHours - Test" + id);
 		branch.setBranchType("BranchType - Test" + id);
@@ -57,9 +60,8 @@ public class MockBranch {
 	public List<BranchResponseDTO> mockDTOList() {
 		List<BranchResponseDTO> branches = new ArrayList<>();
 		for (int i = 0; i < 14; i++) {
-			branches.add(mockDTO(String.valueOf("id" + i)));
+			branches.add(mockDTO("id" + i));
 		}
 		return branches;
 	}
-
 }

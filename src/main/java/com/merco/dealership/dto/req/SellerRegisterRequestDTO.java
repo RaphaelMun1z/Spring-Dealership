@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import com.merco.dealership.dto.res.SellerResponseDTO;
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.Seller;
+import com.merco.dealership.entities.users.Seller;
 import com.merco.dealership.entities.validation.constraints.PhoneNumber;
 
 import jakarta.persistence.Column;

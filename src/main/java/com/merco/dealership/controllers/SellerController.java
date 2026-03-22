@@ -2,7 +2,6 @@ package com.merco.dealership.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.SellerPatchRequestDTO;
 import com.merco.dealership.dto.req.SellerRegisterRequestDTO;
 import com.merco.dealership.dto.res.SellerResponseDTO;
-import com.merco.dealership.entities.Seller;
 import com.merco.dealership.services.SellerService;
 
 import jakarta.validation.Valid;
@@ -31,8 +30,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/sellers")
 public class SellerController {
-	@Autowired
-	private SellerService service;
+
+	private final SellerService service;
+
+	public SellerController(SellerService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<SellerResponseDTO>>> findAll(
@@ -64,8 +67,9 @@ public class SellerController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Seller> patch(@PathVariable String id, @RequestBody Seller obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<SellerResponseDTO> patch(@PathVariable String id,
+												   @RequestBody SellerPatchRequestDTO obj) {
+		SellerResponseDTO sellerDTO = service.patch(id, obj);
+		return ResponseEntity.ok().body(sellerDTO);
 	}
 }

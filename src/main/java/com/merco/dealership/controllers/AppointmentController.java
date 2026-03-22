@@ -2,7 +2,6 @@ package com.merco.dealership.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.AppointmentRequestDTO;
 import com.merco.dealership.dto.res.AppointmentResponseDTO;
 import com.merco.dealership.entities.Appointment;
 import com.merco.dealership.services.AppointmentService;
@@ -30,8 +30,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/appointments")
 public class AppointmentController {
-	@Autowired
-	private AppointmentService service;
+
+	private final AppointmentService service;
+
+	public AppointmentController(AppointmentService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<AppointmentResponseDTO>>> findAll(
@@ -49,7 +53,7 @@ public class AppointmentController {
 	}
 
 	@PostMapping
-	public ResponseEntity<AppointmentResponseDTO> insert(@RequestBody @Valid Appointment obj) {
+	public ResponseEntity<AppointmentResponseDTO> insert(@RequestBody @Valid AppointmentRequestDTO obj) {
 		AppointmentResponseDTO appointmentDTO = service.create(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(appointmentDTO.getId())
 				.toUri();
@@ -63,8 +67,8 @@ public class AppointmentController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Appointment> patch(@PathVariable String id, @RequestBody Appointment obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<Appointment> patch(@PathVariable String id, @RequestBody AppointmentRequestDTO obj) {
+		Appointment appointment = service.patch(id, obj);
+		return ResponseEntity.ok().body(appointment);
 	}
 }

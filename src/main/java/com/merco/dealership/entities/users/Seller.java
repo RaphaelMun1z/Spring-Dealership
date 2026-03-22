@@ -1,4 +1,4 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.users;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.merco.dealership.entities.Appointment;
+import com.merco.dealership.entities.Sale;
 import com.merco.dealership.entities.enums.UserRole;
 
 import jakarta.persistence.Entity;

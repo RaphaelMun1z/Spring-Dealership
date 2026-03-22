@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.BranchRequestDTO;
 import com.merco.dealership.dto.res.BranchResponseDTO;
-import com.merco.dealership.entities.Branch;
 import com.merco.dealership.services.BranchService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +42,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping(value = "/branches")
 @Tag(name = "Branches", description = "Endpoints for Managing Branches")
 public class BranchController {
+
 	private final BranchService service;
 
 	public BranchController(BranchService service) {
@@ -89,7 +90,7 @@ public class BranchController {
 			@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
 			@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
 			@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content) })
-	public ResponseEntity<BranchResponseDTO> insert(@RequestBody @Valid Branch obj) {
+	public ResponseEntity<BranchResponseDTO> insert(@RequestBody @Valid BranchRequestDTO obj) {
 		BranchResponseDTO branchDTO = service.create(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(branchDTO.getId())
 				.toUri();
@@ -115,7 +116,7 @@ public class BranchController {
 			@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
 			@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
 			@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content) })
-	public ResponseEntity<BranchResponseDTO> patch(@PathVariable String id, @RequestBody Branch obj) {
+	public ResponseEntity<BranchResponseDTO> patch(@PathVariable String id, @RequestBody BranchRequestDTO obj) {
 		BranchResponseDTO branchDTO = service.patch(id, obj);
 		return ResponseEntity.ok().body(branchDTO);
 	}

@@ -2,7 +2,7 @@ package com.merco.dealership.dto.res;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.VehicleSpecificDetail;
+import com.merco.dealership.entities.vehicles.details.VehicleSpecificDetail;
 
 public class VehicleSpecificDetailResponseDTO extends RepresentationModel<VehicleSpecificDetailResponseDTO> {
 	private String id;

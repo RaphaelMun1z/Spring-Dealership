@@ -1,6 +1,6 @@
 package com.merco.dealership.repositories;
 
-import com.merco.dealership.entities.Seller;
+import com.merco.dealership.entities.users.Seller;
 
 public interface SellerRepository extends UserRepository<Seller> {
 

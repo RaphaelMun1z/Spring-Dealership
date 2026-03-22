@@ -1,4 +1,4 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.abstractEntities;
 
 import java.io.Serializable;
 import java.util.Objects;

@@ -2,7 +2,6 @@ package com.merco.dealership.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.CustomerAddressRequestDTO;
 import com.merco.dealership.dto.res.CustomerAddressResponseDTO;
-import com.merco.dealership.entities.CustomerAddress;
 import com.merco.dealership.services.CustomerAddressService;
 
 import jakarta.validation.Valid;
@@ -30,8 +29,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/customers-address")
 public class CustomerAddressController {
-	@Autowired
-	private CustomerAddressService service;
+
+	private final CustomerAddressService service;
+
+	public CustomerAddressController(CustomerAddressService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<CustomerAddressResponseDTO>>> findAll(
@@ -49,7 +52,7 @@ public class CustomerAddressController {
 	}
 
 	@PostMapping
-	public ResponseEntity<CustomerAddressResponseDTO> insert(@RequestBody @Valid CustomerAddress obj) {
+	public ResponseEntity<CustomerAddressResponseDTO> insert(@RequestBody @Valid CustomerAddressRequestDTO obj) {
 		CustomerAddressResponseDTO customerAddressDTO = service.create(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(customerAddressDTO.getId()).toUri();
@@ -63,8 +66,9 @@ public class CustomerAddressController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<CustomerAddress> patch(@PathVariable String id, @RequestBody CustomerAddress obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<CustomerAddressResponseDTO> patch(@PathVariable String id,
+															@RequestBody CustomerAddressRequestDTO obj) {
+		CustomerAddressResponseDTO customerAddressDTO = service.patch(id, obj);
+		return ResponseEntity.ok().body(customerAddressDTO);
 	}
 }

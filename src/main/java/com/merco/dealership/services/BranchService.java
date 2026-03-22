@@ -11,13 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.BranchController;
+import com.merco.dealership.dto.req.BranchRequestDTO;
 import com.merco.dealership.dto.res.BranchResponseDTO;
 import com.merco.dealership.entities.Branch;
+import com.merco.dealership.entities.BranchAddress;
 import com.merco.dealership.mapper.Mapper;
+import com.merco.dealership.repositories.BranchAddressRepository;
 import com.merco.dealership.repositories.BranchRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
-import com.merco.dealership.services.exceptions.RequiredObjectIsNullException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -27,19 +29,19 @@ import jakarta.validation.ConstraintViolationException;
 public class BranchService {
 
 	private final BranchRepository repository;
+	private final BranchAddressRepository branchAddressRepository;
 
-	public BranchService(BranchRepository repository) {
+	public BranchService(BranchRepository repository, BranchAddressRepository branchAddressRepository) {
 		this.repository = repository;
+		this.branchAddressRepository = branchAddressRepository;
 	}
 
+	@Transactional(readOnly = true)
 	public Page<BranchResponseDTO> findAll(Pageable pageable) {
 		Page<Branch> branchPage = repository.findAll(pageable);
-
-		return branchPage.map(branch -> {
-			BranchResponseDTO dto = Mapper.modelMapper(branch, BranchResponseDTO.class);
-			dto.add(linkTo(methodOn(BranchController.class).findById(dto.getId())).withSelfRel());
-			return dto;
-		});
+		Page<BranchResponseDTO> branchPageDTO = branchPage.map(p -> Mapper.modelMapper(p, BranchResponseDTO.class));
+		branchPageDTO.map(i -> i.add(linkTo(methodOn(BranchController.class).findById(i.getId())).withSelfRel()));
+		return branchPageDTO;
 	}
 
 	public BranchResponseDTO findById(String id) {
@@ -50,14 +52,26 @@ public class BranchService {
 	}
 
 	@Transactional
-	public BranchResponseDTO create(Branch obj) {
+	public BranchResponseDTO create(BranchRequestDTO obj) {
 		try {
-			if (obj == null)
-				throw new RequiredObjectIsNullException();
+			BranchAddress address = branchAddressRepository.findById(obj.getBranchAddressId())
+					.orElseThrow(() -> new ResourceNotFoundException(obj.getBranchAddressId()));
 
-			Branch branch = repository.save(obj);
-			BranchResponseDTO branchDTO = Mapper.modelMapper(branch, BranchResponseDTO.class);
-			branchDTO.add(linkTo(methodOn(BranchController.class).findById(branch.getId())).withSelfRel());
+			Branch branch = new Branch();
+			branch.setName(obj.getName());
+			branch.setPhoneNumber(obj.getPhoneNumber());
+			branch.setEmail(obj.getEmail());
+			branch.setManagerName(obj.getManagerName());
+			branch.setOpeningHours(obj.getOpeningHours());
+			branch.setBranchType(obj.getBranchType());
+			branch.setStatus(obj.getStatus());
+			branch.setCreatedAt(obj.getCreatedAt());
+			branch.setUpdatedAt(obj.getUpdatedAt());
+			branch.setAddress(address);
+
+			Branch saved = repository.save(branch);
+			BranchResponseDTO branchDTO = Mapper.modelMapper(saved, BranchResponseDTO.class);
+			branchDTO.add(linkTo(methodOn(BranchController.class).findById(saved.getId())).withSelfRel());
 			return branchDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
@@ -80,19 +94,12 @@ public class BranchService {
 	}
 
 	@Transactional
-	public BranchResponseDTO patch(String id, Branch obj) {
+	public BranchResponseDTO patch(String id, BranchRequestDTO obj) {
 		try {
 			Branch entity = repository.getReferenceById(id);
-
 			updateData(entity, obj);
-			Branch savedBranch = repository.save(entity);
-
-			// Padronizado para retornar o DTO com links HATEOAS, igual aos outros métodos
-			BranchResponseDTO branchDTO = Mapper.modelMapper(savedBranch, BranchResponseDTO.class);
-			branchDTO.add(linkTo(methodOn(BranchController.class).findById(savedBranch.getId())).withSelfRel());
-
-			return branchDTO;
-
+			Branch saved = repository.save(entity);
+			return Mapper.modelMapper(saved, BranchResponseDTO.class);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -102,14 +109,27 @@ public class BranchService {
 		}
 	}
 
-	private void updateData(Branch entity, Branch obj) {
-		if (obj.getName() != null) entity.setName(obj.getName());
-		if (obj.getEmail() != null) entity.setEmail(obj.getEmail());
-		if (obj.getPhoneNumber() != null) entity.setPhoneNumber(obj.getPhoneNumber());
-		if (obj.getManagerName() != null) entity.setManagerName(obj.getManagerName());
-		if (obj.getOpeningHours() != null) entity.setOpeningHours(obj.getOpeningHours());
-		if (obj.getBranchType() != null) entity.setBranchType(obj.getBranchType());
-		if (obj.getStatus() != null) entity.setStatus(obj.getStatus());
-		if (obj.getAddress() != null) entity.setAddress(obj.getAddress());
+	private void updateData(Branch entity, BranchRequestDTO obj) {
+		if (obj.getName() != null)
+			entity.setName(obj.getName());
+		if (obj.getPhoneNumber() != null)
+			entity.setPhoneNumber(obj.getPhoneNumber());
+		if (obj.getEmail() != null)
+			entity.setEmail(obj.getEmail());
+		if (obj.getManagerName() != null)
+			entity.setManagerName(obj.getManagerName());
+		if (obj.getOpeningHours() != null)
+			entity.setOpeningHours(obj.getOpeningHours());
+		if (obj.getBranchType() != null)
+			entity.setBranchType(obj.getBranchType());
+		if (obj.getStatus() != null)
+			entity.setStatus(obj.getStatus());
+		if (obj.getUpdatedAt() != null)
+			entity.setUpdatedAt(obj.getUpdatedAt());
+		if (obj.getBranchAddressId() != null) {
+			BranchAddress address = branchAddressRepository.findById(obj.getBranchAddressId())
+					.orElseThrow(() -> new ResourceNotFoundException(obj.getBranchAddressId()));
+			entity.setAddress(address);
+		}
 	}
 }

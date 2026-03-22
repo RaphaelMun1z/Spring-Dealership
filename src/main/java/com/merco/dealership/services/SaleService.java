@@ -19,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.merco.dealership.controllers.SaleController;
 import com.merco.dealership.dto.req.SaleRequestDTO;
 import com.merco.dealership.dto.res.SaleResponseDTO;
-import com.merco.dealership.entities.Customer;
+import com.merco.dealership.entities.customerResources.Customer;
 import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.entities.Sale;
-import com.merco.dealership.entities.Seller;
+import com.merco.dealership.entities.users.Seller;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.CustomerRepository;
 import com.merco.dealership.repositories.InventoryItemRepository;
@@ -77,24 +77,19 @@ public class SaleService {
 	@Transactional
 	public SaleResponseDTO create(SaleRequestDTO dto) {
 		try {
-			// 1. Busca o item no inventário
 			InventoryItem inventoryItem = inventoryRepository.findById(dto.getInventoryId())
 					.orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado no estoque"));
 
-			// 2. Validação de segurança: Impede a venda se o carro já tiver data de saída
 			if (inventoryItem.getStockExitDate() != null) {
 				throw new DataViolationException("Este veículo já foi vendido.");
 			}
 
-			// 3. Baixa no estoque
 			inventoryItem.setStockExitDate(dto.getSaleDate() != null ? dto.getSaleDate() : LocalDate.now());
 			inventoryRepository.save(inventoryItem);
 
-			// 4. Constrói a entidade Sale a partir do DTO
 			Sale sale = new Sale();
 			updateData(sale, dto);
 
-			// 5. Salva a venda na base de dados
 			sale = repository.save(sale);
 
 			SaleResponseDTO saleDTO = Mapper.modelMapper(sale, SaleResponseDTO.class);
@@ -113,7 +108,7 @@ public class SaleService {
 			if (sale.getInventoryItem() != null) {
 				InventoryItem inventoryItem = inventoryRepository.findById(sale.getInventoryItem().getId()).orElse(null);
 				if (inventoryItem != null) {
-					inventoryItem.setStockExitDate(null); // Devolve o veículo ao estoque
+					inventoryItem.setStockExitDate(null);
 					inventoryRepository.save(inventoryItem);
 				}
 			}
@@ -154,7 +149,6 @@ public class SaleService {
 		if (dto.getInstallmentsNumber() != null) entity.setInstallmentsNumber(dto.getInstallmentsNumber());
 		if (dto.getSaleDate() != null) entity.setSaleDate(dto.getSaleDate());
 
-		// Mapeamento dos Relacionamentos a partir dos IDs enviados pelo Frontend
 		if (dto.getCustomerId() != null && !dto.getCustomerId().isBlank()) {
 			Customer customer = customerRepository.findById(dto.getCustomerId())
 					.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));

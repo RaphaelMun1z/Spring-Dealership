@@ -2,7 +2,6 @@ package com.merco.dealership.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.CustomerRequestDTO;
 import com.merco.dealership.dto.res.CustomerResponseDTO;
-import com.merco.dealership.entities.Customer;
 import com.merco.dealership.services.CustomerService;
 
 import jakarta.validation.Valid;
@@ -30,8 +29,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/customers")
 public class CustomerController {
-	@Autowired
-	private CustomerService service;
+
+	private final CustomerService service;
+
+	public CustomerController(CustomerService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<CustomerResponseDTO>>> findAll(
@@ -49,7 +52,7 @@ public class CustomerController {
 	}
 
 	@PostMapping
-	public ResponseEntity<CustomerResponseDTO> insert(@RequestBody @Valid Customer obj) {
+	public ResponseEntity<CustomerResponseDTO> insert(@RequestBody @Valid CustomerRequestDTO obj) {
 		CustomerResponseDTO customerDTO = service.create(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(customerDTO.getId())
 				.toUri();
@@ -63,8 +66,9 @@ public class CustomerController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Customer> patch(@PathVariable String id, @RequestBody Customer obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<CustomerResponseDTO> patch(@PathVariable String id,
+													 @RequestBody CustomerRequestDTO obj) {
+		CustomerResponseDTO customerDTO = service.patch(id, obj);
+		return ResponseEntity.ok().body(customerDTO);
 	}
 }

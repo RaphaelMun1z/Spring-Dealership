@@ -11,7 +11,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.merco.dealership.dto.res.TokenDTO;
-import com.merco.dealership.entities.User;
+import com.merco.dealership.entities.users.User;
 
 import jakarta.annotation.PostConstruct;
 

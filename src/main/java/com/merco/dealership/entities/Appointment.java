@@ -6,9 +6,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.merco.dealership.entities.customerResources.Customer;
 import com.merco.dealership.entities.enums.AppointmentStatus;
 import com.merco.dealership.entities.enums.AppointmentType;
 
+import com.merco.dealership.entities.users.Seller;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

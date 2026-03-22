@@ -3,7 +3,6 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -16,8 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.VehicleSpecificDetailController;
+import com.merco.dealership.dto.req.VehicleSpecificDetailRequestDTO;
 import com.merco.dealership.dto.res.VehicleSpecificDetailResponseDTO;
-import com.merco.dealership.entities.VehicleSpecificDetail;
+import com.merco.dealership.entities.vehicles.details.VehicleSpecificDetail;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.VehicleSpecificDetailRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
@@ -29,11 +29,15 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class VehicleSpecificDetailService {
-	@Autowired
-	private VehicleSpecificDetailRepository repository;
 
-	@Autowired
-	PagedResourcesAssembler<VehicleSpecificDetailResponseDTO> assembler;
+	private final VehicleSpecificDetailRepository repository;
+	private final PagedResourcesAssembler<VehicleSpecificDetailResponseDTO> assembler;
+
+	public VehicleSpecificDetailService(VehicleSpecificDetailRepository repository,
+										PagedResourcesAssembler<VehicleSpecificDetailResponseDTO> assembler) {
+		this.repository = repository;
+		this.assembler = assembler;
+	}
 
 	public PagedModel<EntityModel<VehicleSpecificDetailResponseDTO>> findAll(Pageable pageable) {
 		Page<VehicleSpecificDetail> vehicleSpecificDetailPage = repository.findAll(pageable);
@@ -51,20 +55,21 @@ public class VehicleSpecificDetailService {
 				.orElseThrow(() -> new ResourceNotFoundException(id));
 		VehicleSpecificDetailResponseDTO vehicleSpecificDetailDTO = Mapper.modelMapper(vehicleSpecificDetail,
 				VehicleSpecificDetailResponseDTO.class);
-		vehicleSpecificDetailDTO
-				.add(linkTo(methodOn(VehicleSpecificDetailController.class).findById(id)).withSelfRel());
+		vehicleSpecificDetailDTO.add(linkTo(methodOn(VehicleSpecificDetailController.class).findById(id)).withSelfRel());
 		return vehicleSpecificDetailDTO;
 	}
 
 	@Transactional
-	public VehicleSpecificDetailResponseDTO create(VehicleSpecificDetail obj) {
+	public VehicleSpecificDetailResponseDTO create(VehicleSpecificDetailRequestDTO obj) {
 		try {
-			VehicleSpecificDetail vehicleSpecificDetail = repository.save(obj);
-			VehicleSpecificDetailResponseDTO vehicleSpecificDetailDTO = Mapper.modelMapper(vehicleSpecificDetail,
+			VehicleSpecificDetail vehicleSpecificDetail = new VehicleSpecificDetail();
+			vehicleSpecificDetail.setDetail(obj.getDetail());
+
+			VehicleSpecificDetail saved = repository.save(vehicleSpecificDetail);
+			VehicleSpecificDetailResponseDTO vehicleSpecificDetailDTO = Mapper.modelMapper(saved,
 					VehicleSpecificDetailResponseDTO.class);
-			vehicleSpecificDetailDTO
-					.add(linkTo(methodOn(VehicleSpecificDetailController.class).findById(vehicleSpecificDetail.getId()))
-							.withSelfRel());
+			vehicleSpecificDetailDTO.add(
+					linkTo(methodOn(VehicleSpecificDetailController.class).findById(saved.getId())).withSelfRel());
 			return vehicleSpecificDetailDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
@@ -87,12 +92,12 @@ public class VehicleSpecificDetailService {
 	}
 
 	@Transactional
-	public VehicleSpecificDetail patch(String id, VehicleSpecificDetail obj) {
+	public VehicleSpecificDetailResponseDTO patch(String id, VehicleSpecificDetailRequestDTO obj) {
 		try {
 			VehicleSpecificDetail entity = repository.getReferenceById(id);
 			updateData(entity, obj);
-			VehicleSpecificDetail VehicleSpecificDetail = repository.save(entity);
-			return VehicleSpecificDetail;
+			VehicleSpecificDetail saved = repository.save(entity);
+			return Mapper.modelMapper(saved, VehicleSpecificDetailResponseDTO.class);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -102,12 +107,8 @@ public class VehicleSpecificDetailService {
 		}
 	}
 
-	private void updateData(VehicleSpecificDetail entity, VehicleSpecificDetail obj) {
-//		if (obj.getName() != null)
-//			entity.setName(obj.getName());
-//		if (obj.getEmail() != null)
-//			entity.setEmail(obj.getEmail());
-//		if (obj.getPhone() != null)
-//			entity.setPhone(obj.getPhone());
+	private void updateData(VehicleSpecificDetail entity, VehicleSpecificDetailRequestDTO obj) {
+		if (obj.getDetail() != null)
+			entity.setDetail(obj.getDetail());
 	}
 }

@@ -5,7 +5,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,9 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.AdmController;
+import com.merco.dealership.dto.req.AdmPatchRequestDTO;
 import com.merco.dealership.dto.req.AdmRegisterRequestDTO;
 import com.merco.dealership.dto.res.AdmResponseDTO;
-import com.merco.dealership.entities.Adm;
+import com.merco.dealership.entities.users.Adm;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.AdmRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
@@ -27,12 +27,16 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class AdmService {
-	@Autowired
-	private AdmRepository repository;
+
+	private final AdmRepository repository;
+
+	public AdmService(AdmRepository repository) {
+		this.repository = repository;
+	}
 
 	public List<AdmResponseDTO> findAll() {
 		List<AdmResponseDTO> admsDTO = Mapper.modelMapperList(repository.findAll(), AdmResponseDTO.class);
-		admsDTO.stream().forEach(i -> i.add(linkTo(methodOn(AdmController.class).findById(i.getId())).withSelfRel()));
+		admsDTO.forEach(i -> i.add(linkTo(methodOn(AdmController.class).findById(i.getId())).withSelfRel()));
 		return admsDTO;
 	}
 
@@ -74,12 +78,12 @@ public class AdmService {
 	}
 
 	@Transactional
-	public Adm patch(String id, Adm obj) {
+	public AdmResponseDTO patch(String id, AdmPatchRequestDTO obj) {
 		try {
 			Adm entity = repository.getReferenceById(id);
 			updateData(entity, obj);
-			Adm adm = repository.save(entity);
-			return adm;
+			Adm saved = repository.save(entity);
+			return Mapper.modelMapper(saved, AdmResponseDTO.class);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -89,7 +93,7 @@ public class AdmService {
 		}
 	}
 
-	private void updateData(Adm entity, Adm obj) {
+	private void updateData(Adm entity, AdmPatchRequestDTO obj) {
 		if (obj.getName() != null)
 			entity.setName(obj.getName());
 		if (obj.getEmail() != null)

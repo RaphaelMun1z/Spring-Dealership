@@ -2,7 +2,6 @@ package com.merco.dealership.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.BranchAddressRequestDTO;
 import com.merco.dealership.dto.res.BranchAddressResponseDTO;
-import com.merco.dealership.entities.BranchAddress;
 import com.merco.dealership.services.BranchAddressService;
 
 import jakarta.validation.Valid;
@@ -30,8 +29,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/branches-address")
 public class BranchAddressController {
-	@Autowired
-	private BranchAddressService service;
+
+	private final BranchAddressService service;
+
+	public BranchAddressController(BranchAddressService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<BranchAddressResponseDTO>>> findAll(
@@ -49,7 +52,7 @@ public class BranchAddressController {
 	}
 
 	@PostMapping
-	public ResponseEntity<BranchAddressResponseDTO> insert(@RequestBody @Valid BranchAddress obj) {
+	public ResponseEntity<BranchAddressResponseDTO> insert(@RequestBody @Valid BranchAddressRequestDTO obj) {
 		BranchAddressResponseDTO branchAddressDTO = service.create(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(branchAddressDTO.getId()).toUri();
@@ -63,8 +66,9 @@ public class BranchAddressController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<BranchAddress> patch(@PathVariable String id, @RequestBody BranchAddress obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<BranchAddressResponseDTO> patch(@PathVariable String id,
+														  @RequestBody BranchAddressRequestDTO obj) {
+		BranchAddressResponseDTO branchAddressDTO = service.patch(id, obj);
+		return ResponseEntity.ok().body(branchAddressDTO);
 	}
 }

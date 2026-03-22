@@ -1,4 +1,4 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.vehicles;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -9,12 +9,17 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.merco.dealership.entities.*;
 import com.merco.dealership.entities.enums.FuelType;
 import com.merco.dealership.entities.enums.VehicleAvailability;
 import com.merco.dealership.entities.enums.VehicleCategory;
 import com.merco.dealership.entities.enums.VehicleStatus;
 import com.merco.dealership.entities.enums.VehicleType;
 
+import com.merco.dealership.entities.vehicles.details.VehicleConfiguration;
+import com.merco.dealership.entities.vehicles.details.VehicleImageFile;
+import com.merco.dealership.entities.vehicles.landVehicle.*;
+import com.merco.dealership.entities.vehicles.waterVehicle.Boat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

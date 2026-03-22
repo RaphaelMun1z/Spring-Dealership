@@ -3,7 +3,6 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.BranchAddressController;
+import com.merco.dealership.dto.req.BranchAddressRequestDTO;
 import com.merco.dealership.dto.res.BranchAddressResponseDTO;
 import com.merco.dealership.entities.BranchAddress;
 import com.merco.dealership.mapper.Mapper;
@@ -29,11 +29,15 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class BranchAddressService {
-	@Autowired
-	private BranchAddressRepository repository;
 
-	@Autowired
-	PagedResourcesAssembler<BranchAddressResponseDTO> assembler;
+	private final BranchAddressRepository repository;
+	private final PagedResourcesAssembler<BranchAddressResponseDTO> assembler;
+
+	public BranchAddressService(BranchAddressRepository repository,
+								PagedResourcesAssembler<BranchAddressResponseDTO> assembler) {
+		this.repository = repository;
+		this.assembler = assembler;
+	}
 
 	public PagedModel<EntityModel<BranchAddressResponseDTO>> findAll(Pageable pageable) {
 		Page<BranchAddress> branchAddressPage = repository.findAll(pageable);
@@ -54,13 +58,22 @@ public class BranchAddressService {
 	}
 
 	@Transactional
-	public BranchAddressResponseDTO create(BranchAddress obj) {
+	public BranchAddressResponseDTO create(BranchAddressRequestDTO obj) {
 		try {
-			BranchAddress branchAddress = repository.save(obj);
-			BranchAddressResponseDTO branchAddressDTO = Mapper.modelMapper(branchAddress,
-					BranchAddressResponseDTO.class);
+			BranchAddress branchAddress = new BranchAddress();
+			branchAddress.setStreet(obj.getStreet());
+			branchAddress.setNumber(obj.getNumber());
+			branchAddress.setDistrict(obj.getDistrict());
+			branchAddress.setCity(obj.getCity());
+			branchAddress.setState(obj.getState());
+			branchAddress.setCountry(obj.getCountry());
+			branchAddress.setCep(obj.getCep());
+			branchAddress.setComplement(obj.getComplement());
+
+			BranchAddress saved = repository.save(branchAddress);
+			BranchAddressResponseDTO branchAddressDTO = Mapper.modelMapper(saved, BranchAddressResponseDTO.class);
 			branchAddressDTO
-					.add(linkTo(methodOn(BranchAddressController.class).findById(branchAddress.getId())).withSelfRel());
+					.add(linkTo(methodOn(BranchAddressController.class).findById(saved.getId())).withSelfRel());
 			return branchAddressDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
@@ -83,12 +96,12 @@ public class BranchAddressService {
 	}
 
 	@Transactional
-	public BranchAddress patch(String id, BranchAddress obj) {
+	public BranchAddressResponseDTO patch(String id, BranchAddressRequestDTO obj) {
 		try {
 			BranchAddress entity = repository.getReferenceById(id);
 			updateData(entity, obj);
-			BranchAddress BranchAddress = repository.save(entity);
-			return BranchAddress;
+			BranchAddress saved = repository.save(entity);
+			return Mapper.modelMapper(saved, BranchAddressResponseDTO.class);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -98,12 +111,22 @@ public class BranchAddressService {
 		}
 	}
 
-	private void updateData(BranchAddress entity, BranchAddress obj) {
-//		if (obj.getName() != null)
-//			entity.setName(obj.getName());
-//		if (obj.getEmail() != null)
-//			entity.setEmail(obj.getEmail());
-//		if (obj.getPhone() != null)
-//			entity.setPhone(obj.getPhone());
+	private void updateData(BranchAddress entity, BranchAddressRequestDTO obj) {
+		if (obj.getStreet() != null)
+			entity.setStreet(obj.getStreet());
+		if (obj.getNumber() != null)
+			entity.setNumber(obj.getNumber());
+		if (obj.getDistrict() != null)
+			entity.setDistrict(obj.getDistrict());
+		if (obj.getCity() != null)
+			entity.setCity(obj.getCity());
+		if (obj.getState() != null)
+			entity.setState(obj.getState());
+		if (obj.getCountry() != null)
+			entity.setCountry(obj.getCountry());
+		if (obj.getCep() != null)
+			entity.setCep(obj.getCep());
+		if (obj.getComplement() != null)
+			entity.setComplement(obj.getComplement());
 	}
 }

@@ -1,6 +1,5 @@
 package com.merco.dealership.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,10 +15,13 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
-	@Autowired
-	private AuthorizationService service;
+	private final AuthorizationService service;
 
-	@PostMapping("/login")
+    public AuthenticationController(AuthorizationService service) {
+        this.service = service;
+    }
+
+    @PostMapping("/login")
 	public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO data) {
 		return ResponseEntity.ok(service.login(data));
 	}

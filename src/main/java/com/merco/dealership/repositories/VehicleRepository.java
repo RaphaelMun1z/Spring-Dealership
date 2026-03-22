@@ -2,7 +2,7 @@ package com.merco.dealership.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.merco.dealership.entities.Vehicle;
+import com.merco.dealership.entities.vehicles.Vehicle;
 
 public interface VehicleRepository<T extends Vehicle> extends JpaRepository<T, String> {
 	

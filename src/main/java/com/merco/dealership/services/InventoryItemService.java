@@ -3,7 +3,6 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -16,10 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.InventoryItemController;
+import com.merco.dealership.dto.req.InventoryItemRequestDTO;
 import com.merco.dealership.dto.res.InventoryItemResponseDTO;
 import com.merco.dealership.entities.InventoryItem;
+import com.merco.dealership.entities.vehicles.Vehicle;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.InventoryItemRepository;
+import com.merco.dealership.repositories.VehicleRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
 import com.merco.dealership.services.exceptions.DatabaseException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;
@@ -29,11 +31,17 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class InventoryItemService {
-	@Autowired
-	private InventoryItemRepository repository;
 
-	@Autowired
-	PagedResourcesAssembler<InventoryItemResponseDTO> assembler;
+	private final InventoryItemRepository repository;
+	private final VehicleRepository<?> vehicleRepository;
+	private final PagedResourcesAssembler<InventoryItemResponseDTO> assembler;
+
+	public InventoryItemService(InventoryItemRepository repository, VehicleRepository vehicleRepository,
+								PagedResourcesAssembler<InventoryItemResponseDTO> assembler) {
+		this.repository = repository;
+		this.vehicleRepository = vehicleRepository;
+		this.assembler = assembler;
+	}
 
 	@Transactional(readOnly = true)
 	public PagedModel<EntityModel<InventoryItemResponseDTO>> findAll(Pageable pageable) {
@@ -55,13 +63,24 @@ public class InventoryItemService {
 	}
 
 	@Transactional
-	public InventoryItemResponseDTO create(InventoryItem obj) {
+	public InventoryItemResponseDTO create(InventoryItemRequestDTO obj) {
 		try {
-			InventoryItem inventoryItem = repository.save(obj);
-			InventoryItemResponseDTO inventoryItemDTO = Mapper.modelMapper(inventoryItem,
-					InventoryItemResponseDTO.class);
-			inventoryItemDTO
-					.add(linkTo(methodOn(InventoryItemController.class).findById(inventoryItem.getId())).withSelfRel());
+			Vehicle vehicle = vehicleRepository.findById(obj.getVehicleId())
+					.orElseThrow(() -> new ResourceNotFoundException(obj.getVehicleId()));
+
+			InventoryItem inventoryItem = new InventoryItem();
+			inventoryItem.setVehicle(vehicle);
+			inventoryItem.setStockEntryDate(obj.getStockEntryDate());
+			inventoryItem.setStockExitDate(obj.getStockExitDate());
+			inventoryItem.setAcquisitionPrice(obj.getAcquisitionPrice());
+			inventoryItem.setProfitMargin(obj.getProfitMargin());
+			inventoryItem.setSupplier(obj.getSupplier());
+			inventoryItem.setLicensePlate(obj.getLicensePlate());
+			inventoryItem.setChassis(obj.getChassis());
+
+			InventoryItem saved = repository.save(inventoryItem);
+			InventoryItemResponseDTO inventoryItemDTO = Mapper.modelMapper(saved, InventoryItemResponseDTO.class);
+			inventoryItemDTO.add(linkTo(methodOn(InventoryItemController.class).findById(saved.getId())).withSelfRel());
 			return inventoryItemDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
@@ -84,12 +103,12 @@ public class InventoryItemService {
 	}
 
 	@Transactional
-	public InventoryItem patch(String id, InventoryItem obj) {
+	public InventoryItemResponseDTO patch(String id, InventoryItemRequestDTO obj) {
 		try {
 			InventoryItem entity = repository.getReferenceById(id);
 			updateData(entity, obj);
-			InventoryItem InventoryItem = repository.save(entity);
-			return InventoryItem;
+			InventoryItem saved = repository.save(entity);
+			return Mapper.modelMapper(saved, InventoryItemResponseDTO.class);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -99,12 +118,25 @@ public class InventoryItemService {
 		}
 	}
 
-	private void updateData(InventoryItem entity, InventoryItem obj) {
-//		if (obj.getName() != null)
-//			entity.setName(obj.getName());
-//		if (obj.getEmail() != null)
-//			entity.setEmail(obj.getEmail());
-//		if (obj.getPhone() != null)
-//			entity.setPhone(obj.getPhone());
+	private void updateData(InventoryItem entity, InventoryItemRequestDTO obj) {
+		if (obj.getStockEntryDate() != null)
+			entity.setStockEntryDate(obj.getStockEntryDate());
+		if (obj.getStockExitDate() != null)
+			entity.setStockExitDate(obj.getStockExitDate());
+		if (obj.getAcquisitionPrice() != null)
+			entity.setAcquisitionPrice(obj.getAcquisitionPrice());
+		if (obj.getProfitMargin() != null)
+			entity.setProfitMargin(obj.getProfitMargin());
+		if (obj.getSupplier() != null)
+			entity.setSupplier(obj.getSupplier());
+		if (obj.getLicensePlate() != null)
+			entity.setLicensePlate(obj.getLicensePlate());
+		if (obj.getChassis() != null)
+			entity.setChassis(obj.getChassis());
+		if (obj.getVehicleId() != null) {
+			Vehicle vehicle = vehicleRepository.findById(obj.getVehicleId())
+					.orElseThrow(() -> new ResourceNotFoundException(obj.getVehicleId()));
+			entity.setVehicle(vehicle);
+		}
 	}
 }

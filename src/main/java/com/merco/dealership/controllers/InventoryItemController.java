@@ -2,7 +2,6 @@ package com.merco.dealership.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.merco.dealership.dto.req.InventoryItemRequestDTO;
 import com.merco.dealership.dto.res.InventoryItemResponseDTO;
-import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.services.InventoryItemService;
 
 import jakarta.validation.Valid;
@@ -30,8 +29,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/inventory-items")
 public class InventoryItemController {
-	@Autowired
-	private InventoryItemService service;
+
+	private final InventoryItemService service;
+
+	public InventoryItemController(InventoryItemService service) {
+		this.service = service;
+	}
 
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<InventoryItemResponseDTO>>> findAll(
@@ -49,7 +52,7 @@ public class InventoryItemController {
 	}
 
 	@PostMapping
-	public ResponseEntity<InventoryItemResponseDTO> insert(@RequestBody @Valid InventoryItem obj) {
+	public ResponseEntity<InventoryItemResponseDTO> insert(@RequestBody @Valid InventoryItemRequestDTO obj) {
 		InventoryItemResponseDTO inventoryItemDTO = service.create(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(inventoryItemDTO.getId()).toUri();
@@ -63,8 +66,9 @@ public class InventoryItemController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<InventoryItem> patch(@PathVariable String id, @RequestBody InventoryItem obj) {
-		obj = service.patch(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<InventoryItemResponseDTO> patch(@PathVariable String id,
+														  @RequestBody InventoryItemRequestDTO obj) {
+		InventoryItemResponseDTO inventoryItemDTO = service.patch(id, obj);
+		return ResponseEntity.ok().body(inventoryItemDTO);
 	}
 }

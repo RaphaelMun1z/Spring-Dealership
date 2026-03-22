@@ -3,8 +3,8 @@ package com.merco.dealership.entities.pk;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.merco.dealership.entities.Customer;
-import com.merco.dealership.entities.CustomerAddress;
+import com.merco.dealership.entities.customerResources.Customer;
+import com.merco.dealership.entities.customerResources.CustomerAddress;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;

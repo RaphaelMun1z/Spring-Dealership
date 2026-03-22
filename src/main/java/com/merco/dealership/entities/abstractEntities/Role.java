@@ -1,4 +1,4 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.abstractEntities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

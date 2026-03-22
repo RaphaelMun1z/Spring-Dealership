@@ -1,6 +1,6 @@
 package com.merco.dealership.repositories;
 
-import com.merco.dealership.entities.Adm;
+import com.merco.dealership.entities.users.Adm;
 
 public interface AdmRepository extends UserRepository<Adm> {
 

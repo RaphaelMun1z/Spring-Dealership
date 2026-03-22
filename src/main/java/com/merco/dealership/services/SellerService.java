@@ -3,7 +3,6 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -17,9 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.SellerController;
+import com.merco.dealership.dto.req.SellerPatchRequestDTO;
 import com.merco.dealership.dto.req.SellerRegisterRequestDTO;
 import com.merco.dealership.dto.res.SellerResponseDTO;
-import com.merco.dealership.entities.Seller;
+import com.merco.dealership.entities.users.Seller;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.SellerRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
@@ -31,11 +31,14 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class SellerService {
-	@Autowired
-	private SellerRepository repository;
 
-	@Autowired
-	PagedResourcesAssembler<SellerResponseDTO> assembler;
+	private final SellerRepository repository;
+	private final PagedResourcesAssembler<SellerResponseDTO> assembler;
+
+	public SellerService(SellerRepository repository, PagedResourcesAssembler<SellerResponseDTO> assembler) {
+		this.repository = repository;
+		this.assembler = assembler;
+	}
 
 	public PagedModel<EntityModel<SellerResponseDTO>> findAll(Pageable pageable) {
 		Page<Seller> sellerPage = repository.findAll(pageable);
@@ -85,12 +88,12 @@ public class SellerService {
 	}
 
 	@Transactional
-	public Seller patch(String id, Seller obj) {
+	public SellerResponseDTO patch(String id, SellerPatchRequestDTO obj) {
 		try {
 			Seller entity = repository.getReferenceById(id);
 			patchData(entity, obj);
-			Seller s = repository.save(entity);
-			return s;
+			Seller saved = repository.save(entity);
+			return Mapper.modelMapper(saved, SellerResponseDTO.class);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -100,12 +103,20 @@ public class SellerService {
 		}
 	}
 
-	private void patchData(Seller entity, Seller obj) {
+	private void patchData(Seller entity, SellerPatchRequestDTO obj) {
 		if (obj.getName() != null)
 			entity.setName(obj.getName());
 		if (obj.getEmail() != null)
 			entity.setEmail(obj.getEmail());
 		if (obj.getPhone() != null)
 			entity.setPhone(obj.getPhone());
+		if (obj.getHireDate() != null)
+			entity.setHireDate(obj.getHireDate());
+		if (obj.getSalary() != null)
+			entity.setSalary(obj.getSalary());
+		if (obj.getCommissionRate() != null)
+			entity.setCommissionRate(obj.getCommissionRate());
+		if (obj.getStatus() != null)
+			entity.setStatus(obj.getStatus());
 	}
 }

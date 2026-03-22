@@ -1,9 +1,11 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.vehicles.details;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.merco.dealership.entities.abstractEntities.File;
+import com.merco.dealership.entities.vehicles.Vehicle;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;

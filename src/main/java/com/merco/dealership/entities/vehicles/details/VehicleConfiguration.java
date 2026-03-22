@@ -1,9 +1,10 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.vehicles.details;
 
 import java.io.Serializable;
 
 import com.merco.dealership.entities.pk.VehicleConfigurationPK;
 
+import com.merco.dealership.entities.vehicles.Vehicle;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

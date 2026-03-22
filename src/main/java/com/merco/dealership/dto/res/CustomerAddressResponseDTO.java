@@ -2,7 +2,7 @@ package com.merco.dealership.dto.res;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.CustomerAddress;
+import com.merco.dealership.entities.customerResources.CustomerAddress;
 
 public class CustomerAddressResponseDTO  extends RepresentationModel<CustomerAddressResponseDTO> {
 	private String id;

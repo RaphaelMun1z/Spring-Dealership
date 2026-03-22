@@ -1,6 +1,5 @@
 package com.merco.dealership.infra.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,8 +21,12 @@ import org.springframework.security.web.header.writers.XXssProtectionHeaderWrite
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfigurations {
-	@Autowired
-	SecurityFilter securityFilter;
+
+	private final SecurityFilter securityFilter;
+
+	public SecurityConfigurations(SecurityFilter securityFilter) {
+		this.securityFilter = securityFilter;
+	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

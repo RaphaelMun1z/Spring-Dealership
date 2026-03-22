@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,16 +27,16 @@ import com.merco.dealership.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class FileStorageService {
-	private final Path fileStorageLocation;
 
-	@Autowired
+    private static final Logger log = LogManager.getLogger(FileStorageService.class);
+    private final Path fileStorageLocation;
+
 	public FileStorageService(FileStorageConfig fileStorageConfig) {
 		this.fileStorageLocation = Paths.get(fileStorageConfig.getUploadDir()).toAbsolutePath().normalize();
 		try {
 			Files.createDirectories(this.fileStorageLocation);
 		} catch (Exception e) {
-			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
-					e);
+			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", e);
 		}
 	}
 
@@ -73,13 +74,9 @@ public class FileStorageService {
 					.path(fileName).toUriString();
 			return new UploadFileResponseDTO(fileName, fileDownloadUri, file.getContentType(), file.getSize());
 		} catch (Exception e) {
-			System.out.println(e);
+			log.error("e: ", e);
 			return null;
 		}
-	}
-
-	public List<UploadFileResponseDTO> uploadFiles(MultipartFile[] files) {
-		return Arrays.asList(files).stream().map(file -> this.uploadFile(file)).collect(Collectors.toList());
 	}
 
 	public Resource loadFileAsResource(String fileName) {

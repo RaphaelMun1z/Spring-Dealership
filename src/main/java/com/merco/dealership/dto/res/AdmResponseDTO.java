@@ -2,7 +2,7 @@ package com.merco.dealership.dto.res;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.merco.dealership.entities.Adm;
+import com.merco.dealership.entities.users.Adm;
 
 public class AdmResponseDTO extends RepresentationModel<AdmResponseDTO> {
 	private String id;

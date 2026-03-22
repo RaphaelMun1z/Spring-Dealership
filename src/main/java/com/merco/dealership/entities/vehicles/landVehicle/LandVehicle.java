@@ -1,9 +1,11 @@
-package com.merco.dealership.entities;
+package com.merco.dealership.entities.vehicles.landVehicle;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.merco.dealership.entities.Branch;
+import com.merco.dealership.entities.InventoryItem;
 import com.merco.dealership.entities.enums.FuelType;
 import com.merco.dealership.entities.enums.TransmissionType;
 import com.merco.dealership.entities.enums.VehicleAvailability;
@@ -11,6 +13,9 @@ import com.merco.dealership.entities.enums.VehicleCategory;
 import com.merco.dealership.entities.enums.VehicleStatus;
 import com.merco.dealership.entities.enums.VehicleType;
 
+import com.merco.dealership.entities.vehicles.Vehicle;
+import com.merco.dealership.entities.vehicles.details.VehicleConfiguration;
+import com.merco.dealership.entities.vehicles.details.VehicleImageFile;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -33,22 +38,22 @@ public abstract class LandVehicle extends Vehicle implements Serializable {
 	}
 
 	protected LandVehicle(String id, @NotNull(message = "Required field") String brand,
-			@NotNull(message = "Required field") String model, @NotNull(message = "Required field") VehicleType type,
-			@NotNull(message = "Required field") VehicleCategory category,
-			@NotNull(message = "Required field") LocalDate manufactureYear,
-			@NotNull(message = "Required field") String color, @NotNull(message = "Required field") Double mileage,
-			@NotNull(message = "Required field") Double weight, @NotNull(message = "Required field") FuelType fuelType,
-			@NotNull(message = "Required field") Integer numberOfCylinders,
-			@NotNull(message = "Required field") String infotainmentSystem,
-			@NotNull(message = "Required field") Double fuelTankCapacity,
-			@NotNull(message = "Required field") Double enginePower,
-			@NotNull(message = "Required field") Integer passengerCapacity,
-			@NotNull(message = "Required field") Double salePrice, VehicleStatus status,
-			VehicleAvailability availability, @NotNull(message = "Required field") String description,
-			LocalDate lastUpdate, @NotNull(message = "Required field") Branch branch, Set<InventoryItem> inventoryItems,
-			Set<VehicleConfiguration> specificDetails, Set<VehicleImageFile> images, Integer transmissionType,
-			String brakeType, Double groundClearance, Double autonomyRoad, Double autonomyCity, Integer numberOfGears,
-			String steeringType, Integer tireSize) {
+						  @NotNull(message = "Required field") String model, @NotNull(message = "Required field") VehicleType type,
+						  @NotNull(message = "Required field") VehicleCategory category,
+						  @NotNull(message = "Required field") LocalDate manufactureYear,
+						  @NotNull(message = "Required field") String color, @NotNull(message = "Required field") Double mileage,
+						  @NotNull(message = "Required field") Double weight, @NotNull(message = "Required field") FuelType fuelType,
+						  @NotNull(message = "Required field") Integer numberOfCylinders,
+						  @NotNull(message = "Required field") String infotainmentSystem,
+						  @NotNull(message = "Required field") Double fuelTankCapacity,
+						  @NotNull(message = "Required field") Double enginePower,
+						  @NotNull(message = "Required field") Integer passengerCapacity,
+						  @NotNull(message = "Required field") Double salePrice, VehicleStatus status,
+						  VehicleAvailability availability, @NotNull(message = "Required field") String description,
+						  LocalDate lastUpdate, @NotNull(message = "Required field") Branch branch, Set<InventoryItem> inventoryItems,
+						  Set<VehicleConfiguration> specificDetails, Set<VehicleImageFile> images, Integer transmissionType,
+						  String brakeType, Double groundClearance, Double autonomyRoad, Double autonomyCity, Integer numberOfGears,
+						  String steeringType, Integer tireSize) {
 		super(id, brand, model, type, category, manufactureYear, color, mileage, weight, fuelType, numberOfCylinders,
 				infotainmentSystem, fuelTankCapacity, enginePower, passengerCapacity, salePrice, status, availability,
 				description, lastUpdate, branch, inventoryItems, specificDetails, images);

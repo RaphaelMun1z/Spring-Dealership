@@ -3,7 +3,6 @@ package com.merco.dealership.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -16,8 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.merco.dealership.controllers.CustomerController;
+import com.merco.dealership.dto.req.CustomerRequestDTO;
 import com.merco.dealership.dto.res.CustomerResponseDTO;
-import com.merco.dealership.entities.Customer;
+import com.merco.dealership.entities.customerResources.Customer;
 import com.merco.dealership.mapper.Mapper;
 import com.merco.dealership.repositories.CustomerRepository;
 import com.merco.dealership.services.exceptions.DataViolationException;
@@ -29,11 +29,14 @@ import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class CustomerService {
-	@Autowired
-	private CustomerRepository repository;
 
-	@Autowired
-	PagedResourcesAssembler<CustomerResponseDTO> assembler;
+	private final CustomerRepository repository;
+	private final PagedResourcesAssembler<CustomerResponseDTO> assembler;
+
+	public CustomerService(CustomerRepository repository, PagedResourcesAssembler<CustomerResponseDTO> assembler) {
+		this.repository = repository;
+		this.assembler = assembler;
+	}
 
 	public PagedModel<EntityModel<CustomerResponseDTO>> findAll(Pageable pageable) {
 		Page<Customer> customerPage = repository.findAll(pageable);
@@ -54,16 +57,24 @@ public class CustomerService {
 	}
 
 	@Transactional
-	public CustomerResponseDTO create(Customer obj) {
+	public CustomerResponseDTO create(CustomerRequestDTO obj) {
 		try {
-			Customer customer = repository.save(obj);
-			CustomerResponseDTO customerDTO = Mapper.modelMapper(customer, CustomerResponseDTO.class);
-			customerDTO.add(linkTo(methodOn(CustomerController.class).findById(customer.getId())).withSelfRel());
+			Customer customer = new Customer();
+			customer.setName(obj.getName());
+			customer.setCpf(obj.getCpf());
+			customer.setEmail(obj.getEmail());
+			customer.setPhone(obj.getPhone());
+			customer.setBirthDate(obj.getBirthDate());
+			customer.setRegistrationDate(obj.getRegistrationDate());
+			customer.setClientType(obj.getClientType());
+			customer.setValidCnh(obj.getValidCnh());
+
+			Customer saved = repository.save(customer);
+			CustomerResponseDTO customerDTO = Mapper.modelMapper(saved, CustomerResponseDTO.class);
+			customerDTO.add(linkTo(methodOn(CustomerController.class).findById(saved.getId())).withSelfRel());
 			return customerDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new DataViolationException();
-		} catch (Exception e) {
-			throw new RuntimeException("Teste");
 		}
 	}
 
@@ -83,12 +94,12 @@ public class CustomerService {
 	}
 
 	@Transactional
-	public Customer patch(String id, Customer obj) {
+	public CustomerResponseDTO patch(String id, CustomerRequestDTO obj) {
 		try {
 			Customer entity = repository.getReferenceById(id);
 			updateData(entity, obj);
-			Customer Customer = repository.save(entity);
-			return Customer;
+			Customer saved = repository.save(entity);
+			return Mapper.modelMapper(saved, CustomerResponseDTO.class);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {
@@ -98,12 +109,22 @@ public class CustomerService {
 		}
 	}
 
-	private void updateData(Customer entity, Customer obj) {
-//		if (obj.getName() != null)
-//			entity.setName(obj.getName());
-//		if (obj.getEmail() != null)
-//			entity.setEmail(obj.getEmail());
-//		if (obj.getPhone() != null)
-//			entity.setPhone(obj.getPhone());
+	private void updateData(Customer entity, CustomerRequestDTO obj) {
+		if (obj.getName() != null)
+			entity.setName(obj.getName());
+		if (obj.getCpf() != null)
+			entity.setCpf(obj.getCpf());
+		if (obj.getEmail() != null)
+			entity.setEmail(obj.getEmail());
+		if (obj.getPhone() != null)
+			entity.setPhone(obj.getPhone());
+		if (obj.getBirthDate() != null)
+			entity.setBirthDate(obj.getBirthDate());
+		if (obj.getRegistrationDate() != null)
+			entity.setRegistrationDate(obj.getRegistrationDate());
+		if (obj.getClientType() != null)
+			entity.setClientType(obj.getClientType());
+		if (obj.getValidCnh() != null)
+			entity.setValidCnh(obj.getValidCnh());
 	}
 }

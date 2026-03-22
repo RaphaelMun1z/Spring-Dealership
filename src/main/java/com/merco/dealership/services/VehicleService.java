@@ -6,6 +6,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.time.LocalDate;
 
 import com.merco.dealership.entities.*;
+import com.merco.dealership.entities.vehicles.*;
+import com.merco.dealership.entities.vehicles.landVehicle.*;
+import com.merco.dealership.entities.vehicles.waterVehicle.Boat;
 import com.merco.dealership.repositories.BranchRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;

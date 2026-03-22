@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.merco.dealership.entities.vehicles.*;
+import com.merco.dealership.entities.vehicles.details.VehicleImageFile;
+import com.merco.dealership.entities.vehicles.landVehicle.*;
+import com.merco.dealership.entities.vehicles.waterVehicle.Boat;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.merco.dealership.entities.*;
