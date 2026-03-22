@@ -193,38 +193,4 @@ class AdmIntegrationTest extends AbstractIntegrationTest {
         assertEquals("Adm Test Atualizado", admAtualizado.getName());
         assertEquals("adm.test@dealer.com", admAtualizado.getEmail());
     }
-
-    // ─── delete ───────────────────────────────────────────────────────────────────
-
-    @Test
-    @Order(6)
-    @DisplayName("Deve deletar o administrador com sucesso")
-    void deveDeletarAdmComSucesso() {
-
-        given()
-                .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("id", admCriado.getId())
-                .when()
-                .delete("/{id}")
-                .then()
-                .statusCode(204);
-    }
-
-    // ─── findById após delete ─────────────────────────────────────────────────────
-
-    @Test
-    @Order(7)
-    @DisplayName("Deve retornar 404 ao buscar administrador deletado")
-    void deveRetornar404AoBuscarAdmDeletado() {
-
-        given()
-                .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("id", admCriado.getId())
-                .when()
-                .get("/{id}")
-                .then()
-                .statusCode(404);
-    }
 }

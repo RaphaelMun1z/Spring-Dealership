@@ -89,8 +89,8 @@ public class TestConfig implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		admRepository.save(new Adm(null, "Irineu", "(11) 91234-5678", "irineu@gmail.com",
-				"$2a$10$0P9rooXJBsWKpHufu19Xwei7JC3QSw8C1KqfBRxB5zfMVS4RNZkEu"));
+		admRepository.save(new Adm(null, "Irineu", "(11) 91234-5678", "admin@auto.com",
+				"$2a$12$.TOewZ7uG1dbBYe9AxORYOfWl3vqDLxE7V0LSUQlf05fVXR8.4vy."));
 
 		BranchAddress branchAddress = new BranchAddress(null, "Other Street", 456,
 				"Apt 1A", "Downtown", "Paraná", "PR", "12345-678", "Brazil");

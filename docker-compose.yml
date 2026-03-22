@@ -22,7 +22,7 @@ services:
 
   backend:
     container_name: backend
-    image: raphaelmuniz/dealership-backend:1.1.1
+    image: raphaelmuniz/dealership-backend:1.2.0
     ports:
       - "8080:8080"
     restart: always

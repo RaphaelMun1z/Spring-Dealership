@@ -63,21 +63,6 @@ public class AdmService {
 	}
 
 	@Transactional
-	public void delete(String id) {
-		try {
-			if (repository.existsById(id)) {
-				repository.deleteById(id);
-			} else {
-				throw new ResourceNotFoundException(id);
-			}
-		} catch (EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException(id);
-		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
-		}
-	}
-
-	@Transactional
 	public AdmResponseDTO patch(String id, AdmPatchRequestDTO obj) {
 		try {
 			Adm entity = repository.getReferenceById(id);

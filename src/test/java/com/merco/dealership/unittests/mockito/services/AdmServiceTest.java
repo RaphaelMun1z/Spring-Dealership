@@ -95,32 +95,6 @@ class AdmServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> service.findById("invalidId"));
     }
 
-    // ─── delete ───────────────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("Deve deletar um administrador com sucesso")
-    void testDelete() {
-        // Arrange
-        when(repository.existsById("id1")).thenReturn(true);
-
-        // Act
-        service.delete("id1");
-
-        // Assert
-        verify(repository, times(1)).existsById("id1");
-        verify(repository, times(1)).deleteById("id1");
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao deletar administrador com ID inexistente")
-    void testDeleteNotFound() {
-        // Arrange
-        when(repository.existsById("invalidId")).thenReturn(false);
-
-        // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> service.delete("invalidId"));
-    }
-
     // ─── patch ────────────────────────────────────────────────────────────────────
 
     @Test

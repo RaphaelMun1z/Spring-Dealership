@@ -48,12 +48,6 @@ public class AdmController {
 		return ResponseEntity.created(uri).body(admDTO);
 	}
 
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable String id) {
-		service.delete(id);
-		return ResponseEntity.noContent().build();
-	}
-
 	@PatchMapping(value = "/{id}")
 	public ResponseEntity<AdmResponseDTO> patch(@PathVariable String id, @RequestBody AdmPatchRequestDTO obj) {
 		AdmResponseDTO admDTO = service.patch(id, obj);
