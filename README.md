@@ -31,4 +31,4 @@
 ##
 
 ### 🧭 Tutorial para iniciar projeto
-<p>Soon</p>
+<p>docker compose --env-file .env up -d</p>

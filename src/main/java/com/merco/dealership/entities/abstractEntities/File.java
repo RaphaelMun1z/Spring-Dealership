@@ -18,8 +18,7 @@ import jakarta.validation.constraints.NotNull;
 public abstract class File implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
+	@Id	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
 	@NotNull(message = "Required field")

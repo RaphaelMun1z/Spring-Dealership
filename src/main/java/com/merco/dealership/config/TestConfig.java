@@ -89,55 +89,57 @@ public class TestConfig implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		admRepository.save(new Adm(null, "Irineu", "(11) 91234-5678", "admin@auto.com",
-				"$2a$12$.TOewZ7uG1dbBYe9AxORYOfWl3vqDLxE7V0LSUQlf05fVXR8.4vy."));
+		if (admRepository.findByEmail("admin@dealer.com") == null) {
+			admRepository.save(new Adm(null, "Irineu", "(11) 91234-5678", "admin@auto.com",
+					"$2a$12$.TOewZ7uG1dbBYe9AxORYOfWl3vqDLxE7V0LSUQlf05fVXR8.4vy."));
 
-		BranchAddress branchAddress = new BranchAddress(null, "Other Street", 456,
-				"Apt 1A", "Downtown", "Paraná", "PR", "12345-678", "Brazil");
-		Branch branch = branchRepository.save(new Branch(null, "Main Branch", branchAddress, "(11) 91212-1212",
-				"mainbranch@example.com", "John Doe", "8:00 AM - 6:00 PM", "Dealership", "Active",
-				LocalDate.of(2023, 1, 1), LocalDate.of(2023, 11, 30)));
+			BranchAddress branchAddress = new BranchAddress(null, "Other Street", 456,
+					"Apt 1A", "Downtown", "Paraná", "PR", "12345-678", "Brazil");
+			Branch branch = branchRepository.save(new Branch(null, "Main Branch", branchAddress, "(11) 91212-1212",
+					"mainbranch@example.com", "John Doe", "8:00 AM - 6:00 PM", "Dealership", "Active",
+					LocalDate.of(2023, 1, 1), LocalDate.of(2023, 11, 30)));
 
-		var savedSellers = sellerRepository.saveAll(Arrays.asList(
-				new Seller(null, "JOHN DOE", "(11) 98765-4321", "john.doe@example.com", "securePass123",
-						LocalDate.of(2023, 6, 15), 5000.0, 0.05, "Active"),
-				new Seller(null, "JANE SMITH", "(21) 98765-4321", "jane.smith@example.com", "securePass456",
-						LocalDate.of(2022, 8, 10), 5500.0, 0.07, "Active"),
-				new Seller(null, "ALICE JOHNSON", "(31) 98765-4321", "alice.johnson@example.com",
-						"securePass789", LocalDate.of(2021, 4, 5), 6000.0, 0.06, "Inactive"),
-				new Seller(null, "BOB MARTINEZ", "(41) 98765-4321", "bob.martinez@example.com",
-						"securePass012", LocalDate.of(2020, 12, 20), 4500.0, 0.04, "Active")
-		));
+			var savedSellers = sellerRepository.saveAll(Arrays.asList(
+					new Seller(null, "JOHN DOE", "(11) 98765-4321", "john.doe@example.com", "securePass123",
+							LocalDate.of(2023, 6, 15), 5000.0, 0.05, "Active"),
+					new Seller(null, "JANE SMITH", "(21) 98765-4321", "jane.smith@example.com", "securePass456",
+							LocalDate.of(2022, 8, 10), 5500.0, 0.07, "Active"),
+					new Seller(null, "ALICE JOHNSON", "(31) 98765-4321", "alice.johnson@example.com",
+							"securePass789", LocalDate.of(2021, 4, 5), 6000.0, 0.06, "Inactive"),
+					new Seller(null, "BOB MARTINEZ", "(41) 98765-4321", "bob.martinez@example.com",
+							"securePass012", LocalDate.of(2020, 12, 20), 4500.0, 0.04, "Active")
+			));
 
-		Seller firstSeller = savedSellers.get(0);
+			Seller firstSeller = savedSellers.get(0);
 
-		CustomerAddress customerAddress = customerAddressRepository.save(new CustomerAddress(null, "Main Street", 123,
-				"Apt 4B", "Downtown", "São Paulo", "SP", "01000-000", "Brazil"));
-		Customer customer = customerRepository.save(new Customer(null, "John Doe", "(12) 93456-7890",
-				"johndoe@example.com", "1234567890", LocalDate.of(1990, 1, 1),
-				LocalDate.now(), ClientType.INDIVIDUAL, true));
+			CustomerAddress customerAddress = customerAddressRepository.save(new CustomerAddress(null, "Main Street", 123,
+					"Apt 4B", "Downtown", "São Paulo", "SP", "01000-000", "Brazil"));
+			Customer customer = customerRepository.save(new Customer(null, "John Doe", "(12) 93456-7890",
+					"johndoe@example.com", "1234567890", LocalDate.of(1990, 1, 1),
+					LocalDate.now(), ClientType.INDIVIDUAL, true));
 
-		VehicleSpecificDetail vsd1 = new VehicleSpecificDetail(null, "Sunroof with panoramic view");
-		VehicleSpecificDetail vsd2 = new VehicleSpecificDetail(null, "Leather seats");
-		vehicleSpecificDetailRepository.saveAll(Arrays.asList(vsd1, vsd2));
+			VehicleSpecificDetail vsd1 = new VehicleSpecificDetail(null, "Sunroof with panoramic view");
+			VehicleSpecificDetail vsd2 = new VehicleSpecificDetail(null, "Leather seats");
+			vehicleSpecificDetailRepository.saveAll(Arrays.asList(vsd1, vsd2));
 
-		Car car = carRepository.save(new Car(null, "Toyota", "Corolla", VehicleType.CAR, VehicleCategory.SEDAN,
-				LocalDate.of(2020, 5, 15), "Black", 30000.0, 1500.0, FuelType.GASOLINE, 4,
-				"Premium Sound System", 50.0, 140.0, 5, 75000.0, VehicleStatus.NEW, VehicleAvailability.AVAILABLE,
-				"Excellent condition, low mileage", LocalDate.of(2024, 11, 30), branch, new HashSet<>(), new HashSet<>(),
-				new HashSet<>(), 6, "ABS", 15.0, 12.0, 10.0, 5, "Power Steering", 17, 4, 470.0, "FWD"));
-		InventoryItem inventory = inventoryRepository.save(new InventoryItem(null, car, LocalDate.of(2024, 11, 20),
-				null, 80000.0, 0.15, "Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456"));
+			Car car = carRepository.save(new Car(null, "Toyota", "Corolla", VehicleType.CAR, VehicleCategory.SEDAN,
+					LocalDate.of(2020, 5, 15), "Black", 30000.0, 1500.0, FuelType.GASOLINE, 4,
+					"Premium Sound System", 50.0, 140.0, 5, 75000.0, VehicleStatus.NEW, VehicleAvailability.AVAILABLE,
+					"Excellent condition, low mileage", LocalDate.of(2024, 11, 30), branch, new HashSet<>(), new HashSet<>(),
+					new HashSet<>(), 6, "ABS", 15.0, 12.0, 10.0, 5, "Power Steering", 17, 4, 470.0, "FWD"));
+			InventoryItem inventory = inventoryRepository.save(new InventoryItem(null, car, LocalDate.of(2024, 11, 20),
+					null, 80000.0, 0.15, "Auto Supplier Ltd.", "ABC-1234", "1HGCM82633A123456"));
 
-		Sale sale = saleRepository.save(new Sale(null, firstSeller, customer, inventory,
-				LocalDate.now(), 25000.0, 24000.0, 1000.0, "Credit Card", 12, "RC123456"));
-		Contract contract = contractRepository.save(new Contract(null, "CN12345", sale, "Sale",
-				LocalDate.now(), LocalDate.now().plusDays(15), 95000.0, PaymentTerms.PIX,
-				ContractStatus.SIGNED, "None", "contract_attachment.pdf"));
-		sale.setContract(contract);
-		saleRepository.save(sale);
+			Sale sale = saleRepository.save(new Sale(null, firstSeller, customer, inventory,
+					LocalDate.now(), 25000.0, 24000.0, 1000.0, "Credit Card", 12, "RC123456"));
+			Contract contract = contractRepository.save(new Contract(null, "CN12345", sale, "Sale",
+					LocalDate.now(), LocalDate.now().plusDays(15), 95000.0, PaymentTerms.PIX,
+					ContractStatus.SIGNED, "None", "contract_attachment.pdf"));
+			sale.setContract(contract);
+			saleRepository.save(sale);
 
-		appointmentRepository.save(new Appointment(null, LocalDate.now().plusDays(1), AppointmentType.TEST_DRIVE,
-				AppointmentStatus.PENDING, customer, firstSeller));
+			appointmentRepository.save(new Appointment(null, LocalDate.now().plusDays(1), AppointmentType.TEST_DRIVE,
+					AppointmentStatus.PENDING, customer, firstSeller));
+		}
 	}
 }

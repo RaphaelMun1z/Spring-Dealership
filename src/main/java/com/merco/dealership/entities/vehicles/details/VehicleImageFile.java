@@ -3,9 +3,9 @@ package com.merco.dealership.entities.vehicles.details;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.merco.dealership.entities.abstractEntities.File;
 import com.merco.dealership.entities.vehicles.Vehicle;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,8 +24,8 @@ public class VehicleImageFile extends File implements Serializable {
 	public VehicleImageFile() {
 	}
 
-	public VehicleImageFile(String id, String name, String path, String type, Long size, Vehicle vehicle) {
-		super(id, name, path, type, size);
+	public VehicleImageFile(String id, String name, String downloadUri, String type, Long size, Vehicle vehicle) {
+		super(id, name, downloadUri, type, size);
 		this.vehicle = vehicle;
 	}
 
@@ -36,5 +36,4 @@ public class VehicleImageFile extends File implements Serializable {
 	public void setVehicle(Vehicle vehicle) {
 		this.vehicle = vehicle;
 	}
-
 }

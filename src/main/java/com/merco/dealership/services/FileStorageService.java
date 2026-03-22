@@ -1,95 +1,84 @@
 package com.merco.dealership.services;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import com.merco.dealership.config.FileStorageConfig;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.merco.dealership.dto.res.UploadFileResponseDTO;
-import com.merco.dealership.services.exceptions.DatabaseException;
+import com.merco.dealership.entities.vehicles.Vehicle;
+import com.merco.dealership.entities.vehicles.details.VehicleImageFile;
+import com.merco.dealership.repositories.VehicleImageFileRepository;
+import com.merco.dealership.repositories.VehicleRepository;
 import com.merco.dealership.services.exceptions.FileStorageException;
 import com.merco.dealership.services.exceptions.ResourceNotFoundException;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class FileStorageService {
 
-    private static final Logger log = LogManager.getLogger(FileStorageService.class);
-    private final Path fileStorageLocation;
+	private final Cloudinary cloudinary;
+	private final VehicleRepository<Vehicle> vehicleRepository;
+	private final VehicleImageFileRepository vehicleImageFileRepository;
 
-	public FileStorageService(FileStorageConfig fileStorageConfig) {
-		this.fileStorageLocation = Paths.get(fileStorageConfig.getUploadDir()).toAbsolutePath().normalize();
+	public FileStorageService(
+			@Value("${cloudinary.cloud_name}") String cloudName,
+			@Value("${cloudinary.api_key}") String apiKey,
+			@Value("${cloudinary.api_secret}") String apiSecret,
+			VehicleRepository<Vehicle> vehicleRepository,
+			VehicleImageFileRepository vehicleImageFileRepository
+	) {
+		this.cloudinary = new Cloudinary(ObjectUtils.asMap(
+				"cloud_name", cloudName,
+				"api_key", apiKey,
+				"api_secret", apiSecret
+		));
+		this.vehicleRepository = vehicleRepository;
+		this.vehicleImageFileRepository = vehicleImageFileRepository;
+	}
+
+	@Transactional
+	public UploadFileResponseDTO uploadVehicleImage(MultipartFile file, String vehicleId) {
+		Vehicle vehicle = vehicleRepository.findById(vehicleId)
+				.orElseThrow(() -> new ResourceNotFoundException(vehicleId));
+
 		try {
-			Files.createDirectories(this.fileStorageLocation);
+			Map uploadResult = cloudinary.uploader().upload(
+					file.getBytes(),
+					ObjectUtils.asMap(
+							"folder", "dealership/vehicles/" + vehicleId,
+							"resource_type", "image"
+					)
+			);
+
+			String downloadUri = uploadResult.get("secure_url").toString();
+			String publicId = uploadResult.get("public_id").toString();
+
+			VehicleImageFile imageFile = new VehicleImageFile();
+			imageFile.setName(publicId);
+			imageFile.setDownloadUri(downloadUri);
+			imageFile.setType(file.getContentType());
+			imageFile.setSize(file.getSize());
+			imageFile.setVehicle(vehicle);
+			vehicleImageFileRepository.save(imageFile);
+
+			return new UploadFileResponseDTO(publicId, downloadUri, file.getContentType(), file.getSize());
+
 		} catch (Exception e) {
-			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", e);
+			throw new FileStorageException("Erro ao enviar imagem para o Cloudinary.", e);
 		}
 	}
 
-	public String storeFile(MultipartFile file) {
-		try {
-			String fileNameUUID = StringUtils.cleanPath(UUID.randomUUID().toString());
-			String originalFilename = file.getOriginalFilename();
-
-			String fileExtension = "";
-			if (originalFilename != null && originalFilename.contains(".")) {
-				fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-			}
-
-			String fileName = fileNameUUID + fileExtension;
-
-			if (fileName.contains("..")) {
-				throw new FileStorageException("Filename contains invalid path sequence.");
-			}
-
-			Path targetLocationPath = this.fileStorageLocation.resolve(fileName);
-			Files.copy(file.getInputStream(), targetLocationPath, StandardCopyOption.REPLACE_EXISTING);
-
-			return fileName;
-		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
-		} catch (Exception e) {
-			throw new FileStorageException("Could not store file " + file.getOriginalFilename() + ".", e);
-		}
-	}
-
-	public UploadFileResponseDTO uploadFile(MultipartFile file) {
-		try {
-			String fileName = storeFile(file);
-			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/file/downloadFile/")
-					.path(fileName).toUriString();
-			return new UploadFileResponseDTO(fileName, fileDownloadUri, file.getContentType(), file.getSize());
-		} catch (Exception e) {
-			log.error("e: ", e);
-			return null;
-		}
-	}
-
-	public Resource loadFileAsResource(String fileName) {
-		try {
-			Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-			Resource resource = new UrlResource(filePath.toUri());
-			if (resource.exists()) {
-				return resource;
-			} else {
-				throw new ResourceNotFoundException(fileName);
-			}
-		} catch (Exception e) {
-			throw new ResourceNotFoundException(fileName);
-		}
+	@Transactional
+	public List<UploadFileResponseDTO> uploadMultipleVehicleImages(MultipartFile[] files, String vehicleId) {
+		return Arrays.stream(files)
+				.map(file -> uploadVehicleImage(file, vehicleId))
+				.collect(Collectors.toList());
 	}
 }

@@ -1,31 +1,30 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   compression:
-      enabled: true
+    enabled: true
   servlet:
     context-path: /api
+
 spring:
   application:
     name: dealership
-  profiles:
-    active: dev
-  datasource:
-    servlet:
-      multipart:
-        enabled: true
-        file-size-threshold: 2KB
-        max-file-size: 200MB
-        max-request-size: 215MB
-file:
-  upload-dir: /home/runner/work/Spring-Dealership/UploadDir
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+
 api:
   security:
     token:
-      secret: i9a(Pj7@39&
-spring-doc:
+      secret: ${JWT_SECRET}
+
+springdoc:
   pathsToMatch: /**
   swagger-ui:
     use-root-path: true
+
 management:
   endpoints:
     web:
@@ -35,3 +34,11 @@ management:
   endpoint:
     health:
       show-details: always
+
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+
+cors:
+  originPatterns: ${CORS_ORIGINS}
