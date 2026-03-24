@@ -89,7 +89,7 @@ public class TestConfig implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		if (admRepository.findByEmail("admin@dealer.com") == null) {
+		if (admRepository.findByEmail("admin@auto.com") == null) {
 			admRepository.save(new Adm(null, "Irineu", "(11) 91234-5678", "admin@auto.com",
 					"$2a$12$.TOewZ7uG1dbBYe9AxORYOfWl3vqDLxE7V0LSUQlf05fVXR8.4vy."));
 
