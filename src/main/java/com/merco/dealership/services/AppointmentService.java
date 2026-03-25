@@ -107,11 +107,12 @@ public class AppointmentService {
 	}
 
 	@Transactional
-	public Appointment patch(String id, AppointmentRequestDTO obj) {
+	public AppointmentResponseDTO patch(String id, AppointmentRequestDTO obj) {
 		try {
 			Appointment entity = repository.getReferenceById(id);
 			updateData(entity, obj);
-			return repository.save(entity);
+			Appointment saved = repository.save(entity);
+			return new AppointmentResponseDTO(saved);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		} catch (ConstraintViolationException e) {

@@ -67,8 +67,8 @@ public class AppointmentController {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Appointment> patch(@PathVariable String id, @RequestBody AppointmentRequestDTO obj) {
-		Appointment appointment = service.patch(id, obj);
+	public ResponseEntity<AppointmentResponseDTO> patch(@PathVariable String id, @RequestBody AppointmentRequestDTO obj) {
+		AppointmentResponseDTO appointment = service.patch(id, obj);
 		return ResponseEntity.ok().body(appointment);
 	}
 }
